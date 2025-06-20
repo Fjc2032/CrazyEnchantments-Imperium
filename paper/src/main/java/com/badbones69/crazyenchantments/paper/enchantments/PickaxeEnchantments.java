@@ -11,13 +11,13 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import net.Indyuce.mmoitems.api.event.ItemDropEvent;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,6 +27,7 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,27 +151,37 @@ public class PickaxeEnchantments implements Listener {
 
         List<Item> drops = event.getItems();
 
+        CEnchantment furnanceEnchant = CEnchantments.FURNACE.getEnchantment();
+        CEnchantment autosmeltEnchant = CEnchantments.AUTOSMELT.getEnchantment();
+
         if (EnchantUtils.isEventActive(CEnchantments.AUTOSMELT, player, itemInHand, enchants)) {
-            int level = enchants.get(CEnchantments.AUTOSMELT.getEnchantment());
+            int level = enchantmentBookSettings.getLevel(itemInHand, autosmeltEnchant);
 
             for (Item itemEntity : drops) {
                 ItemStack drop = itemEntity.getItemStack();
                 if (!isSmeltable(drop.getType())) continue;
 
                 if (CEnchantments.AUTOSMELT.chanceSuccessful(level)) {
+                    player.sendMessage("Autosmelt success.");
                     itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
+                    changeDrop(player.getLocation(), event);
                 }
             }
             return;
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.FURNACE, player, itemInHand, enchants)) {
+        if (this.enchantmentBookSettings.hasEnchantment(itemInHand.getItemMeta(), furnanceEnchant)) {
             for (Item itemEntity : drops) {
                 ItemStack drop = itemEntity.getItemStack();
                 if (!isSmeltable(drop.getType())) continue;
 
+                player.sendMessage("Furnance success.");
                 itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
+                changeDrop(player.getLocation(), event);
             }
+        } else {
+            Bukkit.getLogger().warning("It looks like this item does not have Furnace");
+            Bukkit.getLogger().warning("Or the key is null for some reason.");
         }
     }
     //AutoSmelt/furnace ^^^
@@ -184,7 +195,8 @@ public class PickaxeEnchantments implements Listener {
 
         //check enchantments
         Map<CEnchantment, Integer> enchants = Optional.of(this.enchantmentBookSettings.getEnchantments(item)).orElse(Collections.emptyMap());
-        if (EnchantUtils.isEventActive(CEnchantments.EXPERIENCE, player, item, enchants)){
+        if (EnchantUtils.isEventActive(CEnchantments.EXPERIENCE, player, item, enchants)) {
+            CEnchantment enchant = CEnchantments.EXPERIENCE.getEnchantment();
 
             //Check if the player is on cooldown
             if (System.currentTimeMillis() - playerCooldowns.getOrDefault(playerUUID, 0L) < cooldown) {
@@ -195,14 +207,19 @@ public class PickaxeEnchantments implements Listener {
 
 
             //xp chance plus random xp (1-5)
-            int level = enchants.getOrDefault(CEnchantments.EXPERIENCE.getEnchantment(), 0);
-            double chance = 0.15 + 0.15 * level;
+            int level = enchantmentBookSettings.getLevel(item, enchant);
+            double initialChance = CEnchantments.EXPERIENCE.getChance();
+            double chance = initialChance + (0.15 * level);
             if (Math.random() <= chance) {
-                event.setExpToDrop(event.getExpToDrop() + 2 + (int)(Math.random() * 4));
+                int gain = (int) (event.getExpToDrop() + 2 + (Math.random() * 4));
+                //Some debug to see what's going on
+                player.sendMessage("Experience triggered!");
+                player.sendMessage("XP Gain: " + event.getExpToDrop() + " + " + (gain - event.getExpToDrop()));
+                event.setExpToDrop(gain);
             }
         }
     }
-    //Eperience ^^^
+    //Experience ^^^
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onObsidianBlockBreak(PlayerInteractEvent event) {
@@ -329,8 +346,8 @@ public class PickaxeEnchantments implements Listener {
                  DARK_OAK_WOOD, STRIPPED_DARK_OAK_LOG, STRIPPED_DARK_OAK_WOOD, MANGROVE_LOG, MANGROVE_WOOD,
                  STRIPPED_MANGROVE_LOG, STRIPPED_MANGROVE_WOOD, CHERRY_LOG, CHERRY_WOOD, STRIPPED_CHERRY_LOG,
                  STRIPPED_CHERRY_WOOD, PALE_OAK_LOG, PALE_OAK_WOOD, STRIPPED_PALE_OAK_LOG, STRIPPED_PALE_OAK_WOOD ->
-                    false;
-            default -> true;
+                    true;
+            default -> false;
         };
     }
 
@@ -395,5 +412,22 @@ public class PickaxeEnchantments implements Listener {
             case WHITE_TERRACOTTA -> new ItemStack(Material.WHITE_GLAZED_TERRACOTTA, amount);
             default -> drop; //if no swtich found give normal item
         };
+    }
+
+    /**
+     * Moves the drop to a specific location.
+     * Looking at this now, why did I make this?
+     * @param location The location where this will happen
+     * @param event You must use an instance of BlockDropItemEvent
+     */
+    @ApiStatus.Experimental
+    private void changeDrop(Location location, BlockDropItemEvent event) {
+        World world = location.getWorld();
+        final List<Item> drops = event.getItems();
+        for (Item item : drops) {
+            ItemStack result = item.getItemStack();
+            world.dropItemNaturally(location, result);
+        }
+        event.setCancelled(true);
     }
 }
