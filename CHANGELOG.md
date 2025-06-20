@@ -1,0 +1,5 @@
+- Fixed an issue with the tinkerer inventory closing [#881](https://github.com/Crazy-Crew/CrazyEnchantments/pull/881)
+- Added missing enchantments to default config file [#880](https://github.com/Crazy-Crew/CrazyEnchantments/pull/880)
+- Fixed the potion effect for `Commander` [#879](https://github.com/Crazy-Crew/CrazyEnchantments/pull/879)
+- Fixed the experience enchantment [#875](https://github.com/Crazy-Crew/CrazyEnchantments/pull/875)
+- Removed NoCheatPlus support [#864](https://github.com/Crazy-Crew/CrazyEnchantments/pull/864)
