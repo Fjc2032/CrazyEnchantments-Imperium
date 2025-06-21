@@ -277,6 +277,14 @@ public enum CEnchantments {
         this.cooldown = 0;
     }
 
+    /**
+     *
+     * @param name Name of the enchantment.
+     * @param typeName Type of items it goes on.
+     * @param chance The chance the enchantment has to activate.
+     * @param chanceIncrease The amount the chance increases per level.
+     * @param cooldown The amount of time, in ticks, that must elapse before the enchant can proc again. Must be a long.
+     */
     CEnchantments(String name, String typeName, int chance, int chanceIncrease, long cooldown) {
         this.name = name;
         this.typeName = typeName;
@@ -288,6 +296,16 @@ public enum CEnchantments {
         this.cooldown = cooldown;
     }
 
+    /**
+     *
+     * @param name Name of the enchantment.
+     * @param typeName Type of item it goes on.
+     * @param chance The chance the enchantment has to activate.
+     * @param chanceIncrease The amount the chance increases per level.
+     * @param cooldown The amount of time, in ticks, that must elapse before the enchant can proc again. Must be a long.
+     * @param isHeroic Whether the enchantment is heroic. Returns false if left empty.
+     * @param oldEnchant The enchantment this will replace, if isHeroic is true. Returns null if left empty.
+     */
     CEnchantments(String name, String typeName, int chance, int chanceIncrease, long cooldown, boolean isHeroic, CEnchantment oldEnchant) {
         this.name = name;
         this.typeName = typeName;
@@ -344,6 +362,7 @@ public enum CEnchantments {
         return this.name;
     }
 
+    @Deprecated
     public static String getStaticName() {
         Class<CEnchantments> object = CEnchantments.class;
         return staticName = object.getName();
@@ -452,10 +471,18 @@ public enum CEnchantments {
         return this.oldEnchant;
     }
 
+    /**
+     * Gets the cooldown the enchantment has.
+     * @return The cooldown, as a long. Represented as ticks.
+     */
     public long getCooldown() {
         return this.cooldown;
     }
 
+    /**
+     * Sets a new cooldown for the enchantment.
+     * @param cooldown The cooldown, in server ticks. Must be a long.
+     */
     public void setCooldown(long cooldown) {
         this.cooldown = cooldown;
     }

@@ -291,18 +291,6 @@ public class AxeEnchantments implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBlockBreak(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-        ItemStack axe = this.methods.getItemInHand(player);
-        CEnchantment timberEnchant = CEnchantments.TIMBER.getEnchantment();
-        Block block = event.getBlock();
-
-        if (EnchantUtils.isEventActive(CEnchantments.TIMBER, player, axe, this.enchantmentBookSettings.getEnchantments(axe))) {
-
-        }
-    }
-
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBookApply(BookApplyEvent event) {
         CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();

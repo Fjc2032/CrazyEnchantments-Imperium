@@ -6,7 +6,6 @@ import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DataKeys;
-import com.badbones69.crazyenchantments.paper.api.enums.pdc.Enchant;
 import com.badbones69.crazyenchantments.paper.api.events.AuraActiveEvent;
 import com.badbones69.crazyenchantments.paper.api.events.BookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.managers.ArmorEnchantmentManager;
@@ -21,7 +20,6 @@ import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.tasks.processors.ArmorProcessor;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.item.AxeItem;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
@@ -35,10 +33,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -48,7 +43,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.enginehub.linbus.stream.token.LinToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -314,15 +308,20 @@ public class ArmorEnchantments implements Listener {
             //Stuff for Imperium
             if (EnchantUtils.isEventActive(CEnchantments.SHUFFLE, player, armor, enchants)) {
                 Player target = (Player) damager;
+
+                //Gets items in the hotbar as an array.
                 ItemStack[] hotbar = new ItemStack[9];
                 for (int i = 0; i < 9; i++) {
                     hotbar[i] = target.getInventory().getItem(i);
                 }
 
+                //Convert array to a list, and then shuffle it.
+                //The shuffled list goes into another array.
                 List<ItemStack> items = Arrays.asList(hotbar);
                 Collections.shuffle(items);
                 ItemStack[] newHotbar = items.toArray(hotbar);
 
+                //Grab that new array and set the hotbar to it.
                 for (int i = 0; i < 9; i++) {
                     target.getInventory().setItem(i, newHotbar[i]);
                 }
@@ -395,29 +394,39 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.CREEPERARMOR, player, armor, enchants)) {
+                CEnchantment targetEnchant = CEnchantments.CREEPERARMOR.getEnchantment();
                 if (player.getLastDamageCause().getCause().equals(DamageCause.BLOCK_EXPLOSION) || player.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
                     event.setDamage(0);
                 }
                 if (CEnchantments.CREEPERARMOR.getChance() >= 15) {
-                    player.setHealth(player.getHealth() + (double) CEnchantments.CREEPERARMOR.getChanceIncrease() / 10);
+                    player.setHealth(player.getHealth() + this.enchantmentBookSettings.getLevel(armor, targetEnchant));
+                    double rep = player.getHealth() - this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+                    player.sendMessage("** CREEPER ARMOR **\nHealed for " + rep);
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.FAT, player, armor, enchants)) {
-                event.setDamage(event.getDamage() - ((double) CEnchantments.FAT.getChance() / 10));
+                CEnchantment targetEnchant = CEnchantments.FAT.getEnchantment();
+                event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(armor, targetEnchant)));
                 if (CEnchantments.FAT.getChance() > 20) player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 10, 2));
             }
             if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, player, armor, enchants)) {
                 event.setDamage(event.getDamage() * 2);
             }
             if (EnchantUtils.isEventActive(CEnchantments.DESTRUCTION, player, armor, enchants)) {
+                //Get the world and region the player is in.
                 World world = player.getWorld();
                 BoundingBox region = player.getBoundingBox();
+
+                //Expand the region to account for nearby entities.
                 region.expand(8, 0, 8);
+
+                //Dump all entities in the BoundingBox into a new Collection
                 Collection<Entity> nearbyEntities = world.getNearbyEntities(region);
 
+                //Iterate through the collection and damage all entities in the list.
                 for (Entity target : nearbyEntities) {
-                    if (!(target instanceof LivingEntity)) return;
-                    ((LivingEntity) target).setLastDamage(event.getDamage() / 2);
+                    if (!(target instanceof LivingEntity livingEntity)) return;
+                    livingEntity.setLastDamage(event.getDamage() / 2);
                     target.sendMessage("**Destruction**");
                 }
             }
@@ -469,7 +478,7 @@ public class ArmorEnchantments implements Listener {
             }
             if (EnchantUtils.isEventActive(CEnchantments.MIGHTYCACTUS, player, armor, enchants)) {
                 CEnchantment targetEnchant = CEnchantments.MIGHTYCACTUS.getEnchantment();
-                event.setCancelled(true);
+                event.setDamage(0);
                 damager.damage(1 + enchantmentBookSettings.getLevel(armor, targetEnchant));
             }
             if (EnchantUtils.isEventActive(CEnchantments.HEAVY, player, armor, enchants)) {
@@ -494,16 +503,24 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
+                //Declare a new empty collection of blazes as an ArrayList
                 Collection<Blaze> blazes = new ArrayList<>();
+
+                //Get the world, position, and region the player is in.
                 CEnchantment targetEnchant = CEnchantments.SPIRITS.getEnchantment();
                 World world = player.getWorld();
                 Location playerPos = player.getLocation();
                 BoundingBox box = player.getBoundingBox();
+
+                //Get the level of the enchantment as a variable
                 int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
 
+                //Iterate through the enchantment levels. For every level, another blaze can be spawned.
                 for (int i = 0; i < level; i++) {
                     world.spawn(playerPos, Blaze.class);
                 }
+                //Builds a new runnable that checks the amount of blazes in player region, then adds them to the
+                //new Collection.
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
                     for (Entity entity : nearbyEntities) {
@@ -511,11 +528,14 @@ public class ArmorEnchantments implements Listener {
                         blazes.add(blaze);
                     }
 
+                    //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
                     while (!blazes.isEmpty()) {
                         double playerHealth = player.getHealth();
                         player.setHealth(playerHealth + (blazes.size() + this.enchantmentBookSettings.getLevel(armor, targetEnchant)));
                     }
                 }, 40L);
+
+                //Builds a new runnable that removes the blazes after a period of time.
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     for (Blaze blaze : blazes) {
                         blaze.remove();
