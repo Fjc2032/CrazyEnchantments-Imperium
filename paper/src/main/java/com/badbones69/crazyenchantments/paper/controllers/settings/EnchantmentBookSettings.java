@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,8 +39,6 @@ public class EnchantmentBookSettings {
     private final List<CEnchantment> registeredEnchantments = Lists.newArrayList();
 
     private final Gson gson = new Gson();
-
-    private CEnchantments cEnchantments;
 
     public final Map<UUID, Long> playerCooldowns = new ConcurrentHashMap<>();
 
@@ -433,22 +432,9 @@ public class EnchantmentBookSettings {
      * @param item The ItemStack this will happen on. Can't be null.
      */
     @ApiStatus.Experimental
-    public void swapToHeroicEnchant(@NotNull CEnchantments enchant, @Nullable CEnchantment oldEnchant, @NotNull ItemStack item) {
+    public void swapToHeroicEnchant(@NotNull CEnchantment enchant, @Nullable CEnchantment oldEnchant, @NotNull ItemStack item) {
         if (!enchant.isHeroic()) return;
         if (oldEnchant == null) return;
-        if (getEnchantments(item).containsKey(oldEnchant)) removeEnchantment(item.getItemMeta(), oldEnchant);
-    }
-
-    public boolean isHeroic(CEnchantments enchantments) {
-        return enchantments.isHeroic();
-    }
-
-    public CEnchantment getOldEnchant() {
-        return cEnchantments.getOldEnchant();
-    }
-
-
-    private CEnchantments getcEnchantments() {
-        return cEnchantments;
+        if (hasEnchantment(item.getItemMeta(), oldEnchant)) removeEnchantment(item.getItemMeta(), oldEnchant);
     }
 }

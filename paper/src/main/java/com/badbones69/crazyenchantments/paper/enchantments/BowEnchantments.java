@@ -220,7 +220,7 @@ public class BowEnchantments implements Listener {
             BoundingBox headshotZone = entity.getBoundingBox();
             World world = event.getEntity().getWorld();
             for (Entity target : world.getNearbyEntities(headshotZone)) {
-                if ((target instanceof Arrow)) continue;
+                if (!(target instanceof Arrow)) return;
                 if (target.getLocation().getBlockY() <= headshotZone.getMaxY() && target.getLocation().getBlockY() > headshotZone.getCenterY()) continue;
                 event.setDamage(event.getDamage() * (2.5 + ((double) CEnchantments.SNIPER.getChance() / 20)));
             }
@@ -262,6 +262,7 @@ public class BowEnchantments implements Listener {
     }
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBookApply(BookApplyEvent event) {
-        enchantmentBookSettings.swapToHeroicEnchant(CEnchantments.BIDIRECTIONAL, CEnchantments.BIDIRECTIONAL.getOldEnchant(), event.getEnchantedItem());
+        CEnchantment bidirectionalEnchant = CEnchantments.BIDIRECTIONAL.getEnchantment();
+        enchantmentBookSettings.swapToHeroicEnchant(bidirectionalEnchant, bidirectionalEnchant.getOldEnchant(), event.getEnchantedItem());
     }
 }

@@ -331,8 +331,8 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.POISONED, player, armor, enchants)) {
-                Player target = (Player) damager;
-                Integer duration = CEnchantments.POISONED.getChance() / 8;
+                if (!(damager instanceof Player target)) return;
+                int duration = CEnchantments.POISONED.getChance() / 8;
                 PotionEffect poison = new PotionEffect(PotionEffectType.POISON, duration, 2, true, false, true);
                 target.addPotionEffect(poison);
             }
@@ -589,6 +589,7 @@ public class ArmorEnchantments implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBookApply(BookApplyEvent event) {
-        enchantmentBookSettings.swapToHeroicEnchant(CEnchantments.MIGHTYCACTUS, CEnchantments.MIGHTYCACTUS.getOldEnchant(),event.getEnchantedItem());
+        CEnchantment mightycactusEnchant = CEnchantments.MIGHTYCACTUS.getEnchantment();
+        enchantmentBookSettings.swapToHeroicEnchant(mightycactusEnchant, mightycactusEnchant.getOldEnchant(), event.getEnchantedItem());
     }
 }

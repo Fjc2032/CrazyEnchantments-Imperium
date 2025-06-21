@@ -292,7 +292,8 @@ public class AxeEnchantments implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBookApply(BookApplyEvent event) {
-        enchantmentBookSettings.swapToHeroicEnchant(CEnchantments.DEEPBLEED, CEnchantments.DEEPBLEED.getOldEnchant(), event.getEnchantedItem());
+        CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
+        enchantmentBookSettings.swapToHeroicEnchant(deepbleedEnchant, deepbleedEnchant.getOldEnchant(), event.getEnchantedItem());
     }
 
     private void removeBadPotions(Player player) {

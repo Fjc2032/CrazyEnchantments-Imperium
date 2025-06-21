@@ -6,17 +6,12 @@ import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.objects.enchants.EnchantmentType;
-import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
-import com.gmail.nossr50.mcmmo.acf.UnstableAPI;
-import io.netty.util.internal.UnstableApi;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 public enum CEnchantments {
 
@@ -224,10 +219,8 @@ public enum CEnchantments {
     @NotNull
     private final Methods methods = this.starter.getMethods();
 
-    @NotNull
-    private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
-
     private final String name;
+    public static String staticName;
     private final String typeName;
     private final boolean hasChanceSystem;
     private final int chance;
@@ -312,7 +305,7 @@ public enum CEnchantments {
         this.hasChanceSystem = false;
         this.isHeroic = isHeroic;
         this.oldEnchant = null;
-        cooldown = 0;
+        this.cooldown = 0;
     }
 
     /**
@@ -332,7 +325,7 @@ public enum CEnchantments {
         this.hasChanceSystem = true;
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
-        cooldown = 0;
+        this.cooldown = 0;
     }
 
     
@@ -341,6 +334,11 @@ public enum CEnchantments {
      */
     public String getName() {
         return this.name;
+    }
+
+    public static String getStaticName() {
+        Class<CEnchantments> object = CEnchantments.class;
+        return staticName = object.getName();
     }
 
     /**
@@ -448,11 +446,5 @@ public enum CEnchantments {
 
     public long getCooldown() {
         return this.cooldown;
-    }
-
-    //A function that references another function. Func-ception!
-    @ApiStatus.Experimental
-    public void setCooldown(CEnchantment enchantment, ItemStack item, UUID uuid, long cooldown, long multi) {
-        enchantmentBookSettings.createCooldown(enchantment, item , uuid, cooldown, multi);
     }
 }

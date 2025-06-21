@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,8 @@ public class CEnchantment {
     @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
-    private CEnchantments cEnchantments;
+    @NotNull
+    private final Class<CEnchantments> object = CEnchantments.class;
 
     private String name;
     private String customName;
@@ -240,11 +243,30 @@ public class CEnchantment {
 
         this.categories.forEach(category -> category.addEnchantment(this.instance));
     }
-    public long getCooldown() {
-        return cEnchantments.getCooldown();
-    }
 
-    public void setcEnchantments(CEnchantments cEnchantments) {
-        this.cEnchantments = cEnchantments;
+    //eww reflection
+    public long getCooldown() {
+        try {
+            Method method = object.getMethod("getCooldown");
+            return (long) method.invoke(method);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    public boolean isHeroic() {
+        try {
+            Method method = object.getMethod("isHeroic");
+            return (boolean) method.invoke(method);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    public CEnchantment getOldEnchant() {
+        try {
+            Method method = object.getMethod("getOldEnchant");
+            return (CEnchantment) method.invoke(method);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 }
