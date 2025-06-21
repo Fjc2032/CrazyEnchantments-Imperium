@@ -66,7 +66,7 @@ jobs:
     # - name: Build with Gradle 8.9
     #   run: gradle build
 
-  dependency-submission:
+  publish:
 
     runs-on: ubuntu-latest
     permissions:
@@ -80,7 +80,8 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-    # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+    - name: Create package JAR
+      uses: actions/upload-artifact@v4
+      with:
+        name: CrazyEnchantments
+        path: build/libs/*.jar
