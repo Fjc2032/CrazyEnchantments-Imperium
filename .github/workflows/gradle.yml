@@ -40,6 +40,12 @@ jobs:
       with:
         java-version: '21'
         distribution: 'temurin'
+        
+    - name: Fix line endings for Windows-Linux
+      run: sed -i 's/\r$//' ./gradlew
+
+    - name: Gradlew executable
+      run: chmod +x ./gradlew
 
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
@@ -68,10 +74,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
 
     # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
