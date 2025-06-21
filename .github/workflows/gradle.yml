@@ -28,11 +28,12 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - run: sed -i 's/\r$//' ./gradlew
+    - uses: actions/checkout@v4
     - name: Fix line ending for Windows-Linux cross
+    - run: sed -i 's/\r$//' ./gradlew
     
-    - run: chmod +x ./gradlew
     - name: Make gradlew executable
+    - run: chmod +x ./gradlew
     
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
