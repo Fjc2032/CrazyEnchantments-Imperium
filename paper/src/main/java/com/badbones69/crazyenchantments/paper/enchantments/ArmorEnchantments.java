@@ -516,6 +516,11 @@ public class ArmorEnchantments implements Listener {
                         player.setHealth(playerHealth + (blazes.size() + this.enchantmentBookSettings.getLevel(armor, targetEnchant)));
                     }
                 }, 40L);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    for (Blaze blaze : blazes) {
+                        blaze.remove();
+                    }
+                }, 200L);
 
             }
             //Stuff for Imperium
