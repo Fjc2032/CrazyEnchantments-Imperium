@@ -21,11 +21,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
     - name: Fix line ending for Windows-Linux cross
     - run: sed -i 's/\r$//' ./gradlew
-    
-    - name: Make gradlew executable
     - run: chmod +x ./gradlew
   assemble:
 
