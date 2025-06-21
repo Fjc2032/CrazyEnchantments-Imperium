@@ -3,6 +3,7 @@ package com.badbones69.crazyenchantments.paper.api.managers;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.objects.BowEnchantment;
 import com.badbones69.crazyenchantments.paper.api.objects.PotionEffects;
+import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.List;
 public class BowEnchantmentManager {
 
     private final List<BowEnchantment> bowEnchantments = new ArrayList<>();
+
+    private final EnchantmentBookSettings enchantmentBookSettings = new EnchantmentBookSettings();
 
     public void load() {
         this.bowEnchantments.clear();
@@ -21,7 +24,7 @@ public class BowEnchantmentManager {
         if (CEnchantments.VENOM.isActivated()) this.bowEnchantments.add(new BowEnchantment(CEnchantments.VENOM, List.of(new PotionEffects(PotionEffectType.POISON, 2 * 20, -1)), true));
 
         if (CEnchantments.SNIPER.isActivated()) {
-            this.bowEnchantments.add(new BowEnchantment(CEnchantments.SNIPER, List.of(new PotionEffects(PotionEffectType.POISON, 5 * 20, 1)), false));
+            this.bowEnchantments.add(new BowEnchantment(CEnchantments.SNIPER, List.of(new PotionEffects(PotionEffectType.WEAKNESS, 5, 1)), false));
         }
     }
     

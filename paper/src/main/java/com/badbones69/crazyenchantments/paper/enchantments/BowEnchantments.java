@@ -217,12 +217,18 @@ public class BowEnchantments implements Listener {
             event.getEntity().setFireTicks(CEnchantments.INFERNAL.getChance());
         }
         if (EnchantUtils.isEventActive(CEnchantments.SNIPER, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
-            BoundingBox headshotZone = entity.getBoundingBox();
-            World world = event.getEntity().getWorld();
-            for (Entity target : world.getNearbyEntities(headshotZone)) {
-                if (!(target instanceof Arrow)) return;
-                if (target.getLocation().getBlockY() <= headshotZone.getMaxY() && target.getLocation().getBlockY() > headshotZone.getCenterY()) continue;
-                event.setDamage(event.getDamage() * (2.5 + ((double) CEnchantments.SNIPER.getChance() / 20)));
+            CEnchantment sniperEnchantment = CEnchantments.SNIPER.getEnchantment();
+            Location arrowPos = entityArrow.getLocation();
+            Location targetPos = entity.getLocation();
+
+            double targetHeight = entity.getHeight();
+            double headshotThreshold = targetPos.getY() + (targetHeight * 0.85);
+            double arrowPosY = arrowPos.getY();
+
+            if (arrowPosY >= headshotThreshold) {
+                event.setDamage(event.getDamage() * (2.5 + (enchantmentBookSettings.getLevel(enchantedArrow.bow(), sniperEnchantment))));
+                enchantedArrow.getShooter().sendMessage("**HEADSHOT**");
+                if (entity instanceof Player player) player.sendMessage("Headshot from SNIPER hit you for " + event.getDamage());
             }
 
         }
