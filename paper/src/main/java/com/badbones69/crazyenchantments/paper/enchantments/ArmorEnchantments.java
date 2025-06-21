@@ -26,10 +26,7 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -471,10 +468,55 @@ public class ArmorEnchantments implements Listener {
                 if (event.getDamager() instanceof Arrow) event.setCancelled(true);
             }
             if (EnchantUtils.isEventActive(CEnchantments.MIGHTYCACTUS, player, armor, enchants)) {
-                CEnchantments targetEnchant = CEnchantments.MIGHTYCACTUS;
-                boolean heroic = targetEnchant.isHeroic();
+                CEnchantment targetEnchant = CEnchantments.MIGHTYCACTUS.getEnchantment();
                 event.setCancelled(true);
-                damager.damage(1 + enchantmentBookSettings.getLevel(armor, CEnchantments.MIGHTYCACTUS.getEnchantment()));
+                damager.damage(1 + enchantmentBookSettings.getLevel(armor, targetEnchant));
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.HEAVY, player, armor, enchants)) {
+                CEnchantment targetEnchant = CEnchantments.HEAVY.getEnchantment();
+
+                if (!(event.getDamageSource().getDamageType().equals(DamageType.ARROW))) return;
+                double newDamage = event.getDamage() - (event.getDamage() * (0.02 + enchantmentBookSettings.getLevel(armor, targetEnchant)));
+                event.setDamage(newDamage);
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.REINFORCED, player, armor, enchants)) {
+                CEnchantment targetEnchant = CEnchantments.REINFORCED.getEnchantment();
+
+                BoundingBox box = player.getBoundingBox();
+                World world = player.getWorld();
+                Collection<Entity> aggressors = world.getNearbyEntities(box);
+
+                box.expand(3, 3, 3);
+
+                for (Entity entity : aggressors) {
+                    if (!(entity instanceof LivingEntity)) return;
+                    if (entity.getLocation().equals(player.getLocation().add(-3, 0, -3))) event.setDamage(event.getDamage() / (1.5 + enchantmentBookSettings.getLevel(armor, targetEnchant)));
+                }
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
+                Collection<Blaze> blazes = new ArrayList<>();
+                CEnchantment targetEnchant = CEnchantments.SPIRITS.getEnchantment();
+                World world = player.getWorld();
+                Location playerPos = player.getLocation();
+                BoundingBox box = player.getBoundingBox();
+                int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+
+                for (int i = 0; i < level; i++) {
+                    world.spawn(playerPos, Blaze.class);
+                }
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
+                    for (Entity entity : nearbyEntities) {
+                        if (!(entity instanceof Blaze blaze)) return;
+                        blazes.add(blaze);
+                    }
+
+                    while (!blazes.isEmpty()) {
+                        double playerHealth = player.getHealth();
+                        player.setHealth(playerHealth + (blazes.size() + this.enchantmentBookSettings.getLevel(armor, targetEnchant)));
+                    }
+                }, 40L);
+
             }
             //Stuff for Imperium
         }

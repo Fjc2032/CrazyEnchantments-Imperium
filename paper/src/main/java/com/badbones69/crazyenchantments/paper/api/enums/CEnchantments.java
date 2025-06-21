@@ -150,6 +150,9 @@ public enum CEnchantments {
     OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15),
     ENDERSLAYER("Enderslayer", "Sword", 50, 10),
     REAPER("Reaper", "Axe", 10, 3),
+    //Modified: Reaper now scales damage based on XP, and will no longer apply wither effects.
+    //This is final.
+
     NETHERSLAYER("Netherslayer", "Sword", 50, 10),
     SHACKLE("Shackle", "Sword", 70, 10),
     REFORGED("Reforged", "Tool", 10, 10),
@@ -196,13 +199,18 @@ public enum CEnchantments {
     ARROWBREAK("Arrowbreak", "Axe", 10, 10),
     ARROWDEFLECT("Arrowdeflect", "Armor", 10, 10),
     ARROWLIFESTEAL("ArrowLifesteal", "Bow", 10, 10),
+    HELLFIRE("Hellfire", "Bow", 15, 10, 60L),
+    HEAVY("Heavy", "Armor", 10, 5, 20L),
+    REINFORCED("Reinforced", "Armor", 20, 10),
+    TIMBER("Timber", "Axe", 10, 5),
+    SPIRITS("Spirits", "Armor", 10, 10, 600L),
     //SUGGESTED - Imperium
     SWARM("Swarm", "Sword"),
 
     //HEROIC
     MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS.getEnchantment()),
     DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED.getEnchantment()),
-    BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null)
+    BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
 
     ;
 
@@ -227,7 +235,7 @@ public enum CEnchantments {
     private final int chanceIncrease;
     private final CEnchantment oldEnchant;
     private final boolean isHeroic;
-    private final long cooldown;
+    private long cooldown;
 
     private CEnchantment cachedEnchantment = null;
 
@@ -446,5 +454,9 @@ public enum CEnchantments {
 
     public long getCooldown() {
         return this.cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
     }
 }

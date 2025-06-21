@@ -15,6 +15,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
+import net.minecraft.world.entity.projectile.Fireball;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -23,10 +24,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -257,6 +255,18 @@ public class BowEnchantments implements Listener {
 
             entity.setVelocity(arrowPos.getDirection().normalize().multiply(1.05 + enchantmentBookSettings.getLevel(enchantedArrow.bow(), targetEnchant)));
             enchantmentBookSettings.createCooldown(targetEnchant, enchantedArrow.bow(), enchantedArrow.getShooter().getUniqueId(), 300L, 2L);
+        }
+        if (EnchantUtils.isEventActive(CEnchantments.HELLFIRE, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
+            CEnchantment hellfireEnchant = CEnchantments.HELLFIRE.getEnchantment();
+
+            World world = entity.getWorld();
+            Vector direction = entity.getLocation().getDirection();
+            float yield = (float) 1 + (enchantmentBookSettings.getLevel(enchantedArrow.bow(), hellfireEnchant));
+
+            Location arrowPos = entityArrow.getLocation();
+            Entity ball = world.spawnEntity(arrowPos, EntityType.FIREBALL);
+            if (!(ball instanceof Fireball fireball)) return;
+            ball.setVelocity(direction.normalize());
         }
     }
 

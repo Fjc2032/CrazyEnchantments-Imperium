@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -423,6 +424,13 @@ public class EnchantmentBookSettings {
         if (System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) < cooldown) return;
 
         playerCooldowns.put(uuid, System.currentTimeMillis());
+        try {
+            Class<CEnchantments> cEnchantmentsClass = CEnchantments.class;
+            Method method = cEnchantmentsClass.getMethod("setCooldown", long.class);
+            method.invoke(method, cooldown);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

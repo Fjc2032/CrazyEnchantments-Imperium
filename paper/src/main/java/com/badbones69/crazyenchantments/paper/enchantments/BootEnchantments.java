@@ -4,6 +4,7 @@ import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
 import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.managers.WingsManager;
+import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.WingsUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
@@ -148,9 +149,10 @@ public class BootEnchantments implements Listener {
     }
     @EventHandler()
     public void onAttack1(EntityDamageByEntityEvent event) {
+        CEnchantment quiverEnchant = CEnchantments.QUIVER.getEnchantment();
         if (!(event.getEntity() instanceof Player player)) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
-        if (!EnchantUtils.isArmorEventActive(attacker, CEnchantments.QUIVER, attacker.getInventory().getBoots())) return;
+        if (!this.enchantmentBookSettings.getEnchantments(player.getEquipment().getBoots()).containsKey(quiverEnchant)) return;
 
         Vector vector = player.getLocation().getDirection();
         vector.setY(player.getY() + ((double) CEnchantments.QUIVER.getChance() / 100));

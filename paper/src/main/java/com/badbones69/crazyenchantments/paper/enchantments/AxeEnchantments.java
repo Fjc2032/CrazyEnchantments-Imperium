@@ -19,6 +19,8 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
@@ -27,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -133,13 +136,11 @@ public class AxeEnchantments implements Listener {
         }
         //Imperium
         if (EnchantUtils.isEventActive(CEnchantments.REAPER, damager, item, enchantments)) {
-            Collection<PotionEffect> effects = new ArrayList<>();
-            effects.add(new PotionEffect(PotionEffectType.WITHER, CEnchantments.REAPER.getChance() / 5, 1));
-            effects.add(new PotionEffect(PotionEffectType.BLINDNESS, CEnchantments.REAPER.getChance() / 5, 1));
-            entity.addPotionEffects(effects);
-
+            CEnchantment reaperEnchant = CEnchantments.REAPER.getEnchantment();
             int damageAmount = damager.getExpToLevel();
-            event.setDamage(event.getDamage() * (1 + (double) damageAmount / 1000));
+            int cap = this.enchantmentBookSettings.getLevel(item, reaperEnchant) * 10;
+            if (damageAmount > cap) damageAmount = cap;
+            event.setDamage(event.getDamage() * (1 + (double) damageAmount / 1500));
         }
         if (EnchantUtils.isEventActive(CEnchantments.PUMMEL, damager, item, enchantments)) {
             if (!(event.getDamager() instanceof LivingEntity target)) return;
@@ -157,7 +158,7 @@ public class AxeEnchantments implements Listener {
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.CORRUPT, damager, item, enchantments)) {
-            damager.sendMessage("Corrupt activated");
+            damager.sendMessage("** CORRUPT **");
             if (!(event.getEntity() instanceof LivingEntity target)) return;
             target.damage(event.getDamage());
             Bukkit.getScheduler().runTaskLater(plugin, () -> target.damage(event.getDamage()), 40L);
@@ -287,6 +288,18 @@ public class AxeEnchantments implements Listener {
                 ItemStack head = new ItemBuilder().setMaterial(headMat).build();
                 event.getDrops().add(head);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        ItemStack axe = this.methods.getItemInHand(player);
+        CEnchantment timberEnchant = CEnchantments.TIMBER.getEnchantment();
+        Block block = event.getBlock();
+
+        if (EnchantUtils.isEventActive(CEnchantments.TIMBER, player, axe, this.enchantmentBookSettings.getEnchantments(axe))) {
+
         }
     }
 
