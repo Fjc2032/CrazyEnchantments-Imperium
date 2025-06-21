@@ -21,10 +21,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Perform pre-checks
 
-    - run: sed -i 's/\r$//' ./gradlew
     - name: Fix line endings for Windows-Linux
+      run: sed -i 's/\r$//' ./gradlew
+
+    - name: Gradlew executable
+      run: chmod +x ./gradlew
   assemble:
 
     runs-on: ubuntu-latest
