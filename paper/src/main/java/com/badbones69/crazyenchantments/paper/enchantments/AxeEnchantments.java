@@ -204,6 +204,8 @@ public class AxeEnchantments implements Listener {
             //Check if the target is a LivingEntity
             if (!(event.getEntity() instanceof LivingEntity player)) return;
 
+            if (player.isDead()) return;
+
             //Create a bleed stack
             this.bleedStack = (event.getDamage() / (enchantmentBookSettings.getLevel(item, bleedEnchant) * 1.05));
 
@@ -236,6 +238,7 @@ public class AxeEnchantments implements Listener {
             List<BukkitTask> devourTasks = new ArrayList<>();
             if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
                 if (!(event.getEntity() instanceof LivingEntity player)) return;
+                if (player.isDead()) return;
                 this.bleedStack = bleedStack + enchantmentBookSettings.getLevel(item, devourEnchant);
                 devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
                 devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** DEVOUR **"), 40L, 20L));
@@ -272,6 +275,7 @@ public class AxeEnchantments implements Listener {
             this.bleedStack = bleedStack + this.enchantmentBookSettings.getLevel(item, deepbleedEnchant);
 
             if (!(event.getEntity() instanceof LivingEntity player)) return;
+            if (player.isDead()) return;
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);
             List<BukkitTask> bleedTasks = new ArrayList<>();
 
