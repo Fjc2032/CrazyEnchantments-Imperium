@@ -251,7 +251,6 @@ public class BowEnchantments implements Listener {
             Location arrowPos = block.getLocation();
 
             entity.setVelocity(arrowPos.getDirection().normalize().multiply(1.05 + enchantmentBookSettings.getLevel(enchantedArrow.bow(), targetEnchant)));
-            enchantmentBookSettings.createCooldown(targetEnchant, enchantedArrow.bow(), enchantedArrow.getShooter().getUniqueId(), 300L, 2L);
         }
         if (EnchantUtils.isEventActive(CEnchantments.HELLFIRE, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             CEnchantment hellfireEnchant = CEnchantments.HELLFIRE.getEnchantment();

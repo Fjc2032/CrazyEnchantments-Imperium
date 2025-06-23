@@ -406,6 +406,7 @@ public class EnchantmentBookSettings {
         return meta;
     }
 
+    //Deprecating this due to *problems*. We love problems.
     /**
      * Creates a cooldown and applies it to the targeted enchantment. If the enchantment already has a cooldown,
      * the function will terminate.
@@ -416,6 +417,7 @@ public class EnchantmentBookSettings {
      * @param multi The multiplier. Formula is [base - (level*multi)]. Set to 0 for no multiplier. A bigger multi means the cooldown lowers more per level. Must be a long.
      */
     @ApiStatus.Experimental
+    @Deprecated
     public void createCooldown(CEnchantment enchantment, @NotNull ItemStack item, @NotNull UUID uuid, long cooldownModifier, long multi) {
         if (!(enchantment.getCooldown() == 0)) return;
         int level = getLevel(item, enchantment);

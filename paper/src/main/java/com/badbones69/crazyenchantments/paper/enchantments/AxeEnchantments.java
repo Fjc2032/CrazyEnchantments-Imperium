@@ -196,8 +196,6 @@ public class AxeEnchantments implements Listener {
             //Check if the target is a LivingEntity
             if (!(event.getEntity() instanceof LivingEntity player)) return;
 
-            enchantmentBookSettings.createCooldown(CEnchantments.BLEED.getEnchantment(), item, damager.getUniqueId(), 2000L, 2L);
-
             //Particle builder
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);
 
@@ -207,6 +205,8 @@ public class AxeEnchantments implements Listener {
             //If the target happens to be a player, run this particle
             if (player instanceof Player player1) {
                 bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player1.spawnParticle(Particle.DUST, player1.getLocation(), 12, dustOptions), 40L, 20L));
+            } else {
+                bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.getWorld().spawnParticle(Particle.DUST, player.getLocation(), 12, dustOptions), 40L, 20L));
             }
             //These tasks are stored and run
             bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.damage(event.getDamage() / (enchantmentBookSettings.getLevel(item, CEnchantments.BLEED.getEnchantment()) * 1.05)), 40L, 20L));
@@ -248,7 +248,6 @@ public class AxeEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.DEEPBLEED, damager, item, enchantments)) {
             //Literally the same thing as bleed but more damage
-            enchantmentBookSettings.createCooldown(CEnchantments.DEEPBLEED.getEnchantment(), item, damager.getUniqueId(), 500L, 1L);
 
             if (!(event.getEntity() instanceof LivingEntity player)) return;
 
