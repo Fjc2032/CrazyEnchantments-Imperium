@@ -220,7 +220,7 @@ public class BowEnchantments implements Listener {
             Location targetPos = entity.getLocation();
 
             double targetHeight = entity.getHeight();
-            double headshotThreshold = targetPos.getY() + (targetHeight * 0.85);
+            double headshotThreshold = targetPos.getY() + (targetHeight * 0.80);
             double arrowPosY = arrowPos.getY();
 
             if (arrowPosY >= headshotThreshold) {
@@ -239,10 +239,7 @@ public class BowEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.ARROWLIFESTEAL, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             if (!(enchantedArrow.getShooter() instanceof Player shooter)) return;
             double shooterHealth = shooter.getHealth();
-            double shooterMaxHealth = shooter.getAttribute(Attribute.MAX_HEALTH).getValue();
             double modifier = event.getDamage();
-
-            if (shooterHealth + modifier > shooterMaxHealth) modifier = 0;
 
             shooter.setHealth(shooterHealth + modifier);
         }
@@ -266,6 +263,8 @@ public class BowEnchantments implements Listener {
             Location arrowPos = entityArrow.getLocation();
             Entity ball = world.spawnEntity(arrowPos, EntityType.FIREBALL);
             if (!(ball instanceof Fireball fireball)) return;
+            fireball.bukkitYield = yield;
+
             ball.setVelocity(direction.normalize());
         }
     }

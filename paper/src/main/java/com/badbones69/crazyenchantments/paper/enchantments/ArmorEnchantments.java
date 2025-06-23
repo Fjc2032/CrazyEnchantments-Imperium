@@ -525,6 +525,7 @@ public class ArmorEnchantments implements Listener {
                     Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
                     for (Entity entity : nearbyEntities) {
                         if (!(entity instanceof Blaze blaze)) return;
+                        blaze.setTarget(damager);
                         blazes.add(blaze);
                     }
 

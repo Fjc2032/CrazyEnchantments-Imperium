@@ -358,7 +358,7 @@ public class SwordEnchantments implements Listener {
             event.setDamage(damage * ((double) CEnchantments.NETHERSLAYER.getChance() / 20));
         }
         if (EnchantUtils.isEventActive(CEnchantments.SHACKLE, damager, item, enchantments)) {
-            if (event.getEntity() instanceof Player) return;
+            if (event.getEntity() instanceof LivingEntity) return;
             Location playerPos = damager.getLocation();
             Vector vector = damager.getLocation().toVector().subtract(en.getLocation().toVector());
             vector.normalize().multiply(1);
@@ -366,7 +366,7 @@ public class SwordEnchantments implements Listener {
             
         }
         if (EnchantUtils.isEventActive(CEnchantments.GREATSWORD, damager, item, enchantments)) {
-            if (!(event.getEntity() instanceof Player target)) return;
+            if (!(event.getEntity() instanceof LivingEntity target)) return;
             if (target.getActiveItem().getType().equals(Material.BOW)) {
                 event.setDamage(event.getDamage() * (damager.getVelocity().normalize().length() / 2));
             }
@@ -377,7 +377,7 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLOCK, damager, item, enchantments)) {
             event.setCancelled(true);
-            if (!(event.getEntity() instanceof Player target)) return;
+            if (!(event.getEntity() instanceof LivingEntity target)) return;
             target.damage(4 + ((double) CEnchantments.BLOCK.getChance() / 11));
         }
         if (EnchantUtils.isEventActive(CEnchantments.DEMONIC, damager, item, enchantments)) {

@@ -12,8 +12,6 @@ public class BowEnchantmentManager {
 
     private final List<BowEnchantment> bowEnchantments = new ArrayList<>();
 
-    private final EnchantmentBookSettings enchantmentBookSettings = new EnchantmentBookSettings();
-
     public void load() {
         this.bowEnchantments.clear();
 

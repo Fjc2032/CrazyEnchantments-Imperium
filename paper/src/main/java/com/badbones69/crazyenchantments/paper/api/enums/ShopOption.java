@@ -33,7 +33,6 @@ public enum ShopOption {
     private final String path;
     private final String namePath;
     private final String lorePath;
-    private Option option;
     private final boolean buyable;
     
     ShopOption(String optionPath, String path, String namePath, String lorePath, boolean buyable) {

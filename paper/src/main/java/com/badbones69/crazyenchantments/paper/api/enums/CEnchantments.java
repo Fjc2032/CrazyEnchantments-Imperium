@@ -228,7 +228,6 @@ public enum CEnchantments {
     private final Methods methods = this.starter.getMethods();
 
     private final String name;
-    public static String staticName;
     private final String typeName;
     private final boolean hasChanceSystem;
     private final int chance;
@@ -360,12 +359,6 @@ public enum CEnchantments {
      */
     public String getName() {
         return this.name;
-    }
-
-    @Deprecated
-    public static String getStaticName() {
-        Class<CEnchantments> object = CEnchantments.class;
-        return staticName = object.getName();
     }
 
     /**

@@ -42,8 +42,6 @@ public class CrazyEnchantStats extends ItemStat<RandomStatData<CrazyEnchantsData
     @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
-    private final ItemBuilder itemBuilder = new ItemBuilder();
-
     public Methods getMethods() {
         return this.methods;
     }
