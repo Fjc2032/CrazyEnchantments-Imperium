@@ -41,6 +41,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -68,7 +69,13 @@ public class AxeEnchantments implements Listener {
     @NotNull
     private final CrazyManager crazyManager = this.starter.getCrazyManager();
 
+    @NotNull
+    private final BukkitScheduler scheduler = Bukkit.getScheduler();
+
     private Enchant enchant;
+
+    //Private field that handles bleed damage amounts.
+    private double bleedStack;
 
     // Plugin Support.
     @NotNull
@@ -167,9 +174,9 @@ public class AxeEnchantments implements Listener {
             damager.sendMessage("** CORRUPT **");
             if (!(event.getEntity() instanceof LivingEntity target)) return;
             target.damage(event.getDamage());
-            Bukkit.getScheduler().runTaskLater(plugin, () -> target.damage(event.getDamage()), 40L);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> target.damage(event.getDamage()), 60L);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> target.damage(event.getDamage()), 80L);
+            this.scheduler.runTaskLater(plugin, () -> target.damage(event.getDamage()), 40L);
+            this.scheduler.runTaskLater(plugin, () -> target.damage(event.getDamage()), 60L);
+            this.scheduler.runTaskLater(plugin, () -> target.damage(event.getDamage()), 80L);
         }
         if (EnchantUtils.isEventActive(CEnchantments.INSANITY, damager, item, enchantments)) {
             if (!(event.getEntity() instanceof LivingEntity target)) return;
@@ -193,8 +200,12 @@ public class AxeEnchantments implements Listener {
             event.setDamage(event.getDamage() * (1 + ((double) CEnchantments.BARBARIAN.getChance() / 100)));
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
+            CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
             //Check if the target is a LivingEntity
             if (!(event.getEntity() instanceof LivingEntity player)) return;
+
+            //Create a bleed stack
+            this.bleedStack = (event.getDamage() / (enchantmentBookSettings.getLevel(item, bleedEnchant) * 1.05));
 
             //Particle builder
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);
@@ -204,27 +215,36 @@ public class AxeEnchantments implements Listener {
 
             //If the target happens to be a player, run this particle
             if (player instanceof Player player1) {
-                bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player1.spawnParticle(Particle.DUST, player1.getLocation(), 12, dustOptions), 40L, 20L));
+                bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player1.spawnParticle(Particle.DUST, player1.getLocation(), 12, dustOptions), 40L, 20L));
             } else {
-                bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.getWorld().spawnParticle(Particle.DUST, player.getLocation(), 12, dustOptions), 40L, 20L));
+                bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.getWorld().spawnParticle(Particle.DUST, player.getLocation(), 12, dustOptions), 40L, 20L));
             }
             //These tasks are stored and run
-            bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.damage(event.getDamage() / (enchantmentBookSettings.getLevel(item, CEnchantments.BLEED.getEnchantment()) * 1.05)), 40L, 20L));
-            bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.sendMessage("You are bleeding!"), 40L, 20L));
-            bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.sendMessage("You are bleeding!"), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
 
             //Removes the tasks from the plugin after 80 ticks to avoid a memory leak
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            this.scheduler.runTaskLater(plugin, () -> {
                 for (BukkitTask task : bleedTasks) {
                     task.cancel();
                 }
             }, 80L);
         }
         if (EnchantUtils.isEventActive(CEnchantments.DEVOUR, damager, item, enchantments)) {
-            while (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
+            CEnchantment devourEnchant = CEnchantments.DEVOUR.getEnchantment();
+            List<BukkitTask> devourTasks = new ArrayList<>();
+            if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
                 if (!(event.getEntity() instanceof LivingEntity player)) return;
-                player.damage(event.getDamage() * (1 + ((double) CEnchantments.DEVOUR.getChance() / 10)));
-                damager.sendMessage("** Devour - BLEED STACK **");
+                this.bleedStack = bleedStack + enchantmentBookSettings.getLevel(item, devourEnchant);
+                devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
+                devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** DEVOUR **"), 40L, 20L));
+
+                this.scheduler.runTaskLater(plugin, () -> {
+                    for (BukkitTask task : devourTasks) {
+                        task.cancel();
+                    }
+                }, 80L);
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
@@ -248,21 +268,21 @@ public class AxeEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.DEEPBLEED, damager, item, enchantments)) {
             //Literally the same thing as bleed but more damage
+            CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
+            this.bleedStack = bleedStack + this.enchantmentBookSettings.getLevel(item, deepbleedEnchant);
 
             if (!(event.getEntity() instanceof LivingEntity player)) return;
-
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);
-
             List<BukkitTask> bleedTasks = new ArrayList<>();
 
             if (player instanceof Player player1) {
-                bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player1.spawnParticle(Particle.DUST, player1.getLocation(), 12, dustOptions), 40L, 20L));
+                bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player1.spawnParticle(Particle.DUST, player1.getLocation(), 12, dustOptions), 40L, 20L));
             }
-            bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.damage(event.getDamage() / (enchantmentBookSettings.getLevel(item, CEnchantments.DEEPBLEED.getEnchantment()) * 1.75)), 40L, 20L));
-            bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.sendMessage("You are bleeding!"), 40L, 20L));
-            bleedTasks.add(Bukkit.getScheduler().runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.sendMessage("You are bleeding!"), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            this.scheduler.runTaskLater(plugin, () -> {
                 for (BukkitTask task : bleedTasks) {
                     task.cancel();
                 }
