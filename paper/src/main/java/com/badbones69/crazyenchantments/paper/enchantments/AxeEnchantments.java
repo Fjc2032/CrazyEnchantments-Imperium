@@ -7,6 +7,7 @@ import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.Enchant;
 import com.badbones69.crazyenchantments.paper.api.events.BookApplyEvent;
+import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
@@ -71,8 +72,6 @@ public class AxeEnchantments implements Listener {
 
     @NotNull
     private final BukkitScheduler scheduler = Bukkit.getScheduler();
-
-    private Enchant enchant;
 
     //Private field that handles bleed damage amounts.
     private double bleedStack;
@@ -251,12 +250,13 @@ public class AxeEnchantments implements Listener {
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
+            CEnchantment blacksmithEnchant = CEnchantments.BLACKSMITH.getEnchantment();
             ItemStack[] equipment = damager.getEquipment().getArmorContents();
             for (ItemStack armor : equipment) {
                 if (armor == null) return;
                 ItemMeta meta = armor.getItemMeta();
                 Damageable damageable = (Damageable) meta;
-                int modifier = damageable.getDamage() - (2 + enchant.getLevel("Blacksmith"));
+                int modifier = damageable.getDamage() - (2 + this.enchantmentBookSettings.getLevel(item, blacksmithEnchant));
                 if (modifier < 0) return;
                 damageable.setDamage(modifier);
                 armor.setItemMeta(meta);
@@ -332,7 +332,8 @@ public class AxeEnchantments implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBookApply(BookApplyEvent event) {
+    public void onPreBookApply(PreBookApplyEvent event) {
+        if (!event.getEnchantment().isHeroic()) event.setCancelled(true);
         CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
         enchantmentBookSettings.swapToHeroicEnchant(deepbleedEnchant, deepbleedEnchant.getOldEnchant(), event.getEnchantedItem());
     }
@@ -350,13 +351,5 @@ public class AxeEnchantments implements Listener {
         }};
 
         bad.forEach(player::removePotionEffect);
-    }
-
-    public Enchant getEnchant() {
-        return enchant;
-    }
-
-    public void setEnchant(Enchant enchant) {
-        this.enchant = enchant;
     }
 }

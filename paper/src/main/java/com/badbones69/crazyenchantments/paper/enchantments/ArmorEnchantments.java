@@ -8,6 +8,8 @@ import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DataKeys;
 import com.badbones69.crazyenchantments.paper.api.events.AuraActiveEvent;
 import com.badbones69.crazyenchantments.paper.api.events.BookApplyEvent;
+import com.badbones69.crazyenchantments.paper.api.events.HeroicBookApplyEvent;
+import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.managers.ArmorEnchantmentManager;
 import com.badbones69.crazyenchantments.paper.api.objects.ArmorEnchantment;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
@@ -655,8 +657,9 @@ public class ArmorEnchantments implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBookApply(BookApplyEvent event) {
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBookApply(PreBookApplyEvent event) {
+        if (!event.getEnchantment().isHeroic()) return;
         CEnchantment mightycactusEnchant = CEnchantments.MIGHTYCACTUS.getEnchantment();
         enchantmentBookSettings.swapToHeroicEnchant(mightycactusEnchant, mightycactusEnchant.getOldEnchant(), event.getEnchantedItem());
     }

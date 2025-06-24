@@ -419,7 +419,6 @@ public class EnchantmentBookSettings {
     @ApiStatus.Experimental
     @Deprecated
     public void createCooldown(CEnchantment enchantment, @NotNull ItemStack item, @NotNull UUID uuid, long cooldownModifier, long multi) {
-        if (!(enchantment.getCooldown() == 0)) return;
         int level = getLevel(item, enchantment);
         long cooldown = Math.max(cooldownModifier - (level * multi), 3000L);
 
@@ -436,7 +435,7 @@ public class EnchantmentBookSettings {
     }
 
     /**
-     * Swaps an enchant to a heroic variant if requirements are met. A reminder that you do not need to check if the enchantment is heroic yourself; the function will do that for you.
+     * Swaps an enchant to a heroic variant if requirements are met.
      * @param enchant The enchantment that will be the new enchant.
      * @param oldEnchant The old enchantment being replaced. Accessible via the enum. Will exit if null.
      * @param item The ItemStack this will happen on. Can't be null.
