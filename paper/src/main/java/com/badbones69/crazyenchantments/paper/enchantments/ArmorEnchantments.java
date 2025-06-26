@@ -21,9 +21,9 @@ import com.badbones69.crazyenchantments.paper.controllers.settings.ProtectionCry
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.tasks.processors.ArmorProcessor;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
@@ -346,7 +346,7 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.WARD, player, armor, enchants)) {
-                AttributeInstance maxhealth = (AttributeInstance) player.getAttribute(Attribute.MAX_HEALTH);
+                AttributeInstance maxhealth = player.getAttribute(Attribute.MAX_HEALTH);
                 if (maxhealth == null) return;
                 double amount = event.getDamage();
                 double playerHealth = player.getHealth();

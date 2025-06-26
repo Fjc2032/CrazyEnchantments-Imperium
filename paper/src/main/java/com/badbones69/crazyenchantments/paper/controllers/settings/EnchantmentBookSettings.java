@@ -422,9 +422,6 @@ public class EnchantmentBookSettings {
         int level = getLevel(item, enchantment);
         long cooldown = Math.max(cooldownModifier - (level * multi), 3000L);
 
-        if (System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) < cooldown) return;
-
-        playerCooldowns.put(uuid, System.currentTimeMillis());
         try {
             Class<CEnchantments> cEnchantmentsClass = CEnchantments.class;
             Method method = cEnchantmentsClass.getMethod("setCooldown", long.class);
@@ -432,6 +429,35 @@ public class EnchantmentBookSettings {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+
+        if (System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) < cooldown) return;
+
+        playerCooldowns.put(uuid, System.currentTimeMillis());
+    }
+
+    /**
+     * Attempts to implement the cooldown declared in the enum.
+     * @param enchantment The enchantment
+     * @param itemStack The item
+     * @param uuid Object UUID
+     * @param multi Multiplier (the cooldown subtracted by the level * multiplier)
+     * @throws RuntimeException
+     */
+    @ApiStatus.Experimental
+    public void tryCooldown(CEnchantment enchantment, ItemStack itemStack, UUID uuid, long multi) throws RuntimeException {
+        int level = getLevel(itemStack, enchantment);
+        long cooldown = enchantment.getCooldown() - ((long) level * multi);
+
+        try {
+            Class<CEnchantments> cEnchantmentsClass = CEnchantments.class;
+            Method method = cEnchantmentsClass.getMethod("setCooldown", long.class);
+            method.invoke(method, cooldown);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) < cooldown) return;
+        playerCooldowns.put(uuid, System.currentTimeMillis());
     }
 
     /**

@@ -131,7 +131,7 @@ public enum CEnchantments {
     //tools
     AUTOSMELT("AutoSmelt", "Pickaxe", 30, 35),
     EXPERIENCE("Experience", "Pickaxe", 15, 15),
-    FURNACE("Furnace", "Pickaxe"),
+    FURNACE("Furnace", "Pickaxe", 100L),
     OXYGENATE("Oxygenate", "Tool"),
     HASTE("Haste", "Tool"),
     //missing
@@ -331,6 +331,16 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = null;
         this.cooldown = 0;
+    }
+    CEnchantments(String name, String typeName, long cooldown) {
+        this.name = name;
+        this.typeName = typeName;
+        this.cooldown = cooldown;
+        this.chance = 0;
+        this.chanceIncrease = 0;
+        this.hasChanceSystem = false;
+        this.isHeroic = false;
+        this.oldEnchant = null;
     }
 
     /**

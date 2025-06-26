@@ -204,10 +204,11 @@ public class BowEnchantments implements Listener {
             event.setDamage(event.getDamage() * 1.5);
         }
         if (EnchantUtils.isEventActive(CEnchantments.VIRUS, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
+            CEnchantment virusEnchant = CEnchantments.VIRUS.getEnchantment();
             if (entity.hasPotionEffect(PotionEffectType.POISON) || entity.hasPotionEffect(PotionEffectType.WITHER)) {
                 Collection<PotionEffect> effects = new ArrayList<>();
-                effects.add(new PotionEffect(PotionEffectType.POISON, CEnchantments.VIRUS.getChance(), 1));
-                effects.add(new PotionEffect(PotionEffectType.WITHER, CEnchantments.VIRUS.getChance(), 2));
+                effects.add(new PotionEffect(PotionEffectType.POISON, 8, this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), virusEnchant)));
+                effects.add(new PotionEffect(PotionEffectType.WITHER, 8, this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), virusEnchant)));
                 entity.addPotionEffects(effects);
             }
         }
@@ -224,9 +225,10 @@ public class BowEnchantments implements Listener {
             double arrowPosY = arrowPos.getY();
 
             if (arrowPosY >= headshotThreshold) {
-                event.setDamage(event.getDamage() * (2.5 + (enchantmentBookSettings.getLevel(enchantedArrow.bow(), sniperEnchantment))));
+                event.setDamage(event.getDamage() * (2.5 + (this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), sniperEnchantment))));
                 enchantedArrow.getShooter().sendMessage("**HEADSHOT**");
                 if (entity instanceof Player player) player.sendMessage("Headshot from SNIPER hit you for " + event.getDamage());
+                if (enchantedArrow.getShooter() instanceof LivingEntity damager) damager.sendMessage("You hit your target for " + event.getDamage());
             }
 
         }

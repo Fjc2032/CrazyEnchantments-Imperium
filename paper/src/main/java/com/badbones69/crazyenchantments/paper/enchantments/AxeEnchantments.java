@@ -153,6 +153,7 @@ public class AxeEnchantments implements Listener {
             target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 6, 1));
         }
         if (EnchantUtils.isEventActive(CEnchantments.CLEAVE, damager, item, enchantments)) {
+            CEnchantment cleaveEnchant = CEnchantments.CLEAVE.getEnchantment();
             //Get the world the player is in.
             World world = event.getDamager().getWorld();
 
@@ -165,8 +166,9 @@ public class AxeEnchantments implements Listener {
 
             //Iterate through the array, damaging all entities in the box (non LivingEntities are skipped)
             for (Entity target : targets) {
-                if (!(target instanceof LivingEntity)) return;
-                ((LivingEntity) target).damage(event.getDamage() * ((double) CEnchantments.CLEAVE.getChance() / 20));
+                if (!(target instanceof LivingEntity livingEntity)) return;
+                if (target.equals(damager)) return;
+                livingEntity.damage(event.getDamage() + this.enchantmentBookSettings.getLevel(item, cleaveEnchant));
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.CORRUPT, damager, item, enchantments)) {
@@ -196,7 +198,8 @@ public class AxeEnchantments implements Listener {
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BARBARIAN, damager, item, enchantments)) {
-            event.setDamage(event.getDamage() * (1 + ((double) CEnchantments.BARBARIAN.getChance() / 100)));
+            CEnchantment barbarianEnchant = CEnchantments.BARBARIAN.getEnchantment();
+            event.setDamage(event.getDamage() * (this.enchantmentBookSettings.getLevel(item, barbarianEnchant)));
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
             CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
@@ -206,7 +209,7 @@ public class AxeEnchantments implements Listener {
             if (player.isDead()) return;
 
             //Create a bleed stack
-            this.bleedStack = (event.getDamage() / (enchantmentBookSettings.getLevel(item, bleedEnchant) * 1.05));
+            this.bleedStack = (event.getDamage() / (this.enchantmentBookSettings.getLevel(item, bleedEnchant) * 1.05));
 
             //Particle builder
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);
