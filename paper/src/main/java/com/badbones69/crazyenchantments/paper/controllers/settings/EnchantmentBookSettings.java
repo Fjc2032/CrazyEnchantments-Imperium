@@ -467,14 +467,15 @@ public class EnchantmentBookSettings {
 
     /**
      * Swaps an enchant to a heroic variant if requirements are met.
-     * @param enchant The enchantment that will be the new enchant.
-     * @param oldEnchant The old enchantment being replaced. Accessible via the enum. Will exit if null.
+     * @param data The enum enchantment this will be assigned to.
      * @param item The ItemStack this will happen on. Can't be null.
      */
     @ApiStatus.Experimental
-    public void swapToHeroicEnchant(@NotNull CEnchantment enchant, CEnchantments data, @Nullable CEnchantment oldEnchant, @NotNull ItemStack item) {
+    public void swapToHeroicEnchant(@NotNull CEnchantments data, @NotNull ItemStack item) {
         if (!data.isHeroic()) return;
-        if (oldEnchant == null) return;
+        if (data.getOldEnchant() == null) return;
+
+        CEnchantment oldEnchant = data.getOldEnchant();
         if (hasEnchantment(item.getItemMeta(), oldEnchant)) removeEnchantment(item.getItemMeta(), oldEnchant);
     }
 }

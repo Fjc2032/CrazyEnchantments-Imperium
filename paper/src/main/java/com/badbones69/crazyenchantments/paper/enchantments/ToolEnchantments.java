@@ -58,7 +58,7 @@ public class ToolEnchantments implements Listener {
         if (block == null) return;
         if (!block.isSolid()) return;
 
-        reforgedTrigger(player, tool);
+        if (EnchantUtils.isEventActive(CEnchantments.REFORGED, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) reforgedTrigger(player, tool);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -66,11 +66,10 @@ public class ToolEnchantments implements Listener {
         Player player = event.getPlayer();
         ItemStack tool = this.methods.getItemInHand(player);
 
-        if (!EnchantUtils.isEventActive(CEnchantments.TELEPATHY, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) return;
-
-        event.setCancelled(true);
-
-        this.methods.addItemToInventory(player, event.getItems());
+        if (EnchantUtils.isEventActive(CEnchantments.TELEPATHY, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) {
+            event.setCancelled(true);
+            this.methods.addItemToInventory(player, event.getItems());
+        }
     }
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {

@@ -243,22 +243,4 @@ public class CEnchantment {
 
         this.categories.forEach(category -> category.addEnchantment(this.instance));
     }
-
-    //eww reflection
-    public boolean isHeroic() {
-        try {
-            Method method = object.getMethod("isHeroic");
-            return (boolean) method.invoke(method);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-    public CEnchantment getOldEnchant() {
-        try {
-            Method method = object.getMethod("getOldEnchant");
-            return (CEnchantment) method.invoke(method);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
 }
