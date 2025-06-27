@@ -92,18 +92,6 @@ public class EnchantmentControl implements Listener {
                     player.playSound(player.getLocation(), enchantment.getSound(), 1, 1);
                     // ToDo potentially add pitch and volume options.
                 }
-                if (!methods.isEventCancelled(new HeroicBookApplyEvent(player, item, ceBook, true))) {
-                    if (!enchantment.isHeroic()) return;
-                    event.setCurrentItem(crazyManager.addEnchantment(item, enchantment, ceBook.getLevel()));
-                    player.setItemOnCursor(null);
-                    player.sendMessage(Messages.ENCHANTMENT_UPGRADE_SUCCESS.getMessage(new HashMap<>() {{
-                        put("%Enchantment%", enchantment.getCustomName());
-                        put("%Level%", String.valueOf(ceBook.getLevel()));
-
-                    }}));
-                    player.playSound(player.getLocation(), enchantment.getSound(), 1, 1);
-                    // call event for heroic books. lol this will prob throw some dumbass error
-                }
 
                 return;
             } else if (preApplyEvent.getDestroyed()) {

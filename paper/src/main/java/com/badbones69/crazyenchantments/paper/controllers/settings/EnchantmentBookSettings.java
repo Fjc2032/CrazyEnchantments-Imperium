@@ -15,7 +15,9 @@ import com.badbones69.crazyenchantments.paper.api.utils.ColorUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import io.netty.util.internal.UnstableApi;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class EnchantmentBookSettings {
 
@@ -42,6 +45,9 @@ public class EnchantmentBookSettings {
     private final Gson gson = new Gson();
 
     public final Map<UUID, Long> playerCooldowns = new ConcurrentHashMap<>();
+
+    @NotNull
+    private final Logger logger = Bukkit.getLogger();
 
     /**
      *
@@ -438,25 +444,24 @@ public class EnchantmentBookSettings {
     /**
      * Attempts to implement the cooldown declared in the enum.
      * @param enchantment The enchantment
+     * @param data Enum enchantment data
      * @param itemStack The item
      * @param uuid Object UUID
      * @param multi Multiplier (the cooldown subtracted by the level * multiplier)
-     * @throws RuntimeException
+     * @throws RuntimeException Throws an exception if something goes wrong
      */
     @ApiStatus.Experimental
-    public void tryCooldown(CEnchantment enchantment, ItemStack itemStack, UUID uuid, long multi) throws RuntimeException {
-        int level = getLevel(itemStack, enchantment);
-        long cooldown = enchantment.getCooldown() - ((long) level * multi);
+    @ApiStatus.Internal
+    public void tryCooldown(@NotNull CEnchantment enchantment, @NotNull CEnchantments data, @NotNull ItemStack itemStack, @NotNull UUID uuid, long multi) throws RuntimeException {
+        int level = data.getEnchantment().getMaxLevel(); //Using the max possible level for now until I can fix the null error
+        long cooldown = data.getCooldown() - ((long) level * multi);
 
         try {
-            Class<CEnchantments> cEnchantmentsClass = CEnchantments.class;
-            Method method = cEnchantmentsClass.getMethod("setCooldown", long.class);
-            method.invoke(method, cooldown);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            enchantment.setActivated(System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) >= cooldown);
+        } catch (RuntimeException e) {
+            this.logger.warning("Something went wrong while managing the cooldown!");
             throw new RuntimeException(e);
         }
-
-        if (System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) < cooldown) return;
         playerCooldowns.put(uuid, System.currentTimeMillis());
     }
 
@@ -467,8 +472,8 @@ public class EnchantmentBookSettings {
      * @param item The ItemStack this will happen on. Can't be null.
      */
     @ApiStatus.Experimental
-    public void swapToHeroicEnchant(@NotNull CEnchantment enchant, @Nullable CEnchantment oldEnchant, @NotNull ItemStack item) {
-        if (!enchant.isHeroic()) return;
+    public void swapToHeroicEnchant(@NotNull CEnchantment enchant, CEnchantments data, @Nullable CEnchantment oldEnchant, @NotNull ItemStack item) {
+        if (!data.isHeroic()) return;
         if (oldEnchant == null) return;
         if (hasEnchantment(item.getItemMeta(), oldEnchant)) removeEnchantment(item.getItemMeta(), oldEnchant);
     }

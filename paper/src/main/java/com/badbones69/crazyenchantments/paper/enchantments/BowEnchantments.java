@@ -276,9 +276,4 @@ public class BowEnchantments implements Listener {
     public void onWebBreak(BlockBreakEvent event) {
         if (!EventUtils.isIgnoredEvent(event) && this.bowUtils.getWebBlocks().contains(event.getBlock())) event.setCancelled(true);
     }
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBookApply(BookApplyEvent event) {
-        CEnchantment bidirectionalEnchant = CEnchantments.BIDIRECTIONAL.getEnchantment();
-        enchantmentBookSettings.swapToHeroicEnchant(bidirectionalEnchant, bidirectionalEnchant.getOldEnchant(), event.getEnchantedItem());
-    }
 }

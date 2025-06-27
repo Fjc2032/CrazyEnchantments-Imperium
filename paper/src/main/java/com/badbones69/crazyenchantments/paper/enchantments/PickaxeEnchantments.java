@@ -155,7 +155,7 @@ public class PickaxeEnchantments implements Listener {
         CEnchantment autosmeltEnchant = CEnchantments.AUTOSMELT.getEnchantment();
 
         if (EnchantUtils.isEventActive(CEnchantments.AUTOSMELT, player, itemInHand, enchants)) {
-            this.enchantmentBookSettings.tryCooldown(furnanceEnchant, itemInHand, player.getUniqueId(), 1L);
+            this.enchantmentBookSettings.tryCooldown(furnanceEnchant, CEnchantments.AUTOSMELT, itemInHand, player.getUniqueId(), 1L);
             int level = enchantmentBookSettings.getLevel(itemInHand, autosmeltEnchant);
 
             for (Item itemEntity : drops) {

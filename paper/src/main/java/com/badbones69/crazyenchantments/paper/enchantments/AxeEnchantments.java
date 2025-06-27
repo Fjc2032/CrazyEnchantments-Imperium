@@ -334,13 +334,6 @@ public class AxeEnchantments implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPreBookApply(PreBookApplyEvent event) {
-        if (!event.getEnchantment().isHeroic()) event.setCancelled(true);
-        CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
-        enchantmentBookSettings.swapToHeroicEnchant(deepbleedEnchant, deepbleedEnchant.getOldEnchant(), event.getEnchantedItem());
-    }
-
     private void removeBadPotions(Player player) {
         List<PotionEffectType> bad = new ArrayList<>() {{
             add(PotionEffectType.BLINDNESS);

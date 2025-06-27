@@ -32,7 +32,7 @@ public class BowEnchantment {
      */
     public BowEnchantment(CEnchantments enchantment, List<PotionEffects> potionEffects, boolean isLevelAddedToAmplifier) {
         this.enchantment = enchantment;
-        this.potionEffects = potionEffects;
+        this.potionEffects = List.copyOf(potionEffects);
         this.isLevelAddedToAmplifier = isLevelAddedToAmplifier;
         this.isPotionEnchantment = true;
     }

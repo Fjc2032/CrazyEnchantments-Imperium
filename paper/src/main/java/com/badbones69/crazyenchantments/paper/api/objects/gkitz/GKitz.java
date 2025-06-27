@@ -42,12 +42,12 @@ public class GKitz {
     List<String> commands, List<String> itemStrings, boolean autoEquip) {
         this.name = name;
         this.slot = slot;
-        this.preview = preview;
+        this.preview = List.copyOf(preview);
         this.cooldown = cooldown;
-        this.commands = commands;
+        this.commands = List.copyOf(commands);
         this.autoEquip = autoEquip;
         this.displayItem = displayItem;
-        this.itemStrings = itemStrings;
+        this.itemStrings = List.copyOf(itemStrings);
     }
     
     public String getName() {
