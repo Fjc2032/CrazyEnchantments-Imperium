@@ -165,7 +165,7 @@ public class PickaxeEnchantments implements Listener {
                 if (CEnchantments.AUTOSMELT.chanceSuccessful(level)) {
                     player.sendMessage("Autosmelt success.");
                     itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
-                    changeDrop(player.getLocation(), event);
+                    changeDrop(event.getBlock().getLocation(), event);
                 }
             }
             return;
@@ -178,7 +178,7 @@ public class PickaxeEnchantments implements Listener {
 
                 player.sendMessage("Furnance success.");
                 itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
-                changeDrop(player.getLocation(), event);
+                changeDrop(event.getBlock().getLocation(), event);
             }
         } else {
             Bukkit.getLogger().warning("It looks like this item does not have Furnace");
