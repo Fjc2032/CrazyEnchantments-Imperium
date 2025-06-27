@@ -27,7 +27,7 @@ public abstract class InventoryBuilder implements InventoryHolder {
 
     private GKitz kit;
 
-    public InventoryBuilder(Player player, int size, String title) {
+    protected InventoryBuilder(Player player, int size, String title) {
         this.title = title;
         this.size = size;
 
@@ -38,7 +38,7 @@ public abstract class InventoryBuilder implements InventoryHolder {
         this.inventory = this.plugin.getServer().createInventory(this, this.size, ColorUtils.legacyTranslateColourCodes(title));
     }
 
-    public InventoryBuilder(Player player, int size, String title, GKitz kit) {
+    protected InventoryBuilder(Player player, int size, String title, GKitz kit) {
         this.title = title;
         this.size = size;
 

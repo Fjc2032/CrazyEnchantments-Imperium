@@ -18,7 +18,7 @@ public abstract class PoolProcessor {
 
     private ScheduledTask taskId;
 
-    public PoolProcessor() {
+    protected PoolProcessor() {
         start();
     }
 

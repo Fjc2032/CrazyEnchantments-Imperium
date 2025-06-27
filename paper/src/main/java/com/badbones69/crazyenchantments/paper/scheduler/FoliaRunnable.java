@@ -24,26 +24,26 @@ public abstract class FoliaRunnable implements Runnable {
     private int chunkZ;
 
 
-    public FoliaRunnable(@NotNull AsyncScheduler scheduler, @Nullable TimeUnit timeUnit) {
+    protected FoliaRunnable(@NotNull AsyncScheduler scheduler, @Nullable TimeUnit timeUnit) {
         this.asyncScheduler = scheduler;
         this.timeUnit = timeUnit;
     }
 
-    public FoliaRunnable(@NotNull EntityScheduler scheduler, @Nullable Runnable retired) {
+    protected FoliaRunnable(@NotNull EntityScheduler scheduler, @Nullable Runnable retired) {
         this.entityScheduler = scheduler;
         this.entityRetired = retired;
     }
 
-    public FoliaRunnable(@NotNull GlobalRegionScheduler scheduler) {
+    protected FoliaRunnable(@NotNull GlobalRegionScheduler scheduler) {
         this.globalRegionScheduler = scheduler;
     }
 
-    public FoliaRunnable(@NotNull RegionScheduler scheduler, @Nullable Location location) {
+    protected FoliaRunnable(@NotNull RegionScheduler scheduler, @Nullable Location location) {
         this.regionScheduler = scheduler;
         this.location = location;
     }
 
-    public FoliaRunnable(@NotNull RegionScheduler scheduler, @Nullable World world, int chunkX, int chunkZ) {
+    protected FoliaRunnable(@NotNull RegionScheduler scheduler, @Nullable World world, int chunkX, int chunkZ) {
         this.regionScheduler = scheduler;
         this.world = world;
         this.chunkX = chunkX;

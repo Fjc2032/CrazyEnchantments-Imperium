@@ -32,7 +32,7 @@ public class LostBook {
         this.cost = cost;
         this.currency = currency;
         this.useFirework = !fireworkColors.isEmpty() && useFirework;
-        this.fireworkColors = fireworkColors;
+        this.fireworkColors = List.copyOf(fireworkColors);
 
         try { // If the sound doesn't exist it will not error.
             this.sound = Sound.valueOf(sound);

@@ -7,8 +7,6 @@ import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DataKeys;
 import com.badbones69.crazyenchantments.paper.api.events.AuraActiveEvent;
-import com.badbones69.crazyenchantments.paper.api.events.BookApplyEvent;
-import com.badbones69.crazyenchantments.paper.api.events.HeroicBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.managers.ArmorEnchantmentManager;
 import com.badbones69.crazyenchantments.paper.api.objects.ArmorEnchantment;
@@ -219,6 +217,8 @@ public class ArmorEnchantments implements Listener {
 
         if (!(event.getDamager() instanceof LivingEntity damager) || !(event.getEntity() instanceof Player player)) return;
 
+        final @Nullable AttributeInstance maxhealth = player.getAttribute(Attribute.MAX_HEALTH);
+
         for (ItemStack armor : player.getEquipment().getArmorContents()) {
             Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
             if (enchants.isEmpty()) continue;
@@ -346,7 +346,6 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.WARD, player, armor, enchants)) {
-                AttributeInstance maxhealth = player.getAttribute(Attribute.MAX_HEALTH);
                 if (maxhealth == null) return;
                 double amount = event.getDamage();
                 double playerHealth = player.getHealth();
@@ -371,7 +370,10 @@ public class ArmorEnchantments implements Listener {
                 event.setDamage(event.getDamage() + ((double) CEnchantments.MARKSMAN.getChance() / 100));
             }
             if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, player, armor, enchants)) {
-                player.setHealth(player.getHealth() + (1 + ((double) CEnchantments.ANGELIC.getChance() / 20)));
+                CEnchantment angelicEnchant = CEnchantments.ANGELIC.getEnchantment();
+                double modifier = player.getHealth() + (this.enchantmentBookSettings.getLevel(armor, angelicEnchant));
+                if (modifier > maxhealth.getValue()) modifier = maxhealth.getValue();
+                player.setHealth(modifier);
             }
             if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, player, armor, enchants)) {
                 if (!(event.getEntity() instanceof Player victim)) return;
@@ -514,6 +516,8 @@ public class ArmorEnchantments implements Listener {
                 Location playerPos = player.getLocation();
                 BoundingBox box = player.getBoundingBox();
 
+                final double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+
                 //Get the level of the enchantment as a variable
                 int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
 
@@ -526,22 +530,24 @@ public class ArmorEnchantments implements Listener {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
                     for (Entity entity : nearbyEntities) {
-                        if (!(entity instanceof Blaze blaze)) return;
+                        if (!(entity instanceof Blaze blaze)) continue;
                         blaze.setTarget(damager);
                         blazes.add(blaze);
                     }
 
                     //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
-                    while (!blazes.isEmpty()) {
-                        double playerHealth = player.getHealth();
-                        player.setHealth(playerHealth + (blazes.size() + this.enchantmentBookSettings.getLevel(armor, targetEnchant)));
+                    int blazeAmount = blazes.size();
+                    if (blazeAmount > 0) {
+                        double modifier = player.getHealth() + (blazeAmount + level);
+                        double newPlayerHealth = Math.min(modifier, maxHealth);
+                        player.setHealth(newPlayerHealth);
                     }
                 }, 40L);
 
                 //Builds a new runnable that removes the blazes after a period of time.
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     for (Blaze blaze : blazes) {
-                        blaze.remove();
+                        if (!blaze.isDead()) blaze.remove();
                     }
                 }, 200L);
 
@@ -655,12 +661,5 @@ public class ArmorEnchantments implements Listener {
 
         event.setCancelled(true);
 
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBookApply(PreBookApplyEvent event) {
-        if (!event.getEnchantment().isHeroic()) return;
-        CEnchantment mightycactusEnchant = CEnchantments.MIGHTYCACTUS.getEnchantment();
-        enchantmentBookSettings.swapToHeroicEnchant(mightycactusEnchant, mightycactusEnchant.getOldEnchant(), event.getEnchantedItem());
     }
 }

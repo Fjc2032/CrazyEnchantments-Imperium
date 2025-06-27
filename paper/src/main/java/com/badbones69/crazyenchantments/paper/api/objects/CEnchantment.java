@@ -245,14 +245,6 @@ public class CEnchantment {
     }
 
     //eww reflection
-    public long getCooldown() {
-        try {
-            Method method = object.getMethod("getCooldown");
-            return (long) method.invoke(method);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
     public boolean isHeroic() {
         try {
             Method method = object.getMethod("isHeroic");

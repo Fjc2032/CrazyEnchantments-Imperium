@@ -129,7 +129,7 @@ public enum CEnchantments {
     DIZZY("Dizzy", "Axe", 15, 5),
     LIGHTNING("Lightning", "Bow", 24, 8),
     //tools
-    AUTOSMELT("AutoSmelt", "Pickaxe", 30, 35),
+    AUTOSMELT("AutoSmelt", "Pickaxe", 30, 35, 100L),
     EXPERIENCE("Experience", "Pickaxe", 15, 15),
     FURNACE("Furnace", "Pickaxe", 100L),
     OXYGENATE("Oxygenate", "Tool"),
@@ -480,6 +480,10 @@ public enum CEnchantments {
      */
     public long getCooldown() {
         return this.cooldown;
+    }
+
+    public static long getStaticCooldown(CEnchantments enchantments) {
+        return enchantments.getCooldown();
     }
 
     /**

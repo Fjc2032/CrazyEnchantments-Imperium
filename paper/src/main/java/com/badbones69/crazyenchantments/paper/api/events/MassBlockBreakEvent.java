@@ -19,7 +19,7 @@ public class MassBlockBreakEvent extends Event implements Cancellable {
     public MassBlockBreakEvent(Player player, Set<Block> blockList) {
         this.player = player;
         this.cancelled = false;
-        this.blockList = blockList;
+        this.blockList = Set.copyOf(blockList);
     }
     
     public Player getPlayer() {
