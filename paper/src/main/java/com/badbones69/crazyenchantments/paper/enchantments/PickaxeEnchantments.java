@@ -155,7 +155,7 @@ public class PickaxeEnchantments implements Listener {
         CEnchantment autosmeltEnchant = CEnchantments.AUTOSMELT.getEnchantment();
 
         if (EnchantUtils.isEventActive(CEnchantments.AUTOSMELT, player, itemInHand, enchants)) {
-            this.enchantmentBookSettings.tryCooldown(furnanceEnchant, CEnchantments.AUTOSMELT, itemInHand, player.getUniqueId(), 1L);
+            //this.enchantmentBookSettings.tryCooldown(furnanceEnchant, CEnchantments.AUTOSMELT, itemInHand, player.getUniqueId(), 1L);
             int level = enchantmentBookSettings.getLevel(itemInHand, autosmeltEnchant);
 
             for (Item itemEntity : drops) {
@@ -172,13 +172,17 @@ public class PickaxeEnchantments implements Listener {
         }
 
         if (this.enchantmentBookSettings.hasEnchantment(itemInHand.getItemMeta(), furnanceEnchant)) {
-            for (Item itemEntity : drops) {
-                ItemStack drop = itemEntity.getItemStack();
-                if (!isSmeltable(drop.getType())) continue;
+            if (CEnchantments.FURNACE.isOffCooldown(player.getUniqueId(), true)) {
+                for (Item itemEntity : drops) {
+                    ItemStack drop = itemEntity.getItemStack();
+                    if (!isSmeltable(drop.getType())) continue;
 
-                player.sendMessage("Furnance success.");
-                itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
-                changeDrop(event.getBlock().getLocation(), event);
+                    player.sendMessage("Furnance success.");
+                    itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
+                    changeDrop(player.getLocation(), event);
+                }
+            } else {
+                player.sendMessage("Furnace on cooldown.");
             }
         } else {
             Bukkit.getLogger().warning("It looks like this item does not have Furnace");
