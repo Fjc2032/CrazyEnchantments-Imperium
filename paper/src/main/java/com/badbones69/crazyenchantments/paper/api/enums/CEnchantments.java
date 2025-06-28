@@ -122,7 +122,7 @@ public enum CEnchantments {
     //armour
     AQUATIC("Aquatic", "Helmet"),
     GLOWING("Glowing", "Helmet"),
-    SHUFFLE("Shuffle", "Armor", 5, 1),
+    SHUFFLE("Shuffle", "Armor", 4, 2, 400L, 20L),
     //weapons
     HEADLESS("Headless", "Sword", 20, 20),
     OBLITERATE("Obliterate", "Sword", 10, 5),
@@ -238,6 +238,7 @@ public enum CEnchantments {
     private final CEnchantments oldEnchant;
     private final boolean isHeroic;
     private final long cooldown;
+    private final long cooldownDecrease;
 
     private CEnchantment cachedEnchantment = null;
 
@@ -262,6 +263,7 @@ public enum CEnchantments {
         this.isHeroic = false;
         this.oldEnchant = null;
         this.cooldown = 0;
+        this.cooldownDecrease = 0;
     }
 
     /**
@@ -279,6 +281,7 @@ public enum CEnchantments {
         this.isHeroic = false;
         this.oldEnchant = null;
         this.cooldown = 0;
+        this.cooldownDecrease = 0;
     }
 
     /**
@@ -298,6 +301,27 @@ public enum CEnchantments {
         this.isHeroic = false;
         this.oldEnchant = null;
         this.cooldown = cooldown;
+        this.cooldownDecrease = 0;
+    }
+    /**
+     *
+     * @param name Name of the enchantment.
+     * @param typeName Type of items it goes on.
+     * @param chance The chance the enchantment has to activate.
+     * @param chanceIncrease The amount the chance increases per level.
+     * @param cooldown The amount of time, in ticks, that must elapse before the enchant can proc again. Must be a long.
+     * @param cooldownDecrease The amount of time, in ticks, that must elapse before the enchant can proc again. Must be a long.
+     */
+    CEnchantments(String name, String typeName, int chance, int chanceIncrease, long cooldown, long cooldownDecrease) {
+        this.name = name;
+        this.typeName = typeName;
+        this.chance = chance;
+        this.chanceIncrease = chanceIncrease;
+        this.hasChanceSystem = true;
+        this.isHeroic = false;
+        this.oldEnchant = null;
+        this.cooldown = cooldown;
+        this.cooldownDecrease = cooldownDecrease;
     }
 
     /**
@@ -319,6 +343,7 @@ public enum CEnchantments {
         this.cooldown = cooldown;
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
+        this.cooldownDecrease = cooldownDecrease;
     }
 
     /**
@@ -336,6 +361,7 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = null;
         this.cooldown = 0;
+        this.cooldownDecrease = cooldownDecrease;
     }
     CEnchantments(String name, String typeName, long cooldown) {
         this.name = name;
@@ -346,6 +372,7 @@ public enum CEnchantments {
         this.hasChanceSystem = false;
         this.isHeroic = false;
         this.oldEnchant = null;
+        this.cooldownDecrease = cooldownDecrease;
     }
 
     /**
@@ -366,6 +393,7 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
         this.cooldown = 0;
+        this.cooldownDecrease = cooldownDecrease;
     }
 
     
@@ -487,11 +515,12 @@ public enum CEnchantments {
      * @param applyCooldown Whether to apply the cooldown after check.
      * @return True if cooldown is over, false otherwise.
      */
-    public boolean isOffCooldown(UUID playerUUID, boolean applyCooldown) {
+    public boolean isOffCooldown(UUID playerUUID, int level, boolean applyCooldown) {
         if (cooldown <= 0) return true;
 
         long now = System.currentTimeMillis();
-        long cooldownMs = cooldown * 50;
+        long appliedCooldownTicks = Math.max(0L, cooldown - (cooldownDecrease * (level - 1)));
+       long cooldownMs = appliedCooldownTicks * 50;
         long lastUsed = cooldowns.getOrDefault(playerUUID, 0L);
 
         if (now - lastUsed >= cooldownMs) {
