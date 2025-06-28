@@ -313,21 +313,28 @@ public class ArmorEnchantments implements Listener {
             if (EnchantUtils.isEventActive(CEnchantments.SHUFFLE, player, armor, enchants)) {
                 Player target = (Player) damager;
 
-                //Gets items in the hotbar as an array.
-                ItemStack[] hotbar = new ItemStack[9];
-                for (int i = 0; i < 9; i++) {
-                    hotbar[i] = target.getInventory().getItem(i);
-                }
+                CEnchantment shuffleEnchant = CEnchantments.SHUFFLE.getEnchantment();
+                int level = enchantmentBookSettings.getLevel(armor, shuffleEnchant);
 
-                //Convert array to a list, and then shuffle it.
-                //The shuffled list goes into another array.
-                List<ItemStack> items = Arrays.asList(hotbar);
-                Collections.shuffle(items);
-                ItemStack[] newHotbar = items.toArray(hotbar);
+                // Check cooldown before shuffling
+                if (CEnchantments.SHUFFLE.isOffCooldown(target.getUniqueId(), level, true)) {
 
-                //Grab that new array and set the hotbar to it.
-                for (int i = 0; i < 9; i++) {
-                    target.getInventory().setItem(i, newHotbar[i]);
+                    //Gets items in the hotbar as an array.
+                    ItemStack[] hotbar = new ItemStack[9];
+                    for (int i = 0; i < 9; i++) {
+                        hotbar[i] = target.getInventory().getItem(i);
+                    }
+
+                    //Convert array to a list, and then shuffle it.
+                    //The shuffled list goes into another array.
+                    List<ItemStack> items = Arrays.asList(hotbar);
+                    Collections.shuffle(items);
+                    ItemStack[] newHotbar = items.toArray(hotbar);
+
+                    //Grab that new array and set the hotbar to it.
+                    for (int i = 0; i < 9; i++) {
+                        target.getInventory().setItem(i, newHotbar[i]);
+                    }
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.POISONED, player, armor, enchants)) {
