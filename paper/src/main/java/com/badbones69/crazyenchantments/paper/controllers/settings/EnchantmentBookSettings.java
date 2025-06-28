@@ -450,20 +450,20 @@ public class EnchantmentBookSettings {
      * @param multi Multiplier (the cooldown subtracted by the level * multiplier)
      * @throws RuntimeException Throws an exception if something goes wrong
      */
-    @ApiStatus.Experimental
-    @ApiStatus.Internal
-    public void tryCooldown(@NotNull CEnchantment enchantment, @NotNull CEnchantments data, @NotNull ItemStack itemStack, @NotNull UUID uuid, long multi) throws RuntimeException {
-        int level = data.getEnchantment().getMaxLevel(); //Using the max possible level for now until I can fix the null error
-        long cooldown = data.getCooldown() - ((long) level * multi);
+    //@ApiStatus.Experimental
+    //@ApiStatus.Internal
+    //public void tryCooldown(@NotNull CEnchantment enchantment, @NotNull CEnchantments data, @NotNull ItemStack itemStack, @NotNull UUID uuid, long multi) throws RuntimeException {
+    //    int level = data.getEnchantment().getMaxLevel(); //Using the max possible level for now until I can fix the null error
+    //    long cooldown = data.getCooldown() - ((long) level * multi);
 
-        try {
-            enchantment.setActivated(System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) >= cooldown);
-        } catch (RuntimeException e) {
-            this.logger.warning("Something went wrong while managing the cooldown!");
-            throw new RuntimeException(e);
-        }
-        playerCooldowns.put(uuid, System.currentTimeMillis());
-    }
+    //    try {
+    //        enchantment.setActivated(System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) >= cooldown);
+    //    } catch (RuntimeException e) {
+    //        this.logger.warning("Something went wrong while managing the cooldown!");
+    //        throw new RuntimeException(e);
+    //    }
+    //    playerCooldowns.put(uuid, System.currentTimeMillis());
+    //}
 
     /**
      * Swaps an enchant to a heroic variant if requirements are met.
