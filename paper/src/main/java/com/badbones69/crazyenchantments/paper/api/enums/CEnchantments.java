@@ -393,7 +393,7 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
         this.cooldown = 0;
-        this.cooldownDecrease = cooldownDecrease;
+        this.cooldownDecrease = 0;
     }
 
     
