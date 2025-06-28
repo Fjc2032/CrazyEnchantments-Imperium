@@ -179,7 +179,7 @@ public class PickaxeEnchantments implements Listener {
 
                     player.sendMessage("Furnance success.");
                     itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
-                    changeDrop(player.getLocation(), event);
+                    changeDrop(event.getBlock().getLocation(), event);
                 }
             } else {
                 player.sendMessage("Furnace on cooldown.");
