@@ -343,7 +343,7 @@ public enum CEnchantments {
         this.cooldown = cooldown;
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
-        this.cooldownDecrease = cooldownDecrease;
+        this.cooldownDecrease = 0;
     }
 
     /**
@@ -361,7 +361,7 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = null;
         this.cooldown = 0;
-        this.cooldownDecrease = cooldownDecrease;
+        this.cooldownDecrease = 0;
     }
     CEnchantments(String name, String typeName, long cooldown) {
         this.name = name;
@@ -372,7 +372,7 @@ public enum CEnchantments {
         this.hasChanceSystem = false;
         this.isHeroic = false;
         this.oldEnchant = null;
-        this.cooldownDecrease = cooldownDecrease;
+        this.cooldownDecrease = 0;
     }
 
     /**
@@ -393,7 +393,7 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
         this.cooldown = 0;
-        this.cooldownDecrease = cooldownDecrease;
+        this.cooldownDecrease = 0;
     }
 
     
