@@ -172,7 +172,10 @@ public class PickaxeEnchantments implements Listener {
         }
 
         if (this.enchantmentBookSettings.hasEnchantment(itemInHand.getItemMeta(), furnanceEnchant)) {
-            if (CEnchantments.FURNACE.isOffCooldown(player.getUniqueId(), true)) {
+
+            int level = enchantmentBookSettings.getLevel(itemInHand, furnanceEnchant);
+
+            if (CEnchantments.FURNACE.isOffCooldown(player.getUniqueId(), level, true)) {
                 for (Item itemEntity : drops) {
                     ItemStack drop = itemEntity.getItemStack();
                     if (!isSmeltable(drop.getType())) continue;
