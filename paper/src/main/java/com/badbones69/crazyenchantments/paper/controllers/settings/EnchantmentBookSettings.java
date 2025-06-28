@@ -422,7 +422,6 @@ public class EnchantmentBookSettings {
     @ApiStatus.Experimental
     public void swapToHeroicEnchant(@NotNull CEnchantments data, @NotNull ItemStack item, Player player) throws NullPointerException {
         this.logger.info("Preparing to convert to heroic...");
-        final Inventory inventory = player.getInventory();
         if (!data.isHeroic()) {
             this.logger.warning("Data set heroic returned false! Exiting...");
             return;

@@ -31,6 +31,7 @@ import com.badbones69.crazyenchantments.paper.listeners.FireworkDamageListener;
 import com.badbones69.crazyenchantments.paper.listeners.MiscListener;
 import com.badbones69.crazyenchantments.paper.listeners.ProtectionCrystalListener;
 import com.badbones69.crazyenchantments.paper.listeners.ShopListener;
+import com.badbones69.crazyenchantments.paper.listeners.misc.MiscEquipmentListener;
 import com.badbones69.crazyenchantments.paper.listeners.server.WorldSwitchListener;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.CrazyEnchantStats;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.MMOItemsEventHook;
@@ -136,6 +137,7 @@ public class CrazyEnchantments extends JavaPlugin {
         this.pluginManager.registerEvents(new WorldSwitchListener(), this);
 
         this.pluginManager.registerEvents(new MMOItemsEventHook(), this);
+        this.pluginManager.registerEvents(new MiscEquipmentListener(), this);
 
         if (this.starter.getCrazyManager().isGkitzEnabled()) {
             getLogger().info("G-Kitz support is now enabled.");

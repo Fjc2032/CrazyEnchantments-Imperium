@@ -64,7 +64,7 @@ public enum CEnchantments {
     //	----------------Armor----------------  \\
     HULK("Hulk", "Armor"),
     VALOR("Valor", "Armor"),
-    DRUNK("Drunk", "Armor"),
+    DRUNK("Drunk", "Helmet"),
     NINJA("Ninja", "Armor"),
     ANGEL("Angel", "Armor"),
     TAMER("Tamer", "Armor"),
@@ -82,7 +82,7 @@ public enum CEnchantments {
     BLIZZARD("Blizzard", "Armor"),
     ACIDRAIN("AcidRain", "Armor", 5, 5),
     SANDSTORM("SandStorm", "Armor", 5, 5),
-    SMOKEBOMB("SmokeBomb", "Armor", 5, 5),
+    SMOKEBOMB("SmokeBomb", "Helmet", 5, 5),
     PAINGIVER("PainGiver", "Armor", 10, 5),
     INTIMIDATE("Intimidate", "Armor"),
     BURNSHIELD("BurnShield", "Armor"),
@@ -96,7 +96,7 @@ public enum CEnchantments {
     BEEKEEPER("BeeKeeper", "Armor"),
     MANEUVER("Maneuver", "Armor", 10, 5),
     CROUCH("Crouch", "Armor", 10, 5),
-    SHOCKWAVE("Shockwave", "Armor", 10, 5),
+    SHOCKWAVE("Shockwave", "Armor", 10, 5, "Chestplate"),
     SYSTEMREBOOT("SystemReboot", "Armor", 10, 5),
     //	----------------Axes----------------  \\
     REKT("Rekt", "Axe", 5, 1),
@@ -178,12 +178,12 @@ public enum CEnchantments {
     METAPHYSICAL("Metaphysical", "Boots", 50, 10),
     DISTANCE("Distance", "Sword", 14, 3),
     //SNIPER(Exists, but was redone. Putting comment here for tracking purposes.)
-    FAT("Fat", "Armor", 12, 2),
+    FAT("Fat", "Armor", 12, 2, "Chestplate"),
     DEATHBRINGER("Deathbringer", "Armor", 14, 7),
-    DESTRUCTION("Destruction", "Armor", 10, 5),
-    DEATHGOD("DeathGod", "Armor", 8, 3),
+    DESTRUCTION("Destruction", "Helmet", 10, 5),
+    DEATHGOD("DeathGod", "Helmet", 8, 3),
     INSANITY("Insanity", "Axe", 50, 8),
-    DIMINISH("Diminish", "Armor", 20, 6),
+    DIMINISH("Diminish", "Armor", 20, 6, "Chestplate"),
     BARBARIAN("Barbarian", "Axe", 20, 4),
     ABIDING("Abiding", "Tool"),
     QUIVER("Quiver", "Boots", 10, 7),
@@ -197,7 +197,7 @@ public enum CEnchantments {
     STUN("Stun", "Sword", 10, 10),
     JUDGEMENT("Judgement", "Armor", 10, 10),
     BLACKSMITH("Blacksmith", "Axe", 30, 10),
-    CURSE("Curse", "Armor", 40, 10),
+    CURSE("Curse", "Armor", 40, 10, "Chestplate"),
     RAGDOLL("Ragdoll", "Armor", 30, 5),
     ARROWBREAK("Arrowbreak", "Axe", 10, 10),
     ARROWDEFLECT("Arrowdeflect", "Armor", 10, 10),
@@ -232,6 +232,7 @@ public enum CEnchantments {
 
     private final String name;
     private final String typeName;
+    private final String miscTypeName;
     private final boolean hasChanceSystem;
     private final int chance;
     private final int chanceIncrease;
@@ -264,6 +265,20 @@ public enum CEnchantments {
         this.oldEnchant = null;
         this.cooldown = 0;
         this.cooldownDecrease = 0;
+        this.miscTypeName = null;
+    }
+
+    CEnchantments(String name, String typeName, String miscTypeName) {
+        this.name = name;
+        this.typeName = typeName;
+        this.miscTypeName = miscTypeName;
+        this.chance = 0;
+        this.chanceIncrease = 0;
+        this.hasChanceSystem = false;
+        this.isHeroic = false;
+        this.oldEnchant = null;
+        this.cooldown = 0;
+        this.cooldownDecrease = 0;
     }
 
     /**
@@ -277,6 +292,20 @@ public enum CEnchantments {
         this.typeName = typeName;
         this.chance = chance;
         this.chanceIncrease = chanceIncrease;
+        this.hasChanceSystem = true;
+        this.isHeroic = false;
+        this.oldEnchant = null;
+        this.cooldown = 0;
+        this.cooldownDecrease = 0;
+        this.miscTypeName = null;
+    }
+
+    CEnchantments(String name, String typeName, int chance, int chanceIncrease, String miscTypeName) {
+        this.name = name;
+        this.typeName = typeName;
+        this.chance = chance;
+        this.chanceIncrease = chanceIncrease;
+        this.miscTypeName = miscTypeName;
         this.hasChanceSystem = true;
         this.isHeroic = false;
         this.oldEnchant = null;
@@ -302,6 +331,7 @@ public enum CEnchantments {
         this.oldEnchant = null;
         this.cooldown = cooldown;
         this.cooldownDecrease = 0;
+        this.miscTypeName = null;
     }
     /**
      *
@@ -322,6 +352,7 @@ public enum CEnchantments {
         this.oldEnchant = null;
         this.cooldown = cooldown;
         this.cooldownDecrease = cooldownDecrease;
+        this.miscTypeName = null;
     }
 
     /**
@@ -344,6 +375,7 @@ public enum CEnchantments {
         this.isHeroic = isHeroic;
         this.oldEnchant = oldEnchant;
         this.cooldownDecrease = 0;
+        this.miscTypeName = null;
     }
 
     /**
@@ -362,6 +394,7 @@ public enum CEnchantments {
         this.oldEnchant = null;
         this.cooldown = 0;
         this.cooldownDecrease = 0;
+        this.miscTypeName = null;
     }
     CEnchantments(String name, String typeName, long cooldown) {
         this.name = name;
@@ -373,6 +406,7 @@ public enum CEnchantments {
         this.isHeroic = false;
         this.oldEnchant = null;
         this.cooldownDecrease = 0;
+        this.miscTypeName = null;
     }
 
     /**
@@ -394,6 +428,7 @@ public enum CEnchantments {
         this.oldEnchant = oldEnchant;
         this.cooldown = 0;
         this.cooldownDecrease = 0;
+        this.miscTypeName = null;
     }
 
     
@@ -402,6 +437,18 @@ public enum CEnchantments {
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     *
+     * @return The type of the enchantment, as a string.
+     */
+    public String getTypeName() {
+        return this.typeName;
+    }
+
+    public String getMiscTypeName() {
+        return this.miscTypeName;
     }
 
     /**
