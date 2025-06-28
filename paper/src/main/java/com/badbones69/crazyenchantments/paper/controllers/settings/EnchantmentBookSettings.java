@@ -20,6 +20,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -412,70 +414,36 @@ public class EnchantmentBookSettings {
         return meta;
     }
 
-    //Deprecating this due to *problems*. We love problems.
-    /**
-     * Creates a cooldown and applies it to the targeted enchantment. If the enchantment already has a cooldown,
-     * the function will terminate.
-     * @param enchantment The enchantment getting the cooldown.
-     * @param item The ItemStack the enchantment is on.
-     * @param uuid The UUID of the target.
-     * @param cooldownModifier The base cooldown, in server ticks. Must be represented as a long.
-     * @param multi The multiplier. Formula is [base - (level*multi)]. Set to 0 for no multiplier. A bigger multi means the cooldown lowers more per level. Must be a long.
-     */
-    @ApiStatus.Experimental
-    @Deprecated
-    public void createCooldown(CEnchantment enchantment, @NotNull ItemStack item, @NotNull UUID uuid, long cooldownModifier, long multi) {
-        int level = getLevel(item, enchantment);
-        long cooldown = Math.max(cooldownModifier - (level * multi), 3000L);
-
-        try {
-            Class<CEnchantments> cEnchantmentsClass = CEnchantments.class;
-            Method method = cEnchantmentsClass.getMethod("setCooldown", long.class);
-            method.invoke(method, cooldown);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) < cooldown) return;
-
-        playerCooldowns.put(uuid, System.currentTimeMillis());
-    }
-
-    /**
-     * Attempts to implement the cooldown declared in the enum.
-     * @param enchantment The enchantment
-     * @param data Enum enchantment data
-     * @param itemStack The item
-     * @param uuid Object UUID
-     * @param multi Multiplier (the cooldown subtracted by the level * multiplier)
-     * @throws RuntimeException Throws an exception if something goes wrong
-     */
-    //@ApiStatus.Experimental
-    //@ApiStatus.Internal
-    //public void tryCooldown(@NotNull CEnchantment enchantment, @NotNull CEnchantments data, @NotNull ItemStack itemStack, @NotNull UUID uuid, long multi) throws RuntimeException {
-    //    int level = data.getEnchantment().getMaxLevel(); //Using the max possible level for now until I can fix the null error
-    //    long cooldown = data.getCooldown() - ((long) level * multi);
-
-    //    try {
-    //        enchantment.setActivated(System.currentTimeMillis() - playerCooldowns.getOrDefault(uuid, 0L) >= cooldown);
-    //    } catch (RuntimeException e) {
-    //        this.logger.warning("Something went wrong while managing the cooldown!");
-    //        throw new RuntimeException(e);
-    //    }
-    //    playerCooldowns.put(uuid, System.currentTimeMillis());
-    //}
-
     /**
      * Swaps an enchant to a heroic variant if requirements are met.
      * @param data The enum enchantment this will be assigned to.
      * @param item The ItemStack this will happen on. Can't be null.
      */
     @ApiStatus.Experimental
-    public void swapToHeroicEnchant(@NotNull CEnchantments data, @NotNull ItemStack item) {
-        if (!data.isHeroic()) return;
-        if (data.getOldEnchant() == null) return;
+    public void swapToHeroicEnchant(@NotNull CEnchantments data, @NotNull ItemStack item, Player player) throws NullPointerException {
+        this.logger.info("Preparing to convert to heroic...");
+        final Inventory inventory = player.getInventory();
+        if (!data.isHeroic()) {
+            this.logger.warning("Data set heroic returned false! Exiting...");
+            return;
+        }
 
-        CEnchantment oldEnchant = data.getOldEnchant();
-        if (hasEnchantment(item.getItemMeta(), oldEnchant)) removeEnchantment(item.getItemMeta(), oldEnchant);
+        @NotNull CEnchantment oldEnchant = data.getOldEnchant().getEnchantment();
+        if (oldEnchant == null) {
+            this.logger.warning("Data entry for this heroic is null!");
+            this.logger.warning("Or something else went wrong.");
+            return;
+        } else {
+            this.logger.info("Check 1 passed! Continuing...");
+        }
+        if (this.hasEnchantment(item.getItemMeta(), oldEnchant)) {
+            this.logger.info("Check 2 passed! Continuing...");
+            ItemStack newItem = this.removeEnchantment(item, oldEnchant);
+            inventory.remove(item);
+            player.getWorld().dropItemNaturally(player.getLocation(), newItem);
+            this.logger.info("Enchantment " + oldEnchant + " removed!");
+        } else {
+            this.logger.warning("Something has went wrong!");
+        }
     }
 }

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -212,8 +211,8 @@ public enum CEnchantments {
     SWARM("Swarm", "Sword"),
 
     //HEROIC
-    MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS.getEnchantment()),
-    DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED.getEnchantment()),
+    MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
+    DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
     BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
 
     ;
@@ -236,7 +235,7 @@ public enum CEnchantments {
     private final boolean hasChanceSystem;
     private final int chance;
     private final int chanceIncrease;
-    private final CEnchantment oldEnchant;
+    private final CEnchantments oldEnchant;
     private final boolean isHeroic;
     private final long cooldown;
 
@@ -311,7 +310,7 @@ public enum CEnchantments {
      * @param isHeroic Whether the enchantment is heroic. Returns false if left empty.
      * @param oldEnchant The enchantment this will replace, if isHeroic is true. Returns null if left empty.
      */
-    CEnchantments(String name, String typeName, int chance, int chanceIncrease, long cooldown, boolean isHeroic, CEnchantment oldEnchant) {
+    CEnchantments(String name, String typeName, int chance, int chanceIncrease, long cooldown, boolean isHeroic, CEnchantments oldEnchant) {
         this.name = name;
         this.typeName = typeName;
         this.chance = chance;
@@ -358,7 +357,7 @@ public enum CEnchantments {
      * @param isHeroic Whether the enchantment is heroic. False by default.
      * @param oldEnchant The enchantment being replaced, if the enchantment is heroic.
      */
-    CEnchantments(String name, String typeName, int chance, int chanceIncrease, boolean isHeroic, CEnchantment oldEnchant) {
+    CEnchantments(String name, String typeName, int chance, int chanceIncrease, boolean isHeroic, CEnchantments oldEnchant) {
         this.name = name;
         this.typeName = typeName;
         this.chance = chance;
@@ -475,10 +474,10 @@ public enum CEnchantments {
      * @return The enchantment that matches the condition, if present. Otherwise, returns null.
      */
     @ApiStatus.Experimental
-    @Nullable
-    public CEnchantment getOldEnchant() {
+    public CEnchantments getOldEnchant() {
         return this.oldEnchant;
     }
+
 
     /**
      * Check if the enchantment is off cooldown for a specific player.
