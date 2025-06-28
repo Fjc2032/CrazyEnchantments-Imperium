@@ -11,7 +11,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum CEnchantments {
 
@@ -237,6 +241,8 @@ public enum CEnchantments {
     private long cooldown;
 
     private CEnchantment cachedEnchantment = null;
+
+    private final Map<UUID, Long> cooldowns = new ConcurrentHashMap<>();
 
     public static void invalidateCachedEnchants() {
         for (CEnchantments value : values()) {
@@ -475,22 +481,27 @@ public enum CEnchantments {
     }
 
     /**
-     * Gets the cooldown the enchantment has.
-     * @return The cooldown, as a long. Represented as ticks.
+     * Check if the enchantment is off cooldown for a specific player.
+     * If off cooldown and `applyCooldown` is true, it sets the cooldown.
+     *
+     * @param playerUUID UUID of a player using the enchantment.
+     * @param applyCooldown Whether to apply the cooldown after check.
+     * @return True if cooldown is over, false otherwise.
      */
-    public long getCooldown() {
-        return this.cooldown;
-    }
+    public boolean isOffCooldown(UUID playerUUID, boolean applyCooldown) {
+        if (cooldown <= 0) return true;
 
-    public static long getStaticCooldown(CEnchantments enchantments) {
-        return enchantments.getCooldown();
-    }
+        long now = System.currentTimeMillis();
+        long cooldownMs = cooldown * 50;
+        long lastUsed = cooldowns.getOrDefault(playerUUID, 0L);
 
-    /**
-     * Sets a new cooldown for the enchantment.
-     * @param cooldown The cooldown, in server ticks. Must be a long.
-     */
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
+        if (now - lastUsed >= cooldownMs) {
+            if (applyCooldown) {
+                cooldowns.put(playerUUID, now);
+            }
+            return true;
+        }
+
+        return false;
     }
 }
