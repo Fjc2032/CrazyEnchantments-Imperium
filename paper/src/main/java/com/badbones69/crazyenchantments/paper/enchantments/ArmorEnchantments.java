@@ -7,9 +7,11 @@ import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DataKeys;
 import com.badbones69.crazyenchantments.paper.api.events.AuraActiveEvent;
+import com.badbones69.crazyenchantments.paper.api.events.BookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.managers.ArmorEnchantmentManager;
 import com.badbones69.crazyenchantments.paper.api.objects.ArmorEnchantment;
+import com.badbones69.crazyenchantments.paper.api.objects.CEBook;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.objects.PotionEffects;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
@@ -661,5 +663,16 @@ public class ArmorEnchantments implements Listener {
 
         event.setCancelled(true);
 
+    }
+
+    @EventHandler()
+    public void onBookApply(PreBookApplyEvent event) {
+        CEBook book = event.getCEBook();
+
+        if (!event.getSuccessful()) return;
+
+        if (book.getEnchantment().equals(CEnchantments.MIGHTYCACTUS.getEnchantment())) {
+            this.enchantmentBookSettings.swapToHeroicEnchant(CEnchantments.MIGHTYCACTUS, event.getEnchantedItem(), event.getPlayer());
+        }
     }
 }

@@ -37,8 +37,6 @@ public class CEnchantment {
     @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
-    @NotNull
-    private final Class<CEnchantments> object = CEnchantments.class;
 
     private String name;
     private String customName;
