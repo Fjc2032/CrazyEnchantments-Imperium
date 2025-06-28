@@ -439,9 +439,8 @@ public class EnchantmentBookSettings {
         if (this.hasEnchantment(item.getItemMeta(), oldEnchant)) {
             this.logger.info("Check 2 passed! Continuing...");
             ItemStack newItem = this.removeEnchantment(item, oldEnchant);
-            inventory.remove(item);
-            player.getWorld().dropItemNaturally(player.getLocation(), newItem);
-            this.logger.info("Enchantment " + oldEnchant + " removed!");
+            item.setItemMeta(newItem.getItemMeta());
+            this.logger.info("Enchantment " + oldEnchant.getName() + " removed!");
         } else {
             this.logger.warning("Something has went wrong!");
         }
