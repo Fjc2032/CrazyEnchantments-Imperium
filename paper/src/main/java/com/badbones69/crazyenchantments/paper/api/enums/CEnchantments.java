@@ -238,7 +238,7 @@ public enum CEnchantments {
     private final int chanceIncrease;
     private final CEnchantment oldEnchant;
     private final boolean isHeroic;
-    private long cooldown;
+    private final long cooldown;
 
     private CEnchantment cachedEnchantment = null;
 
