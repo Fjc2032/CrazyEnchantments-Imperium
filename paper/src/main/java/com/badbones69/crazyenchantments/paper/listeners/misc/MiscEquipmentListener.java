@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -19,14 +20,7 @@ public class MiscEquipmentListener implements Listener {
     private final Set<Material> chestplates = Set.of(Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.IRON_CHESTPLATE,
             Material.CHAINMAIL_CHESTPLATE, Material.DIAMOND_CHESTPLATE, Material.NETHERITE_CHESTPLATE);
 
-    private final List<CEnchantments> targets = List.of(
-            CEnchantments.DIMINISH,
-            CEnchantments.CURSE,
-            CEnchantments.DEATHGOD,
-            CEnchantments.FAT,
-            CEnchantments.SHOCKWAVE
-    );
-
+    private final List<CEnchantments> targets = Arrays.asList(CEnchantments.values());
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeggingsBookApply(PreBookApplyEvent event) {

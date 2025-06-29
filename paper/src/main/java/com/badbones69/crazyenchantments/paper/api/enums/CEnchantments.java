@@ -333,6 +333,19 @@ public enum CEnchantments {
         this.cooldownDecrease = 0;
         this.miscTypeName = null;
     }
+
+    CEnchantments(String name, String typeName, int chance, int chanceIncrease, long cooldown, String miscTypeName) {
+        this.name = name;
+        this.typeName = typeName;
+        this.chance = chance;
+        this.chanceIncrease = chanceIncrease;
+        this.cooldown = cooldown;
+        this.miscTypeName = miscTypeName;
+        this.hasChanceSystem = true;
+        this.isHeroic = false;
+        this.cooldownDecrease = 0;
+        this.oldEnchant = null;
+    }
     /**
      *
      * @param name Name of the enchantment.
