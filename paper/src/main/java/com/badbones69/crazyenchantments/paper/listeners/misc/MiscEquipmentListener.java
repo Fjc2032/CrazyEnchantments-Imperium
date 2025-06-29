@@ -42,6 +42,12 @@ public class MiscEquipmentListener implements Listener {
             }
         }
     }
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onTridentApply(PreBookApplyEvent event) {
+        for (CEnchantments dataset : targets) {
+
+        }
+    }
 
     private boolean leggingsCheck(CEnchantments data) {
         String name = data.getMiscTypeName();
@@ -51,5 +57,8 @@ public class MiscEquipmentListener implements Listener {
         String name = data.getMiscTypeName();
         return (Objects.equals(name, "Chestplate"));
     }
-
+    private boolean tridentCheck(CEnchantments data) {
+        String type = data.getTypeName();
+        return (Objects.equals(type, "Trident"));
+    }
 }

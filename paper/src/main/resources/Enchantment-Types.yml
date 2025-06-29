@@ -292,3 +292,6 @@ Types:
       - 'BOW'
       - 'FISHING_ROD'
       - 'TURTLE_HELMET'
+  Trident:
+    Enchantable-Items:
+      - 'TRIDENT'
