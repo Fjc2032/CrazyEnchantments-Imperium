@@ -1,7 +1,7 @@
 Info-GUI-Settings:
   Inventory:
-    Name: '&c&lEnchantment Info'
-    Size: 18
+    Name: '&r&8ᴇɴᴄʜᴀɴᴛᴍᴇɴᴛ ɪɴꜰᴏ ᴘᴀɢᴇ'
+    Size: 27
   Back-Item:
     Right:
       Item: 'NETHER_STAR'
@@ -14,18 +14,12 @@ Info-GUI-Settings:
 Types:
   Helmet:
     Display-Item:
-      Item: 'GOLDEN_HELMET'
+      Item: 'IRON_HELMET'
       Slot: 1
       Name: '&e&lHelmet Enchantments'
       Lore:
         - '&7Enchantable Items:'
-        - '&a- Leather Helmet'
-        - '&a- Chain Helmet'
-        - '&a- Gold Helmet'
-        - '&a- Iron Helmet'
-        - '&a- Diamond Helmet'
-        - '&a- Netherite Helmet'
-        - '&a- Turtle Helmet'
+        - '&a- Helmets'
     Enchantable-Items:
       - 'LEATHER_HELMET'
       - 'CHAINMAIL_HELMET'
@@ -34,88 +28,59 @@ Types:
       - 'DIAMOND_HELMET'
       - 'NETHERITE_HELMET'
       - 'TURTLE_HELMET'
-  Boots:
+  Chestplate:
     Display-Item:
-      Item: 'GOLDEN_BOOTS'
+      Item: 'IRON_CHESTPLATE'
       Slot: 2
-      Name: '&e&lBoot Enchantments'
+      Name: '&e&lChestplate Enchantments'
       Lore:
         - '&7Enchantable Items:'
-        - '&a- Leather Boots'
-        - '&a- Chain Boots'
-        - '&a- Gold Boots'
-        - '&a- Iron Boots'
-        - '&a- Diamond Boots'
-        - '&a- Netherite Boots'
+        - '&a- Chestplates'
     Enchantable-Items:
-      - 'LEATHER_BOOTS'
-      - 'CHAINMAIL_BOOTS'
-      - 'GOLDEN_BOOTS'
-      - 'IRON_BOOTS'
-      - 'DIAMOND_BOOTS'
-      - 'NETHERITE_BOOTS'
-  Armor:
-    Display-Item:
-      Item: 'GOLDEN_CHESTPLATE'
-      Slot: 3
-      Name: '&e&lArmor Enchantments'
-      Lore:
-        - '&7Enchantable Items:'
-        - '&a- Leather Armor'
-        - '&a- Chain Armor'
-        - '&a- Gold Armor'
-        - '&a- Iron Armor'
-        - '&a- Diamond Armor'
-        - '&a- Netherite Armor'
-    Enchantable-Items:
-      - 'LEATHER_HELMET'
-      - 'CHAINMAIL_HELMET'
-      - 'GOLDEN_HELMET'
-      - 'IRON_HELMET'
-      - 'DIAMOND_HELMET'
-      - 'NETHERITE_HELMET'
-      - 'TURTLE_HELMET'
       - 'LEATHER_CHESTPLATE'
       - 'CHAINMAIL_CHESTPLATE'
       - 'GOLDEN_CHESTPLATE'
       - 'IRON_CHESTPLATE'
       - 'DIAMOND_CHESTPLATE'
       - 'NETHERITE_CHESTPLATE'
+  Leggings:
+    Display-Item:
+      Item: 'IRON_LEGGINGS'
+      Slot: 3
+      Name: '&e&lLegging Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Leggings'
+    Enchantable-Items:
       - 'LEATHER_LEGGINGS'
       - 'CHAINMAIL_LEGGINGS'
       - 'GOLDEN_LEGGINGS'
       - 'IRON_LEGGINGS'
       - 'DIAMOND_LEGGINGS'
       - 'NETHERITE_LEGGINGS'
+  Boots:
+    Display-Item:
+      Item: 'IRON_BOOTS'
+      Slot: 4
+      Name: '&e&lBoot Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Boots'
+    Enchantable-Items:
       - 'LEATHER_BOOTS'
       - 'CHAINMAIL_BOOTS'
       - 'GOLDEN_BOOTS'
       - 'IRON_BOOTS'
       - 'DIAMOND_BOOTS'
       - 'NETHERITE_BOOTS'
-  Bow:
-    Display-Item:
-      Item: 'BOW'
-      Slot: 4
-      Name: '&e&lBow Enchantments'
-      Lore:
-        - '&7Enchantable Items:'
-        - '&a- Bow'
-    Enchantable-Items:
-      - 'BOW'
   Sword:
     Display-Item:
-      Item: 'GOLDEN_SWORD'
+      Item: 'STONE_SWORD'
       Slot: 5
       Name: '&e&lSword Enchantments'
       Lore:
         - '&7Enchantable Items:'
-        - '&a- Wooden Sword'
-        - '&a- Stone Sword'
-        - '&a- Gold Sword'
-        - '&a- Iron Sword'
-        - '&a- Diamond Sword'
-        - '&a- Netherite Sword'
+        - '&a- Swords'
     Enchantable-Items:
       - 'WOODEN_SWORD'
       - 'STONE_SWORD'
@@ -126,16 +91,11 @@ Types:
   Axe:
     Display-Item:
       Slot: 6
-      Item: 'GOLDEN_AXE'
+      Item: 'STONE_AXE'
       Name: '&e&lAxe Enchantments'
       Lore:
         - '&7Enchantable Items:'
-        - '&a- Wooden Axe'
-        - '&a- Stone Axe'
-        - '&a- Iron Axe'
-        - '&a- Golden Axe'
-        - '&a- Diamond Axe'
-        - '&a- Netherite Axe'
+        - '&a- Axes'
     Enchantable-Items:
       - 'WOODEN_AXE'
       - 'STONE_AXE'
@@ -143,39 +103,14 @@ Types:
       - 'GOLDEN_AXE'
       - 'DIAMOND_AXE'
       - 'NETHERITE_AXE'
-  Hoe:
-    Display-Item:
-      Item: 'GOLDEN_HOE'
-      Slot: 7
-      Name: '&e&lHoe Enchantments'
-      Lore:
-        - '&7Enchantable Items:'
-        - '&a- Wooden Hoe'
-        - '&a- Stone Hoe'
-        - '&a- Gold Hoe'
-        - '&a- Iron Hoe'
-        - '&a- Diamond Hoe'
-        - '&a- Netherite Hoe'
-    Enchantable-Items:
-      - 'WOODEN_HOE'
-      - 'STONE_HOE'
-      - 'IRON_HOE'
-      - 'GOLDEN_HOE'
-      - 'DIAMOND_HOE'
-      - 'NETHERITE_HOE'
   Pickaxe:
     Display-Item:
-      Item: 'GOLDEN_PICKAXE'
-      Slot: 8
+      Item: 'STONE_PICKAXE'
+      Slot: 7
       Name: '&e&lPickaxe Enchantments'
       Lore:
         - '&7Enchantable Items:'
-        - '&a- Wooden Pickaxe'
-        - '&a- Stone Pickaxe'
-        - '&a- Gold Pickaxe'
-        - '&a- Iron Pickaxe'
-        - '&a- Diamond Pickaxe'
-        - '&a- Netherite Pickaxe'
+        - '&a- Pickaxes'
     Enchantable-Items:
       - 'WOODEN_PICKAXE'
       - 'STONE_PICKAXE'
@@ -183,10 +118,70 @@ Types:
       - 'GOLDEN_PICKAXE'
       - 'DIAMOND_PICKAXE'
       - 'NETHERITE_PICKAXE'
+  Shovels:
+    Display-Item:
+      Item: 'STONE_SHOVEL'
+      Slot: 8
+      Name: '&e&lShovel Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Shovels'
+    Enchantable-Items:
+      - 'WOODEN_SHOVEL'
+      - 'STONE_SHOVEL'
+      - 'IRON_SHOVEL'
+      - 'GOLDEN_SHOVEL'
+      - 'DIAMOND_SHOVEL'
+      - 'NETHERITE_SHOVEL'
+  Hoe:
+    Display-Item:
+      Item: 'STONE_HOE'
+      Slot: 9
+      Name: '&e&lHoe Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Hoes'
+    Enchantable-Items:
+      - 'WOODEN_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLDEN_HOE'
+      - 'DIAMOND_HOE'
+      - 'NETHERITE_HOE'
+  Bow:
+    Display-Item:
+      Item: 'BOW'
+      Slot: 10
+      Name: '&e&lBow Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Bow'
+    Enchantable-Items:
+      - 'BOW'
+  Crossbows:
+    Display-Item:
+      Item: 'CROSSBOW'
+      Slot: 11
+      Name: '&e&lCrossbow Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Crossbows'
+    Enchantable-Items:
+      - 'CROSSBOW'
+  Tridents:
+    Display-Item:
+      Item: 'TRIDENT'
+      Slot: 12
+      Name: '&e&lTrident Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Tridents'
+    Enchantable-Items:
+      - 'TRIDENT'
   Tool:
     Display-Item:
-      Item: 'GOLDEN_SHOVEL'
-      Slot: 9
+      Item: 'Dirt'
+      Slot: 19
       Name: '&e&lTool Enchantments'
       Lore:
         - '&7Enchantable Items:'
@@ -224,7 +219,7 @@ Types:
   Damaged-Items:
     Display-Item:
       Item: 'DAMAGED_ANVIL'
-      Slot: 14
+      Slot: 20
       Name: '&e&lDamaged Item Enchantments'
       Lore:
         - '&7Enchantable Items:'
@@ -292,6 +287,120 @@ Types:
       - 'BOW'
       - 'FISHING_ROD'
       - 'TURTLE_HELMET'
-  Trident:
+  HelmetsBoots:
+    Display-Item:
+      Item: 'LEATHER_HELMET'
+      Slot: 21
+      Name: '&e&lHelmet_Boot Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Helmets'
+        - '&a- Boots'
     Enchantable-Items:
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLDEN_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'NETHERITE_HELMET'
+      - 'TURTLE_HELMET'
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLDEN_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+      - 'NETHERITE_BOOTS'
+  Weapons:
+    Display-Item:
+      Item: 'STICK'
+      Slot: 22
+      Name: '&e&lWeapon Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- All melee weapons '
+    Enchantable-Items:
+      - 'WOODEN_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLDEN_AXE'
+      - 'DIAMOND_AXE'
+      - 'NETHERITE_AXE'
+      - 'WOODEN_SWORD'
+      - 'STONE_SWORD'
+      - 'IRON_SWORD'
+      - 'GOLDEN_SWORD'
+      - 'DIAMOND_SWORD'
+      - 'NETHERITE_SWORD'
       - 'TRIDENT'
+  SwordsAxes:
+    Display-Item:   
+      Item: 'WOODEN_SWORD'
+      Slot: 23
+      Name: '&e&lSword_Axe Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- all axes '
+        - '&a- all Swords '
+    Enchantable-Items:
+      - 'WOODEN_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLDEN_AXE'
+      - 'DIAMOND_AXE'
+      - 'NETHERITE_AXE'
+      - 'WOODEN_SWORD'
+      - 'STONE_SWORD'
+      - 'IRON_SWORD'
+      - 'GOLDEN_SWORD'
+      - 'DIAMOND_SWORD'
+      - 'NETHERITE_SWORD'
+  BowsCrossbows:
+    Display-Item:
+      Item: 'ARROW'
+      Slot: 24
+      Name: '&e&lSword_Axe Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- all Bow type weapons'
+    Enchantable-Items:
+      - 'BOW'
+      - 'CROSSBOW'
+  Armor:
+    Display-Item:
+      Item: 'LEATHER_CHESTPLATE'
+      Slot: 25
+      Name: '&e&lArmor Enchantments'
+      Lore:
+        - '&7Enchantable Items:'
+        - '&a- Leather Armor'
+        - '&a- Chain Armor'
+        - '&a- Gold Armor'
+        - '&a- Iron Armor'
+        - '&a- Diamond Armor'
+        - '&a- Netherite Armor'
+    Enchantable-Items:
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLDEN_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'NETHERITE_HELMET'
+      - 'TURTLE_HELMET'
+      - 'LEATHER_CHESTPLATE'
+      - 'CHAINMAIL_CHESTPLATE'
+      - 'GOLDEN_CHESTPLATE'
+      - 'IRON_CHESTPLATE'
+      - 'DIAMOND_CHESTPLATE'
+      - 'NETHERITE_CHESTPLATE'
+      - 'LEATHER_LEGGINGS'
+      - 'CHAINMAIL_LEGGINGS'
+      - 'GOLDEN_LEGGINGS'
+      - 'IRON_LEGGINGS'
+      - 'DIAMOND_LEGGINGS'
+      - 'NETHERITE_LEGGINGS'
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLDEN_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+      - 'NETHERITE_BOOTS'
