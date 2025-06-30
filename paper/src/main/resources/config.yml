@@ -57,20 +57,18 @@ Settings:
   Slot_Crystal:
     InGUI: false #If it's in the GUI.
     Slot: 26 #Slot it is in
-    Item: 'EMERALD' #Item it is
-    Glowing: true #If it has a glowing effect.
-    Name: '&5&lSlot &b&lCrystal' #Name of the item
+    Item: 'ENDER_EYE' #Item it is
+    Glowing: false #If it has a glowing effect.
+    Name: '&f&lSlot Increaser' #Name of the item
     Lore: #Lore of the item
-      - '&7A rare crystal that is said to'
-      - '&7increase the amount of enchants'
-      - '&7that can be added onto an item.'
+      - '&7A rare item that can be used to increase'
+      - '&7the slots availible on an item &a+1.'
       - ''
-      - '&7&l(&6&l!&7&l) &7Drag and drop on an item.'
-    GUIName: '&5&lSlot &b&lCrystal'
+      - '&ePlace onto item to apply.'
+    GUIName: '&f&lSlot Increaser'
     GUILore:
-      - '&7A rare crystal that is said to'
-      - '&7increase the amount of enchants'
-      - '&7that can be added onto an item.'
+      - '&7A rare item that can be used to increase'
+      - '&7the slots availible on an item &a+1.'
       - ''
       - '&eCost: &e&l$500'
   GKitz: #GKitz GUI option.
@@ -127,7 +125,7 @@ Settings:
         - '&7the enchantments on them.'
       Found: '&c&lCost: &6&l%cost%XP' #The lore at the bottom of the item
     Transaction: #Options for the pricing
-      Currency: XP_Level
+      Currency: XP_Points
       Costs: #Cost options
         Power-Up: 5 #When an enchantment levels up 1 on an item
         Add-Enchantment: 3 #When it adds an enchantment to the item from another item
@@ -152,12 +150,11 @@ Settings:
       - '&b&lClick to view'
   Dust: #Settings for the Magical Dust
     MysteryDust:
-      Item: 'GUNPOWDER' #Item mystery dust is
-      Name: '&7Mystery Dust' #Name of the dust
+      Item: 'FIREWORK_STAR' #Item mystery dust is
+      Name: '&f§lSecret dust &7(Right Click)' #Name of the dust
       Lore: #Use %percent% to set the percent
-        - '&a1-%percent%% &7will be on a'
-        - '&aMagical AngelDust &7or &eMagical Fixing &7Dust'
-        - '&7&l(&6&l!&7&l) &7Right click'
+        - '&7An unidentified stachel of dust.'
+        - '&7Contains: §f§nMagic§r §7or §f§nMystery dust.'
       Firework:
         Toggle: true #Toggle if the firework happens on open.
         Colors: 'Black, Gray, Lime' #The colors the firework will be.
@@ -170,53 +167,52 @@ Settings:
         #Min will always be 1.
     SuccessDust:
       InGUI: true #If you can buy it in the /CE GUI
-      GUIName: '&aMagical Angel Dust' #Name of the item in the GUI
+      GUIName: '&f&lMagic Dust' #Name of the item in the GUI
       GUILore: #Lore in the GUI.
-        - '&eCost: &a&l$500'
         - '&7Dust allows you to bring'
         - '&7up your &aSuccess Rate&7.'
+        - ''
+        - '&eCost: &e&l$500'
       Slot: 22 #Slot number it is on
       Item: 'SUGAR' #Item the dust is
-      Name: '&aMagical Angel Dust' #Name of the dust
+      Name: '&f&lMagic Dust' #Name of the dust
       Lore: #Lore for the dust
         - '&a+%percent%% Success Rate'
-        - '&7Apply to an Enchantment Book to'
-        - '&7Increase the Success Rate by &e%percent%%'
+        - '&7Apply to any Enchantment Book to'
+        - '&7Increase the Success Rate by &f%percent%%'
       PercentRange: #Range the success rate will be.
-        Max: 30 #Max percent
-        Min: 2 #Minimum percent
+        Max: 15 #Max percent
+        Min: 1t #Minimum percent
     DestroyDust:
       InGUI: true #If you can buy it in the /CE GUI
-      GUIName: '&eMagical Fixing Dust' #Name of the item in the GUI
+      GUIName: '&f&lPreservation Dust' #Name of the item in the GUI
       GUILore: #Lore in the GUI.
         - '&eCost: &a&l$500'
         - '&7Dust allows you to bring'
         - '&7down your &4Destroy Rate&7.'
       Slot: 21 #Slot number it is on
       Item: 'REDSTONE' #Item the dust is
-      Name: '&eMagical Fixing Dust' #Name of the dust
+      Name: '&c&lPreservation Dust' #Name of the dust
       Lore: #Lore for the dust
         - '&c-%percent%% Destroy Rate'
-        - '&7Apply to an Enchantment Book to'
-        - '&7Decrease the Destroy Rate by &e%percent%%'
+        - '&7Apply to any Enchantment Book to'
+        - '&7Decrease the Destroy Rate by &f%percent%%'
       PercentRange: #Range the destroy rate will be.
         Max: 10 #Max percent
         Min: 2 #Minimum percent
     FailedDust:
       Item: 'GUNPOWDER' #Item the dust is
-      Name: '&7Failed Dust' #Name of the dust
+      Name: '&fMystery Dust' #Name of the dust
       Lore: #Lore for the dust
-        - '&7This dust has failed.'
-        - '&7It is now useless unless you'
-        - '&7needed to make TNT or a throwable potion.'
+        - '&7A failed bi-product.'
+        - '&7of Magic dust.'
   BlackScroll: #Settings for the black scrolls
     Item: 'INK_SAC' #The item the black scroll can be
-    Name: '&8&l&nBlack Scroll' #The name of the black scroll
+    Name: '&8&lBlack Scroll' #The name of the black scroll
     Item-Lore: #The lore that will be on the black scroll.
-      - '&7Have a custom enchantment you don''t want?'
-      - '&7Drag and drop this on an item with a custom enchantment'
-      - '&7and it will remove a random enchantment for you.'
-      - '&7&l(&6&l!&7&l) &7Only works on Custom Enchantments.'
+      - '&7Removes a random enchantment from an item'
+      - '&7converting it into random success book'
+      - '&ePlace Scroll onto item to extract.'
     Chance-Toggle: false #Toggle on and off if the black scrolls have a chance of failing.
     Chance: 75 #The chance that the black scroll will work.
     InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
@@ -234,30 +230,30 @@ Settings:
       Max: 25 #The Max percent
       Min: 5 #The Minimum percent
   WhiteScroll:
-    Item: 'PAPER' #The item the white scroll is.
-    Name: '&e&lWhite Scroll' #The name of the white scrolls.
+    Item: 'MAP' #The item the white scroll is.
+    Name: '&f&lWhite Scroll' #The name of the white scrolls.
     Item-Lore: #The lore that will be on the white scroll.
-      - '&7Want to protect an item from a book''s destroy rate?'
-      - '&7Drag and drop this on an enchant-able item'
-      - '&7and it will protect the item from the destroy rate.'
+      - '&7Prevent an item from being destoryed'
+      - '&7due to failed Enchantment Books.'
+      - '&ePlace scroll on item to apply.'
     InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
-    GUIName: '&7White Scroll'
+    GUIName: '&f&lWhite Scroll'
     Glowing: false #If it has a glowing effect.
     Slot: 19 #Slot you can buy the scroll at
     Lore: #Lore of the scroll in the GUI
+      - '&7Prevent an item from being destoryed'
+      - '&7due to failed Enchantment Books.'
       - '&eCost: &a&l$2000'
-      - '&7White Scrolls allow you to'
-      - '&7protect items from breaking.'
-    ProtectedName: '&b&lPROTECTED' #The lore that is added to protect an item.
+    ProtectedName: '&f&lPROTECTED' #The lore that is added to protect an item.
   TransmogScroll:
-    Item: 'QUARTZ' #The item the scroll is.
-    Name: '&d&lTransmog Scroll' #The name of the scroll.
+    Item: 'PAPER' #The item the scroll is.
+    Name: '&c&lTransmog Scroll' #The name of the scroll.
     Item-Lore: #The lore that will be on the scroll.
-      - '&7This scroll allows you to organize'
-      - '&7your enchantments and tell you how many'
-      - '&7enchantments you currently have on the item.'
+      - '&7Organizes enchants on item by &f§nCatagory'
+      - '&7and adds the &f§nlore count§r &7to name.'
+      - '&ePlace scroll onto item to apply.'
     InGUI: false #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
-    GUIName: '&dTransmog Scroll'
+    GUIName: '&cTransmog Scroll'
     Glowing: false #If it has a glowing effect.
     Slot: 1 #Slot you can buy the scroll at
     Lore: #Lore of the scroll in the GUI
@@ -280,7 +276,7 @@ Settings:
       Check-Perms: false # If false, the limit permissions will be used, otherwise the the limits listed below.
       Default-Limit: 3 # Use the permission crazyenchantments.limit.# to edit it per player.
       Default-Base-Limit: 0 # Use the permission crazyenchantments.base-limit.# to edit it per player.
-      Change-On-Fail: true # If the enchantment limiter should be reduced on enchant fail.
+      Change-On-Fail: false # If the enchantment limiter should be reduced on enchant fail.
     IncludeVanillaEnchantments: false #Count Vanilla enchantments also.
     Enchant-Stacked-Items: false #Turn on if you wish for enchantment books to enchant stacked items.
     MaxRageLevel: 4 #The max amount of rage that scan stack when fighting.
@@ -288,7 +284,7 @@ Settings:
     Rage-Boss-Bar: false #If true, messages from rage will be displayed on a boss bar.
     Rage-Increase: 0.1 #Rage will increase in damage by a multiple of enchantLevel*rageIncrease every hit.
     Right-Click-Book-Description: true #Toggles whether when you right-click the enchantment book if it messages the player the description or not.
-    UnSafe-Enchantments: true #Having this set to true will allow players to use enchantments levels above the max level.
+    UnSafe-Enchantments: false #Having this set to true will allow players to use enchantments levels above the max level.
     Blast-Full-Durability: true #Toggle if the item takes damage for every block it breaks or just one. True to take full damage or false to take only 1 damage.
     VeinMiner-Full-Durability: true
     Drop-Blocks-For-Blast: true #Toggle if the blast enchantment drops blocks when used.
@@ -305,7 +301,7 @@ Settings:
       Bee: '&e%player%''s Bee'
     Armor-Upgrade: #Having this enabled will allow players to try and add a higher level of an enchantment onto an item with a lower level of the enchantment.
       Toggle: true #Toggle on or off the ability to upgrade the enchantments.
-      Enchantment-Break: true #If the book's destroy rate happens the item doesn't break but instead the current lower version of the enchantment is destroyed. If false then the item will be destroyed instead.
+      Enchantment-Break: false #If the book's destroy rate happens the item doesn't break but instead the current lower version of the enchantment is destroyed. If false then the item will be destroyed instead.
     Wings: #Options for the Wings Enchantment.
       Clouds: true #Toggle if the wings enchantment shows particles under the player's feet. Warning this option has been known to cause lag so toggle it off if you get lag.
       Enemy-Toggle: true #This toggles on and off the wings enchantment when an enemy is close to the player.
