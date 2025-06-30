@@ -209,7 +209,7 @@ public class AxeEnchantments implements Listener {
             if (player.isDead()) return;
 
             //Create a bleed stack
-            this.bleedStack = (event.getDamage() / (this.enchantmentBookSettings.getLevel(item, bleedEnchant) * 1.05));
+            this.bleedStack = (event.getDamage() / (8.39 - this.enchantmentBookSettings.getLevel(item, bleedEnchant)));
 
             //Particle builder
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);

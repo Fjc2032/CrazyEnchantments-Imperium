@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Deprecated
 public class MiscEquipmentListener implements Listener {
 
 
@@ -45,7 +46,7 @@ public class MiscEquipmentListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTridentApply(PreBookApplyEvent event) {
         for (CEnchantments dataset : targets) {
-
+            if (!tridentCheck(dataset)) return;
         }
     }
 

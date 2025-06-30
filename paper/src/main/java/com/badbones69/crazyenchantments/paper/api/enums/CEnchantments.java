@@ -215,6 +215,10 @@ public enum CEnchantments {
     DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
     BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
 
+    // Trident //
+    IMPACT("Impact", "Trident", 15, 10),
+    TWINGE("Twinge", "Trident", 40, 8)
+
     ;
 
 

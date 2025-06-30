@@ -5,7 +5,6 @@ import com.badbones69.crazyenchantments.paper.api.builders.types.BaseMenu;
 import com.badbones69.crazyenchantments.paper.api.builders.types.blacksmith.BlackSmithMenu;
 import com.badbones69.crazyenchantments.paper.api.builders.types.gkitz.KitsMenu;
 import com.badbones69.crazyenchantments.paper.api.builders.types.tinkerer.TinkererMenu;
-import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.FileUtils;
 import com.badbones69.crazyenchantments.paper.commands.BlackSmithCommand;
 import com.badbones69.crazyenchantments.paper.commands.CECommand;
@@ -31,16 +30,9 @@ import com.badbones69.crazyenchantments.paper.listeners.FireworkDamageListener;
 import com.badbones69.crazyenchantments.paper.listeners.MiscListener;
 import com.badbones69.crazyenchantments.paper.listeners.ProtectionCrystalListener;
 import com.badbones69.crazyenchantments.paper.listeners.ShopListener;
-import com.badbones69.crazyenchantments.paper.listeners.misc.MiscEquipmentListener;
 import com.badbones69.crazyenchantments.paper.listeners.server.WorldSwitchListener;
-import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.CrazyEnchantStats;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.MMOItemsEventHook;
-import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.MMOItemsSupport;
-import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.CrazyEnchantsData;
 import com.badbones69.crazyenchantments.paper.utils.Metrics;
-import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.comp.enchants.EnchantPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -137,7 +129,6 @@ public class CrazyEnchantments extends JavaPlugin {
         this.pluginManager.registerEvents(new WorldSwitchListener(), this);
 
         this.pluginManager.registerEvents(new MMOItemsEventHook(), this);
-        this.pluginManager.registerEvents(new MiscEquipmentListener(), this);
 
         if (this.starter.getCrazyManager().isGkitzEnabled()) {
             getLogger().info("G-Kitz support is now enabled.");
