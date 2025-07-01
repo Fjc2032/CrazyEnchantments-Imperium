@@ -48,10 +48,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AxeEnchantments implements Listener {
 
@@ -183,13 +180,14 @@ public class AxeEnchantments implements Listener {
             if (!(event.getEntity() instanceof LivingEntity target)) return;
             ItemStack axe = target.getActiveItem();
 
-            Collection<ItemStack> axes = new ArrayList<>();
-            axes.add(ItemStack.of(Material.WOODEN_AXE));
-            axes.add(ItemStack.of(Material.STONE_AXE));
-            axes.add(ItemStack.of(Material.GOLDEN_AXE));
-            axes.add(ItemStack.of(Material.IRON_AXE));
-            axes.add(ItemStack.of(Material.DIAMOND_AXE));
-            axes.add(ItemStack.of(Material.NETHERITE_AXE));
+            @NotNull Set<ItemStack> axes = Set.of(
+                    ItemStack.of(Material.WOODEN_AXE),
+                    ItemStack.of(Material.STONE_AXE),
+                    ItemStack.of(Material.IRON_AXE),
+                    ItemStack.of(Material.GOLDEN_AXE),
+                    ItemStack.of(Material.DIAMOND_AXE),
+                    ItemStack.of(Material.NETHERITE_AXE)
+            );
 
             for (ItemStack selectedItem : axes) {
                 if (selectedItem.equals(axe)) {

@@ -392,13 +392,14 @@ public class ArmorEnchantments implements Listener {
             }
             if (EnchantUtils.isEventActive(CEnchantments.TANK, player, armor, enchants)) {
                 @NotNull ItemStack weapon = damager.getActiveItem();
-                @NotNull Collection<ItemStack> axes = new ArrayList<>();
-                axes.add(ItemStack.of(Material.WOODEN_AXE));
-                axes.add(ItemStack.of(Material.STONE_AXE));
-                axes.add(ItemStack.of(Material.IRON_AXE));
-                axes.add(ItemStack.of(Material.GOLDEN_AXE));
-                axes.add(ItemStack.of(Material.DIAMOND_AXE));
-                axes.add(ItemStack.of(Material.NETHERITE_AXE));
+                @NotNull Set<ItemStack> axes = Set.of(
+                        ItemStack.of(Material.WOODEN_AXE),
+                        ItemStack.of(Material.STONE_AXE),
+                        ItemStack.of(Material.IRON_AXE),
+                        ItemStack.of(Material.GOLDEN_AXE),
+                        ItemStack.of(Material.DIAMOND_AXE),
+                        ItemStack.of(Material.NETHERITE_AXE)
+                );
                 for (ItemStack item : axes) {
                     if (weapon.equals(item)) {
                         event.setDamage(event.getDamage() - (event.getDamage() * ((double) CEnchantments.TANK.getChance() / 20)));
@@ -451,14 +452,14 @@ public class ArmorEnchantments implements Listener {
                 event.setDamage(lastAttack / 2);
             }
             if (EnchantUtils.isEventActive(CEnchantments.ARMORED, player, armor, enchants)) {
-                Collection<ItemStack> swords = new ArrayList<>();
-                swords.add(ItemStack.of(Material.WOODEN_SWORD));
-                swords.add(ItemStack.of(Material.STONE_SWORD));
-                swords.add(ItemStack.of(Material.IRON_SWORD));
-                swords.add(ItemStack.of(Material.GOLDEN_SWORD));
-                swords.add(ItemStack.of(Material.DIAMOND_SWORD));
-                swords.add(ItemStack.of(Material.NETHERITE_SWORD));
-
+                @NotNull Set<ItemStack> swords = Set.of(
+                        ItemStack.of(Material.WOODEN_SWORD),
+                        ItemStack.of(Material.STONE_SWORD),
+                        ItemStack.of(Material.IRON_SWORD),
+                        ItemStack.of(Material.GOLDEN_SWORD),
+                        ItemStack.of(Material.DIAMOND_SWORD),
+                        ItemStack.of(Material.NETHERITE_SWORD)
+                );
                 for (ItemStack sword : swords) {
                     if (damager.getActiveItem() == sword) {
                         double modifier = (event.getDamage() * 0.02);
