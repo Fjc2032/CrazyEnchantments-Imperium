@@ -310,30 +310,30 @@ public class ArmorEnchantments implements Listener {
                 damager.damage(5D);
             }
             //Stuff for Imperium
-            if (EnchantUtils.isEventActive(CEnchantments.SHUFFLE, player, armor, enchants)) {
-                Player target = (Player) damager;
+            if (damager instanceof Player target) {
+                if (EnchantUtils.isEventActive(CEnchantments.SHUFFLE, player, armor, enchants)) {
+                    CEnchantment shuffleEnchant = CEnchantments.SHUFFLE.getEnchantment();
+                    int level = enchantmentBookSettings.getLevel(armor, shuffleEnchant);
 
-                CEnchantment shuffleEnchant = CEnchantments.SHUFFLE.getEnchantment();
-                int level = enchantmentBookSettings.getLevel(armor, shuffleEnchant);
+                    // Check cooldown before running
+                    if (CEnchantments.SHUFFLE.isOffCooldown(target.getUniqueId(), level, true)) {
 
-                // Check cooldown before shuffling
-                if (CEnchantments.SHUFFLE.isOffCooldown(target.getUniqueId(), level, true)) {
+                        // Gets items in the hotbar as an array
+                        ItemStack[] hotbar = new ItemStack[9];
+                        for (int i = 0; i < 9; i++) {
+                            hotbar[i] = target.getInventory().getItem(i);
+                        }
 
-                    //Gets items in the hotbar as an array.
-                    ItemStack[] hotbar = new ItemStack[9];
-                    for (int i = 0; i < 9; i++) {
-                        hotbar[i] = target.getInventory().getItem(i);
-                    }
+                        // Convert array to a modifiable list and shuffle it
+                        List<ItemStack> items = new ArrayList<>(Arrays.asList(hotbar));
+                        Collections.shuffle(items);
 
-                    //Convert array to a list, and then shuffle it.
-                    //The shuffled list goes into another array.
-                    List<ItemStack> items = Arrays.asList(hotbar);
-                    Collections.shuffle(items);
-                    ItemStack[] newHotbar = items.toArray(hotbar);
-
-                    //Grab that new array and set the hotbar to it.
-                    for (int i = 0; i < 9; i++) {
-                        target.getInventory().setItem(i, newHotbar[i]);
+                        // Set the shuffled items back to the hotbar
+                        for (int i = 0; i < 9; i++) {
+                            target.getInventory().setItem(i, items.get(i));
+                        }
+                    } else {
+                        target.sendMessage("Shuffle on cooldown!");
                     }
                 }
             }
