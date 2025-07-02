@@ -42,10 +42,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BowEnchantments implements Listener {
 
@@ -116,29 +113,34 @@ public class BowEnchantments implements Listener {
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.LIGHTNING, shooter, enchantedArrow.bow(), enchantedArrow.enchantments())) {
-            Location location = enchantedArrow.arrow().getLocation();
+            int level = enchantmentBookSettings.getLevel(enchantedArrow.bow(), CEnchantments.LIGHTNING.getEnchantment());
+            if (CEnchantments.LIGHTNING.isOffCooldown(shooter.getUniqueId(), level, true)) {
+                Location location = enchantedArrow.arrow().getLocation();
 
-            Entity lightning = location.getWorld().strikeLightningEffect(location);
+                Entity lightning = location.getWorld().strikeLightningEffect(location);
 
-            int lightningSoundRange = Files.CONFIG.getFile().getInt("Settings.EnchantmentOptions.Lightning-Sound-Range", 160);
+                int lightningSoundRange = Files.CONFIG.getFile().getInt("Settings.EnchantmentOptions.Lightning-Sound-Range", 160);
 
-            try {
-                location.getWorld().playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, (float) lightningSoundRange / 16f, 1);
-            } catch (Exception ignore) {
-            }
+                try {
+                    location.getWorld().playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, (float) lightningSoundRange / 16f, 1);
+                } catch (Exception ignore) {
+                }
 
-            for (LivingEntity entity : this.methods.getNearbyLivingEntities(2D, enchantedArrow.arrow())) {
-                EntityDamageEvent damageByEntityEvent = new EntityDamageEvent(entity, DamageCause.LIGHTNING, DamageSource.builder(DamageType.LIGHTNING_BOLT).withCausingEntity(shooter).withDirectEntity(lightning).build(), 5D);
+                for (LivingEntity entity : this.methods.getNearbyLivingEntities(2D, enchantedArrow.arrow())) {
+                    EntityDamageEvent damageByEntityEvent = new EntityDamageEvent(entity, DamageCause.LIGHTNING, DamageSource.builder(DamageType.LIGHTNING_BOLT).withCausingEntity(shooter).withDirectEntity(lightning).build(), 5D);
 
-                EventUtils.addIgnoredEvent(damageByEntityEvent);
-                EventUtils.addIgnoredUUID(shooter.getUniqueId());
-                shooter.getServer().getPluginManager().callEvent(damageByEntityEvent);
+                    EventUtils.addIgnoredEvent(damageByEntityEvent);
+                    EventUtils.addIgnoredUUID(shooter.getUniqueId());
+                    shooter.getServer().getPluginManager().callEvent(damageByEntityEvent);
 
-                if (!damageByEntityEvent.isCancelled() && !this.pluginSupport.isFriendly(enchantedArrow.getShooter(), entity) && !enchantedArrow.getShooter().getUniqueId().equals(entity.getUniqueId()))
-                    entity.damage(5D);
+                    if (!damageByEntityEvent.isCancelled() && !this.pluginSupport.isFriendly(enchantedArrow.getShooter(), entity) && !enchantedArrow.getShooter().getUniqueId().equals(entity.getUniqueId()))
+                        entity.damage(5D);
 
-                EventUtils.removeIgnoredEvent(damageByEntityEvent);
-                EventUtils.removeIgnoredUUID(shooter.getUniqueId());
+                    EventUtils.removeIgnoredEvent(damageByEntityEvent);
+                    EventUtils.removeIgnoredUUID(shooter.getUniqueId());
+                }
+            } else {
+                shooter.sendMessage("Lightning on cooldown!");
             }
 
         }
