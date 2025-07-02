@@ -311,7 +311,7 @@ public class SwordEnchantments implements Listener {
             int level = enchantmentBookSettings.getLevel(item, obliterate);
 
             if (CEnchantments.OBLITERATE.isOffCooldown(damager.getUniqueId(), level, true)) {
-                //Scale knockback: 1.0 base + 0.5 per level, capped at 3.0
+                //Scale knockback: 1.0 base + 0.5 per level
                 double strengthX = 1.0 + (0.5 * level);
                 double strengthY = 0.25 + (0.25 * level);
 
