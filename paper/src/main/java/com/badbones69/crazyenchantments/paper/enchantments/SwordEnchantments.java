@@ -8,7 +8,6 @@ import com.badbones69.crazyenchantments.paper.api.economy.Currency;
 import com.badbones69.crazyenchantments.paper.api.economy.CurrencyAPI;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.Messages;
-import com.badbones69.crazyenchantments.paper.api.enums.pdc.Enchant;
 import com.badbones69.crazyenchantments.paper.api.events.RageBreakEvent;
 import com.badbones69.crazyenchantments.paper.api.objects.CEPlayer;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
@@ -54,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.HashMap;
 import java.util.*;
 
 public class SwordEnchantments implements Listener {
@@ -76,9 +74,6 @@ public class SwordEnchantments implements Listener {
 
     @NotNull
     private final BukkitScheduler scheduler = Bukkit.getScheduler();
-
-    @NotNull
-    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
 
     // Plugin Support.
     @NotNull
@@ -260,39 +255,39 @@ public class SwordEnchantments implements Listener {
             if (damager.getHealth() + event.getDamage() / 2 >= maxHealth) damager.setHealth(maxHealth);
         }
 
-        //Imperium Enchants: Insomnia VVV
+        //Imperium Enchants: Insomnia
         if (EnchantUtils.isEventActive(CEnchantments.INSOMNIA, damager, item, enchantments)) {
-            //get UUID
             UUID playerUUID = damager.getUniqueId();
-
-            //get enchantment level
+            // Check if the enchantment is on cooldown
             int level = enchantmentBookSettings.getLevel(item, CEnchantments.INSOMNIA.getEnchantment());
-            long cooldown = Math.max(10000L - (level * 300L), 3000L);
-            int duration = (level * 800);  //0 + 40 per level;
 
-            // Check if the player is on cooldown
-            if (System.currentTimeMillis() - playerCooldowns.getOrDefault(playerUUID, 0L) < cooldown) {
-                return; //skip if cooldown
+            if (CEnchantments.INSOMNIA.isOffCooldown(playerUUID, level, true)) {
+                if (event.getEntity() instanceof LivingEntity target) {
+                    // Amplifier level 7 = amplifier 3: l5-3=a2  l2-1=a1
+                    int amplifier = (level >= 7) ? 2 : (level >= 3 ? 1 : 0);
+                    // Durations: (Level_7 = 4_seconds): (Level_6 = 9_seconds): (Level_5 = 7_seconds): (Level_4 = 6_seconds):
+                    // (Level_3 = 5_seconds): (Level_2 = 4_seconds): (Level_1 = 2_seconds):
+                    int duration = (level >= 7) ? 80 : (level == 6) ? 180 : (level == 5) ? 140 : (level == 4) ? 120 : (level == 3) ? 100 : (level == 2 ? 80 : 40);
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, duration, amplifier));
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, amplifier));
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, duration, amplifier));
+                }
+                return;
             }
-
-            //effects
-            if (event.getEntity() instanceof LivingEntity target) {
-                target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, duration, enchantments.get(CEnchantments.INSOMNIA.getEnchantment()) - 1));
-                target.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, enchantments.get(CEnchantments.INSOMNIA.getEnchantment()) - 1));
-                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, duration, enchantments.get(CEnchantments.INSOMNIA.getEnchantment()) - 1));
-            }
-
-            //start cooldown store time
-            playerCooldowns.put(playerUUID, System.currentTimeMillis());
         }
-        //Insomnia ^^^
+        //IMPERIUM: Insomnia
 
         if (EnchantUtils.isEventActive(CEnchantments.BLINDNESS, damager, item, enchantments)) {
             en.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 3 * 20, enchantments.get(CEnchantments.BLINDNESS.getEnchantment()) - 1));
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.CONFUSION, damager, item, enchantments)) {
-            en.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 5 + (enchantments.get(CEnchantments.CONFUSION.getEnchantment())) * 20, 0));
+            int level = enchantmentBookSettings.getLevel(item, CEnchantments.CONFUSION.getEnchantment());
+
+            if (CEnchantments.CONFUSION.isOffCooldown(damager.getUniqueId(), level, true)) {
+                int duration = (level >= 3) ? 120 : (level == 2 ? 80 : 40);
+                en.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, duration, 0));
+            }
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.DOUBLEDAMAGE, damager, item, enchantments)) {
@@ -312,7 +307,19 @@ public class SwordEnchantments implements Listener {
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.OBLITERATE, damager, item, enchantments)) {
-            event.getEntity().setVelocity(damager.getLocation().getDirection().multiply(2).setY(1.25));
+            CEnchantment obliterate = CEnchantments.OBLITERATE.getEnchantment();
+            int level = enchantmentBookSettings.getLevel(item, obliterate);
+
+            if (CEnchantments.OBLITERATE.isOffCooldown(damager.getUniqueId(), level, true)) {
+                //Scale knockback: 1.0 base + 0.5 per level, capped at 3.0
+                double strengthX = 1.0 + (0.5 * level);
+                double strengthY = 0.25 + (0.25 * level);
+
+                Vector direction = damager.getLocation().getDirection().multiply(strengthX).setY(strengthY);
+                event.getEntity().setVelocity(direction);
+            } else {
+                damager.sendMessage("Obliterate on cooldown!");
+            }
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.PARALYZE, damager, item, enchantments)) {
@@ -438,32 +445,6 @@ public class SwordEnchantments implements Listener {
                     5 + enchantmentBookSettings.getLevel(item, swarmEnchant)
             );
             event.setDamage(event.getDamage() * ((double) total.size() / 2));
-        }
-        if (EnchantUtils.isEventActive(CEnchantments.INSOMNIA, damager, item, enchantments)) {
-            //get UUID
-            UUID playerUUID = damager.getUniqueId();
-
-
-            //get enchantment level
-            int level = enchantmentBookSettings.getLevel(item, CEnchantments.INSOMNIA.getEnchantment());
-            long cooldown = Math.max(10000L - (level * 300L), 3000L);
-            int duration = (level * 800);  //0 + 40 per level;
-
-            // Check if the player is on cooldown
-            if (System.currentTimeMillis() - playerCooldowns.getOrDefault(playerUUID, 0L) < cooldown) {
-                return; //skip if cooldown
-            }
-
-
-            //effects
-            if (event.getEntity() instanceof LivingEntity target) {
-                target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, duration, enchantments.get(CEnchantments.INSOMNIA.getEnchantment()) - 1));
-                target.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, enchantments.get(CEnchantments.INSOMNIA.getEnchantment()) - 1));
-                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, duration, enchantments.get(CEnchantments.INSOMNIA.getEnchantment()) - 1));
-            }
-
-            //start cooldown store time
-            playerCooldowns.put(playerUUID, System.currentTimeMillis());
         }
         //IMPERIUM
     }
