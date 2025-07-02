@@ -199,31 +199,27 @@ public class PickaxeEnchantments implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         ItemStack item = player.getInventory().getItemInMainHand();
-        long cooldown = 1500L;
-
         //check enchantments
         Map<CEnchantment, Integer> enchants = Optional.of(this.enchantmentBookSettings.getEnchantments(item)).orElse(Collections.emptyMap());
+
         if (EnchantUtils.isEventActive(CEnchantments.EXPERIENCE, player, item, enchants)) {
             CEnchantment enchant = CEnchantments.EXPERIENCE.getEnchantment();
+            int level = this.enchantmentBookSettings.getLevel(item, CEnchantments.EXPERIENCE.getEnchantment());
 
-            //Check if the player is on cooldown
-            if (System.currentTimeMillis() - playerCooldowns.getOrDefault(playerUUID, 0L) < cooldown) {
-                return;//skip cooldown
-            }
-            //start cooldown store time
-            playerCooldowns.put(playerUUID, System.currentTimeMillis());
+            if (CEnchantments.EXPERIENCE.isOffCooldown(player.getUniqueId(), level, true)) {
 
-
-            //xp chance plus random xp (1-5)
-            int level = enchantmentBookSettings.getLevel(item, enchant);
-            double initialChance = CEnchantments.EXPERIENCE.getChance();
-            double chance = initialChance + (0.15 * level);
-            if (Math.random() <= chance) {
-                int gain = (int) (event.getExpToDrop() + 2 + (Math.random() * 4));
-                //Some debug to see what's going on
-                player.sendMessage("Experience triggered!");
-                player.sendMessage("XP Gain: " + event.getExpToDrop() + " + " + (gain - event.getExpToDrop()));
-                event.setExpToDrop(gain);
+                //xp chance plus random xp (1-5)
+                double initialChance = CEnchantments.EXPERIENCE.getChance();
+                double chance = initialChance + (0.15 * level);
+                if (Math.random() <= chance) {
+                    int gain = (int) (event.getExpToDrop() + 2 + (Math.random() * 4));
+                    //Some debug to see what's going on
+                    player.sendMessage("Experience triggered!");
+                    player.sendMessage("XP Gain: " + event.getExpToDrop() + " + " + (gain - event.getExpToDrop()));
+                    event.setExpToDrop(gain);
+                }
+            } else {
+                player.sendMessage("Experience on cooldown!");
             }
         }
     }
