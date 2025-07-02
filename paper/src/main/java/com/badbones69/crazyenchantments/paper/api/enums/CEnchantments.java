@@ -122,27 +122,27 @@ public enum CEnchantments {
     //armour
     AQUATIC("Aquatic", "Helmet"),
     GLOWING("Glowing", "Helmet"),
-    SHUFFLE("Shuffle", "Armor", 4, 2, 400L, 20L),
+    SHUFFLE("Shuffle", "Armor", 4, 2, 400L, 40L),
     //weapons
     HEADLESS("Headless", "Sword", 20, 20),
-    OBLITERATE("Obliterate", "Sword", 10, 5),
-    CONFUSION("Confusion", "Sword", 15, 5),
-    INSOMNIA("Insomnia", "Swords", 10, 2),
+    OBLITERATE("Obliterate", "Sword", 10, 5, 400L, 40L),
+    CONFUSION("Confusion", "Sword", 15, 5, 80L, -20L),
+    INSOMNIA("Insomnia", "Swords", 10, 2, 200L, 10L),
     DECAPITATION("Decapitation", "Axe", 20, 20),
-    DIZZY("Dizzy", "Axe", 15, 5),
-    LIGHTNING("Lightning", "Bow", 24, 8),
+    DIZZY("Dizzy", "Axe", 15, 5, 80L, -20L),
+    LIGHTNING("Lightning", "Bow", 24, 8, 60L),//should lightning only strike if entity is hit?
     //tools
-    AUTOSMELT("AutoSmelt", "Pickaxe", 30, 35, 100L),
-    EXPERIENCE("Experience", "Pickaxe", 15, 15),
+    AUTOSMELT("AutoSmelt", "Pickaxe", 30, 35),
+    EXPERIENCE("Experience", "Pickaxe", 15, 15, 20L),
     FURNACE("Furnace", "Pickaxe", 100L),
-    OXYGENATE("Oxygenate", "Tool"),
+    OXYGENATE("Oxygenate", "Tool", 60L),
     HASTE("Haste", "Tool"),
     //missing
     //EPICNESS kinda poinless
     //THUNDERINGBLOW thunder i think it was just strike lighting more as an effect enchant
     //ETHERAL haste upon killing mobs kinda pointless
-    //Strike a Trident lighting enchant but tridents do not exist in this plugin yet 
-    
+    //Strike strikes lighting on impact with the ground
+
     //NEW - Imperium
     POISONED("Poisoned", "Armor", 10, 5),
     HARDENED("Hardened", "Armor", 30, 10),
@@ -448,7 +448,7 @@ public enum CEnchantments {
         this.miscTypeName = null;
     }
 
-    
+
     /**
      * @return The name of the enchantment.
      */
@@ -584,7 +584,7 @@ public enum CEnchantments {
 
         long now = System.currentTimeMillis();
         long appliedCooldownTicks = Math.max(0L, cooldown - (cooldownDecrease * (level - 1)));
-       long cooldownMs = appliedCooldownTicks * 50;
+        long cooldownMs = appliedCooldownTicks * 50;
         long lastUsed = cooldowns.getOrDefault(playerUUID, 0L);
 
         if (now - lastUsed >= cooldownMs) {
