@@ -111,8 +111,14 @@ public class AxeEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.CURSED, damager, item, enchantments))
             entity.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (enchantments.get(CEnchantments.CURSED.getEnchantment()) + 9) * 20, 1));
 
-        if (EnchantUtils.isEventActive(CEnchantments.DIZZY, damager, item, enchantments))
-            entity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, (enchantments.get(CEnchantments.DIZZY.getEnchantment()) + 9) * 20, 0));
+        if (EnchantUtils.isEventActive(CEnchantments.DIZZY, damager, item, enchantments)) {
+            int level = enchantmentBookSettings.getLevel(item, CEnchantments.DIZZY.getEnchantment());
+
+            if (CEnchantments.DIZZY.isOffCooldown(damager.getUniqueId(), level, true)) {
+                int duration = (level >= 3) ? 120 : (level == 2 ? 80 : 40);
+                entity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, duration, 0));
+            }
+        }
 
         if (EnchantUtils.isEventActive(CEnchantments.BATTLECRY, damager, item, enchantments)) {
             for (Entity nearbyEntity : damager.getNearbyEntities(3, 3, 3)) {
