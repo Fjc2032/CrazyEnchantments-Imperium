@@ -76,14 +76,25 @@ public class ToolEnchantments implements Listener {
         Player player = event.getPlayer();
         ItemStack item = this.methods.getItemInHand(player);
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
-        
-        int potionTime = 20;
 
         if (EnchantUtils.isEventActive(CEnchantments.OXYGENATE, player, item, enchantments)) {
-            player.removePotionEffect(PotionEffectType.WATER_BREATHING);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, potionTime, 5));
-        }
+            Material blockType = player.getLocation().getBlock().getType();
 
+            if (player.isInWater()) {
+
+                int level = this.enchantmentBookSettings.getLevel(item, CEnchantments.OXYGENATE.getEnchantment());
+
+                if (CEnchantments.OXYGENATE.isOffCooldown(player.getUniqueId(), level, true)) {
+                    int duration = 20;
+
+                    player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, duration, 5));
+
+                } else {
+                    player.sendMessage("Oxygenate on cooldown!");
+                }
+            }
+        }
     }
 
     private void updateEffects(Player player) {
