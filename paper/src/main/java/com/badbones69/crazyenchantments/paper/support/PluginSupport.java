@@ -48,6 +48,12 @@ public class PluginSupport {
         return SupportedPlugins.SUPERIORSKYBLOCK.isPluginLoaded() && this.starter.getSuperiorSkyBlockSupport().inTerritory(player);
     }
 
+    public boolean inClaim(Player player) {
+        if (this.claimPlugin != null) return this.claimPlugin.inTerritory(player);
+
+        return SupportedPlugins.GRIEF_PREVENTION.isPluginEnabled() && this.starter.getGriefPreventionSupport().inTerritory(player);
+    }
+
     public boolean isFriendly(Entity pEntity, Entity oEntity) {
         if (!(pEntity instanceof Player player) || !(oEntity instanceof Player otherPlayer)) return false;
 
@@ -80,10 +86,6 @@ public class PluginSupport {
 
     public boolean allowExplosion(Location location) {
         return !SupportedPlugins.WORLDEDIT.isPluginLoaded() || !SupportedPlugins.WORLDGUARD.isPluginLoaded() || this.worldGuardUtils.getWorldGuardSupport().allowsExplosions(location);
-    }
-
-    public boolean invokeMMOItemsSupport() {
-        return false;
     }
 
     public void updateHooks() {

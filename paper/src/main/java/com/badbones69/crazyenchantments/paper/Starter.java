@@ -23,11 +23,13 @@ import com.badbones69.crazyenchantments.paper.listeners.SlotCrystalListener;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport.SupportedPlugins;
 import com.badbones69.crazyenchantments.paper.support.SkullCreator;
+import com.badbones69.crazyenchantments.paper.support.claims.GriefPreventionSupport;
 import com.badbones69.crazyenchantments.paper.support.claims.SuperiorSkyBlockSupport;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.CrazyEnchantStats;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.MMOItemsSupport;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.EnchantPluginBuilder;
 import com.badbones69.crazyenchantments.paper.support.misc.OraxenSupport;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.comp.enchants.EnchantPlugin;
 import org.bukkit.Bukkit;
@@ -56,6 +58,7 @@ public class Starter {
     private BowUtils bowUtils;
 
     // Plugin Support.
+    private GriefPreventionSupport griefPreventionSupport;
     private SuperiorSkyBlockSupport superiorSkyBlockSupport;
     private PluginSupport pluginSupport;
     private VaultSupport vaultSupport;
@@ -175,6 +178,14 @@ public class Starter {
 
     public OraxenSupport getOraxenSupport() {
         return this.oraxenSupport;
+    }
+
+    public GriefPreventionSupport getGriefPreventionSupport() {
+        return this.griefPreventionSupport;
+    }
+    public void initializeGPSupport(GriefPreventionSupport griefPreventionSupport) {
+        if (!SupportedPlugins.GRIEF_PREVENTION.isPluginEnabled()) return;
+        this.griefPreventionSupport = griefPreventionSupport;
     }
 
 
