@@ -344,12 +344,13 @@ public class ArmorEnchantments implements Listener {
                 target.addPotionEffect(poison);
             }
             if (EnchantUtils.isEventActive(CEnchantments.HARDENED, player, armor, enchants)) {
+                CEnchantment hardenedEnchant = CEnchantments.HARDENED.getEnchantment();
                 @Nullable ItemStack @NotNull [] playerArmor = player.getInventory().getArmorContents();
                 for (ItemStack equipment : playerArmor) {
                     if (equipment == null) return;
                     ItemMeta meta = equipment.getItemMeta();
                     Damageable damage = (Damageable) meta;
-                    damage.setDamage(damage.getDamage() - (CEnchantments.HARDENED.getChance() / 20));
+                    damage.setDamage(damage.getDamage() - this.enchantmentBookSettings.getLevel(armor, hardenedEnchant));
                     if (damage.getDamage() <= 0) return;
                     equipment.setItemMeta(meta);
                 }
@@ -419,9 +420,9 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.FAT, player, armor, enchants)) {
-                CEnchantment targetEnchant = CEnchantments.FAT.getEnchantment();
-                event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(armor, targetEnchant)));
-                if (CEnchantments.FAT.getChance() > 20) player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 10, 2));
+                CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
+                event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(armor, fatEnchant)));
+                if (this.enchantmentBookSettings.getLevel(armor, fatEnchant) >= 5) player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 10, 2));
             }
             if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, player, armor, enchants)) {
                 event.setDamage(event.getDamage() * 2);
@@ -440,8 +441,8 @@ public class ArmorEnchantments implements Listener {
                 //Iterate through the collection and damage all entities in the list.
                 for (Entity target : nearbyEntities) {
                     if (!(target instanceof LivingEntity livingEntity)) return;
-                    livingEntity.setLastDamage(event.getDamage() / 2);
-                    target.sendMessage("**Destruction**");
+                    livingEntity.damage(event.getDamage() / 2);
+                    target.sendMessage("** Destruction **");
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, player, armor, enchants)) {
@@ -472,13 +473,15 @@ public class ArmorEnchantments implements Listener {
                 if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) player.removePotionEffect(PotionEffectType.BLINDNESS);
             }
             if (EnchantUtils.isEventActive(CEnchantments.JUDGEMENT, player, armor, enchants)) {
-                if (!damager.hasPotionEffect(PotionEffectType.POISON)) damager.addPotionEffect(new PotionEffect(PotionEffectType.POISON, CEnchantments.JUDGEMENT.getChance() / 5, enchantmentBookSettings.getLevel(armor, CEnchantments.JUDGEMENT.getEnchantment())));
-                if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance() / 5, enchantmentBookSettings.getLevel(armor, CEnchantments.JUDGEMENT.getEnchantment())));
+                CEnchantment judgementEnchant = CEnchantments.JUDGEMENT.getEnchantment();
+                if (!damager.hasPotionEffect(PotionEffectType.POISON)) damager.addPotionEffect(new PotionEffect(PotionEffectType.POISON, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
+                if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
             }
             if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
-                while (player.getHealth() < 6) {
-                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance() / 2, enchantmentBookSettings.getLevel(armor, CEnchantments.CURSE.getEnchantment())));
-                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance() / 2, enchantmentBookSettings.getLevel(armor, CEnchantments.CURSE.getEnchantment())));
+                CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
+                if (player.getHealth() < 6) {
+                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
+                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 1));
                 }
             }

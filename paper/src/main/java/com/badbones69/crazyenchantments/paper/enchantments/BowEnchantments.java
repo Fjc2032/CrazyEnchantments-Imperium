@@ -198,19 +198,19 @@ public class BowEnchantments implements Listener {
         //Imperium
         if (EnchantUtils.isEventActive(CEnchantments.LONGBOW, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             if (entity.getActiveItem().equals(ItemStack.of(Material.BOW))) {
-                event.setDamage(event.getDamage() * ((double) CEnchantments.LONGBOW.getChance() / 10));
+                event.setDamage(event.getDamage() * (this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), CEnchantments.LONGBOW.getEnchantment())));
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.UNFOCUS, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
-            entity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, CEnchantments.UNFOCUS.getChance() / 10, 1, true, true, true));
+            entity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, CEnchantments.UNFOCUS.getChance(), 1, true, true, true));
             event.setDamage(event.getDamage() * 1.5);
         }
         if (EnchantUtils.isEventActive(CEnchantments.VIRUS, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             CEnchantment virusEnchant = CEnchantments.VIRUS.getEnchantment();
             if (entity.hasPotionEffect(PotionEffectType.POISON) || entity.hasPotionEffect(PotionEffectType.WITHER)) {
                 Collection<PotionEffect> effects = new ArrayList<>();
-                effects.add(new PotionEffect(PotionEffectType.POISON, 8, this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), virusEnchant)));
-                effects.add(new PotionEffect(PotionEffectType.WITHER, 8, this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), virusEnchant)));
+                effects.add(new PotionEffect(PotionEffectType.POISON, virusEnchant.getChance(), this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), virusEnchant)));
+                effects.add(new PotionEffect(PotionEffectType.WITHER, virusEnchant.getChance(), this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), virusEnchant)));
                 entity.addPotionEffects(effects);
             }
         }

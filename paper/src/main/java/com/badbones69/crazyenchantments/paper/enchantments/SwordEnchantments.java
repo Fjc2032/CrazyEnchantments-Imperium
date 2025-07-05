@@ -20,7 +20,6 @@ import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBo
 import com.badbones69.crazyenchantments.paper.scheduler.FoliaRunnable;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import org.bukkit.Bukkit;
@@ -30,9 +29,7 @@ import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -48,6 +45,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -362,17 +360,29 @@ public class SwordEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.ENDERSLAYER, damager, item, enchantments)) {
             if (!(event.getEntity() instanceof EnderMan) || !(event.getEntity() instanceof EnderDragon)) return;
             double damage = event.getDamage();
-            event.setDamage(damage * ((double) CEnchantments.ENDERSLAYER.getChance() / 20));
+            event.setDamage(damage * (this.enchantmentBookSettings.getLevel(item, CEnchantments.ENDERSLAYER.getEnchantment())));
         }
         if (EnchantUtils.isEventActive(CEnchantments.NETHERSLAYER, damager, item, enchantments)) {
-            if (!(event.getEntity() instanceof Blaze) || !(event.getEntity() instanceof ZombifiedPiglin)) return;
+            CEnchantment netherslayerEnchant = CEnchantments.NETHERSLAYER.getEnchantment();
             double damage = event.getDamage();
-            event.setDamage(damage * ((double) CEnchantments.NETHERSLAYER.getChance() / 20));
+            switch (event.getEntity()) {
+                case Blaze blaze -> blaze.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                case Piglin piglin -> piglin.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                case PiglinBrute piglinBrute -> piglinBrute.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                case MagmaCube magmaCube -> magmaCube.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                case PigZombie pigZombie -> pigZombie.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                case WitherSkeleton witherSkeleton -> witherSkeleton.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                case Zoglin zoglin -> zoglin.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+                default -> {
+                    return;
+                }
+            }
+            event.setDamage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
         }
         if (EnchantUtils.isEventActive(CEnchantments.SHACKLE, damager, item, enchantments)) {
             if (event.getEntity() instanceof LivingEntity) return;
             Location playerPos = damager.getLocation();
-            Vector vector = damager.getLocation().toVector().subtract(en.getLocation().toVector());
+            Vector vector = playerPos.toVector().subtract(en.getLocation().toVector());
             vector.normalize().multiply(1);
             en.setVelocity(vector);
 
@@ -385,7 +395,8 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.DOMINATE, damager, item, enchantments)) {
             if (!(event.getEntity() instanceof LivingEntity target)) return;
-            target.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 10, CEnchantments.DOMINATE.getChance() / 20));
+            target.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, CEnchantments.DOMINATE.getChance(),
+                    this.enchantmentBookSettings.getLevel(item, CEnchantments.DOMINATE.getEnchantment())));
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLOCK, damager, item, enchantments)) {
             event.setCancelled(true);
@@ -399,11 +410,12 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.DISTANCE, damager, item, enchantments)) {
             damager.setVelocity(damager.getLocation().getDirection().multiply(-2).normalize());
-            damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.DISTANCE.getChance() / 10, 1));
+            damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.DISTANCE.getChance(),
+                    this.enchantmentBookSettings.getLevel(item, CEnchantments.DISTANCE.getEnchantment())));
         }
         if (EnchantUtils.isEventActive(CEnchantments.INVERSION, damager, item, enchantments)) {
             event.setCancelled(true);
-            damager.setHealth(damager.getHealth() + ((double) CEnchantments.INVERSION.getChance() / 10));
+            damager.setHealth(damager.getHealth() + (this.enchantmentBookSettings.getLevel(item, CEnchantments.INVERSION.getEnchantment())));
         }
         if (EnchantUtils.isEventActive(CEnchantments.SILENCE, damager, item, enchantments)) {
             if (!(en instanceof Player target)) return;
@@ -428,9 +440,9 @@ public class SwordEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.STUN, damager, item, enchantments)) {
             CEnchantment stunEnchant = CEnchantments.STUN.getEnchantment();
             if (!en.hasPotionEffect(PotionEffectType.SLOWNESS))
-                en.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, CEnchantments.STUN.getChance() / 7, this.enchantmentBookSettings.getLevel(item, stunEnchant)));
+                en.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, CEnchantments.STUN.getChance(), this.enchantmentBookSettings.getLevel(item, stunEnchant)));
             if (!en.hasPotionEffect(PotionEffectType.WEAKNESS))
-                en.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, CEnchantments.STUN.getChance() / 7, this.enchantmentBookSettings.getLevel(item, stunEnchant)));
+                en.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, CEnchantments.STUN.getChance(), this.enchantmentBookSettings.getLevel(item, stunEnchant)));
             if (damager.hasPotionEffect(PotionEffectType.SLOWNESS))
                 damager.removePotionEffect(PotionEffectType.SLOWNESS);
         }
@@ -439,11 +451,9 @@ public class SwordEnchantments implements Listener {
             //The more entities there are in an area, the higher the buff to damage.
             //Radius considered is raised by each level.
             //Maximum level should be 5.
-            List<Entity> total = damager.getNearbyEntities(
-                    5 + enchantmentBookSettings.getLevel(item, swarmEnchant),
-                    5 + enchantmentBookSettings.getLevel(item, swarmEnchant),
-                    5 + enchantmentBookSettings.getLevel(item, swarmEnchant)
-            );
+            BoundingBox radius = damager.getBoundingBox();
+            radius.expand(5 + this.enchantmentBookSettings.getLevel(item, swarmEnchant));
+            List<Entity> total = damager.getNearbyEntities(radius.getWidthX(), radius.getMaxY(), radius.getWidthZ());
             event.setDamage(event.getDamage() * ((double) total.size() / 2));
         }
         //IMPERIUM
