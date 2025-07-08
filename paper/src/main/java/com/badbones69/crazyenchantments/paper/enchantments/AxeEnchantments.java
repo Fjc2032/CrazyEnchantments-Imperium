@@ -192,11 +192,6 @@ public class AxeEnchantments implements Listener {
             targets.stream()
                     .filter(target -> target instanceof LivingEntity)
                     .filter(target -> !target.equals(damager))
-                    .sorted((obj1, obj2) -> {
-                        boolean isObj1Player = obj1 instanceof Player;
-                        boolean isObj2Player = obj2 instanceof Player;
-                        return Boolean.compare(!isObj1Player, !isObj2Player);
-                    })
                     .limit(4 + cleaveLvl)
                     .map(target -> (LivingEntity) target)
                     .forEach(target -> {
@@ -209,7 +204,7 @@ public class AxeEnchantments implements Listener {
             CEnchantment corruptEnchant = CEnchantments.CORRUPT.getEnchantment();
             damager.sendMessage("** CORRUPT **");
             if (!(event.getEntity() instanceof LivingEntity target)) return;
-            double damageAmt = (event.getDamage() / (corruptEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, corruptEnchant)));
+            double damageAmt = (event.getDamage() / (4 - this.enchantmentBookSettings.getLevel(item, corruptEnchant)));
             List<BukkitTask> runnables = new ArrayList<>();
 
             runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 2, 0), 0L, 5L));
