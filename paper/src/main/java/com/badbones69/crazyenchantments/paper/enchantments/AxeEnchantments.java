@@ -12,6 +12,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.EntityUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -179,6 +180,7 @@ public class AxeEnchantments implements Listener {
             //Get the world the player is in.
             World world = damager.getWorld();
 
+            //Cancel if you're in a claim
             if (this.pluginSupport.inClaim(damager)) return;
 
             int cleaveLvl = this.enchantmentBookSettings.getLevel(item, cleaveEnchant);
@@ -204,7 +206,8 @@ public class AxeEnchantments implements Listener {
             CEnchantment corruptEnchant = CEnchantments.CORRUPT.getEnchantment();
             damager.sendMessage("** CORRUPT **");
             if (!(event.getEntity() instanceof LivingEntity target)) return;
-            double damageAmt = (event.getDamage() / (4 - this.enchantmentBookSettings.getLevel(item, corruptEnchant)));
+            double cap = corruptEnchant.getChance();
+            double damageAmt = Math.min(cap, (event.getDamage() / (4 - this.enchantmentBookSettings.getLevel(item, corruptEnchant))));
             List<BukkitTask> runnables = new ArrayList<>();
 
             runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 2, 0), 0L, 5L));
@@ -247,6 +250,7 @@ public class AxeEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
             CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
+            bleedEnchant.setActivated(true);
             //Check if the target is a LivingEntity
             if (!(event.getEntity() instanceof LivingEntity player)) return;
 
@@ -413,10 +417,6 @@ public class AxeEnchantments implements Listener {
                 ItemStack head = new ItemBuilder().setMaterial(headMat).build();
                 event.getDrops().add(head);
             }
-        }
-        if (EnchantUtils.isEventActive(CEnchantments.BLEED, killer, item, enchantments)) {
-            CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
-            bleedEnchant.setActivated(false);
         }
     }
 
