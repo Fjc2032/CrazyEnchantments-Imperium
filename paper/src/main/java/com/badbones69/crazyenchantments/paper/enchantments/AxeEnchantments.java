@@ -5,6 +5,8 @@ import com.badbones69.crazyenchantments.paper.Methods;
 import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
+import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
+import com.badbones69.crazyenchantments.paper.api.objects.CEBook;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
@@ -12,7 +14,6 @@ import com.badbones69.crazyenchantments.paper.api.utils.EntityUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -56,7 +57,7 @@ public class AxeEnchantments implements Listener {
     private final BukkitScheduler scheduler = Bukkit.getScheduler();
 
     //Private fields that handles bleed damage amounts.
-    private double bleedStack = 1;
+    private double bleedStack;
     private double bleedCap;
 
     // Plugin Support.
@@ -85,15 +86,9 @@ public class AxeEnchantments implements Listener {
     private double handleBleedCap(@NotNull CEnchantments data, double bleed, double cap) {
         this.bleedStack = bleed;
         this.bleedCap = cap;
-        try {
-            if (bleed > cap) bleed = (cap * (1 + data.getChance()));
-            this.starter.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
-            this.starter.getLogger().warning("New bleed stack: " + bleed);
-            return this.bleedStack = bleed;
-        } catch (NullPointerException exception) {
-            plugin.getLogger().warning("Something has gone horribly wrong while setting the bleed cap!");
-            plugin.getLogger().warning("Stacktrace: " + exception);
-        }
+        if (bleed > cap) bleed = (cap + data.getChance());
+        this.starter.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
+        this.starter.getLogger().warning("New bleed stack: " + bleed);
         return this.bleedStack = bleed;
     }
 
@@ -166,8 +161,8 @@ public class AxeEnchantments implements Listener {
         //Imperium
         if (EnchantUtils.isEventActive(CEnchantments.REAPER, damager, item, enchantments)) {
             CEnchantment reaperEnchant = CEnchantments.REAPER.getEnchantment();
-            double damageAmount = 1 + (double) damager.getExpToLevel() / 1500;
-            double cap = (event.getDamage() / (reaperEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, reaperEnchant)));
+            double damageAmount = event.getDamage() + (double) damager.getExpToLevel() / 1500;
+            double cap = Math.min(event.getDamage(), (reaperEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, reaperEnchant)));
             if (damageAmount > cap) damageAmount = cap;
             event.setDamage(damageAmount);
         }
@@ -367,7 +362,7 @@ public class AxeEnchantments implements Listener {
         ItemStack item = this.methods.getItemInHand(target);
 
         final Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
-        Sound sound = Sound.BLOCK_ANVIL_DESTROY;
+        Sound sound = Sound.ITEM_SHIELD_BLOCK;
 
         if (EnchantUtils.isEventActive(CEnchantments.ARROWBREAK, target, item, enchantments)) {
             Vector power = proj.getVelocity().multiply(-1.5);
@@ -417,6 +412,17 @@ public class AxeEnchantments implements Listener {
                 ItemStack head = new ItemBuilder().setMaterial(headMat).build();
                 event.getDrops().add(head);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBookApply(PreBookApplyEvent event) {
+        CEBook book = event.getCEBook();
+
+        if (!event.getSuccessful()) return;
+
+        if (book.getEnchantment().equals(CEnchantments.DEEPBLEED.getEnchantment())) {
+            this.enchantmentBookSettings.swapToHeroicEnchant(CEnchantments.DEEPBLEED, event.getEnchantedItem(), event.getPlayer());
         }
     }
 

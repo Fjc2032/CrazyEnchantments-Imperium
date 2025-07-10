@@ -380,12 +380,10 @@ public class SwordEnchantments implements Listener {
             event.setDamage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
         }
         if (EnchantUtils.isEventActive(CEnchantments.SHACKLE, damager, item, enchantments)) {
-            if (event.getEntity() instanceof LivingEntity) return;
             Location playerPos = damager.getLocation();
             Vector vector = playerPos.toVector().subtract(en.getLocation().toVector());
             vector.normalize().multiply(1);
             en.setVelocity(vector);
-
         }
         if (EnchantUtils.isEventActive(CEnchantments.GREATSWORD, damager, item, enchantments)) {
             if (!(event.getEntity() instanceof LivingEntity target)) return;
@@ -410,7 +408,7 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.DISTANCE, damager, item, enchantments)) {
             damager.setVelocity(damager.getLocation().getDirection().multiply(-2).normalize());
-            damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.DISTANCE.getChance(),
+            damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.DISTANCE.getChance() * 4,
                     this.enchantmentBookSettings.getLevel(item, CEnchantments.DISTANCE.getEnchantment())));
         }
         if (EnchantUtils.isEventActive(CEnchantments.INVERSION, damager, item, enchantments)) {

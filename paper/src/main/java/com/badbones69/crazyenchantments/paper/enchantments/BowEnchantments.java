@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -155,6 +156,7 @@ public class BowEnchantments implements Listener {
         if (!(event.getDamager() instanceof Arrow entityArrow)) return;
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
 
+
         EnchantedArrow enchantedArrow = this.bowUtils.getEnchantedArrow(entityArrow);
         if (enchantedArrow == null) return;
 
@@ -242,10 +244,14 @@ public class BowEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.ARROWLIFESTEAL, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             if (!(enchantedArrow.getShooter() instanceof Player shooter)) return;
+            final double maxhealth = shooter.getAttribute(Attribute.MAX_HEALTH).getValue();
             double shooterHealth = shooter.getHealth();
+            double absorb = shooterHealth - maxhealth;
+            if (shooterHealth > maxhealth) shooterHealth = maxhealth;
             double modifier = event.getDamage();
 
-            shooter.setHealth(shooterHealth + modifier);
+            shooter.setHealth(Math.min(shooterHealth + modifier, maxhealth));
+            shooter.setAbsorptionAmount(shooter.getAbsorptionAmount() + absorb);
         }
         if (EnchantUtils.isEventActive(CEnchantments.BIDIRECTIONAL, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             CEnchantment targetEnchant = CEnchantments.BIDIRECTIONAL.getEnchantment();

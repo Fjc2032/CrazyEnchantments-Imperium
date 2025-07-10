@@ -7,7 +7,6 @@ import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DataKeys;
 import com.badbones69.crazyenchantments.paper.api.events.AuraActiveEvent;
-import com.badbones69.crazyenchantments.paper.api.events.BookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.managers.ArmorEnchantmentManager;
 import com.badbones69.crazyenchantments.paper.api.objects.ArmorEnchantment;
@@ -43,6 +42,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +65,9 @@ public class ArmorEnchantments implements Listener {
 
     @NotNull
     private final CrazyManager crazyManager = this.starter.getCrazyManager();
+
+    @NotNull
+    private final BukkitScheduler scheduler = Bukkit.getScheduler();
 
     // Settings.
     @NotNull
@@ -501,7 +505,7 @@ public class ArmorEnchantments implements Listener {
             if (EnchantUtils.isEventActive(CEnchantments.HEAVY, player, armor, enchants)) {
                 CEnchantment targetEnchant = CEnchantments.HEAVY.getEnchantment();
 
-                if (!(event.getDamageSource().getDamageType().equals(DamageType.ARROW))) return;
+                if (!(event.getDamager() instanceof Arrow)) return;
                 double newDamage = event.getDamage() - (event.getDamage() * (0.02 + enchantmentBookSettings.getLevel(armor, targetEnchant)));
                 event.setDamage(newDamage);
             }
@@ -522,6 +526,7 @@ public class ArmorEnchantments implements Listener {
             if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
                 //Declare a new empty collection of blazes as an ArrayList
                 Collection<Blaze> blazes = new ArrayList<>();
+                List<BukkitTask> spiritTasks = new ArrayList<>();
 
                 //Get the world, position, and region the player is in.
                 CEnchantment targetEnchant = CEnchantments.SPIRITS.getEnchantment();
@@ -529,7 +534,7 @@ public class ArmorEnchantments implements Listener {
                 Location playerPos = player.getLocation();
                 BoundingBox box = player.getBoundingBox();
 
-                final double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+                final double maxHealth = maxhealth.getValue();
 
                 //Get the level of the enchantment as a variable
                 int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
@@ -540,7 +545,7 @@ public class ArmorEnchantments implements Listener {
                 }
                 //Builds a new runnable that checks the amount of blazes in player region, then adds them to the
                 //new Collection.
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
                     Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
                     for (Entity entity : nearbyEntities) {
                         if (!(entity instanceof Blaze blaze)) continue;
@@ -548,22 +553,28 @@ public class ArmorEnchantments implements Listener {
                         blazes.add(blaze);
                     }
 
-                    //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
-                    int blazeAmount = blazes.size();
-                    if (blazeAmount > 0) {
-                        double modifier = player.getHealth() + (blazeAmount + level);
+                }, 40L));
+                //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
+                spiritTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
+                    if (!blazes.isEmpty()) {
+                        double modifier = player.getHealth() + (blazes.size() + level);
                         double newPlayerHealth = Math.min(modifier, maxHealth);
                         player.setHealth(newPlayerHealth);
                     }
-                }, 40L);
+                }, 0L, 20L));
 
                 //Builds a new runnable that removes the blazes after a period of time.
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
                     for (Blaze blaze : blazes) {
                         if (!blaze.isDead()) blaze.remove();
                     }
-                }, 200L);
+                }, 200L));
 
+                this.scheduler.runTaskLater(plugin, () -> {
+                    for (BukkitTask task : spiritTasks) {
+                        if (blazes.isEmpty()) task.cancel();
+                    }
+                }, 400L);
             }
             //Stuff for Imperium
         }
