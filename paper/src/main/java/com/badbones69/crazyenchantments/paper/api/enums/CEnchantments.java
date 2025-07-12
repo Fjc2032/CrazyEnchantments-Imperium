@@ -21,12 +21,10 @@ public enum CEnchantments {
     //	----------------Boots----------------  \\
     GEARS("Gears", "Boots"),
     WINGS("Wings", "Boots"),
-    ADRENALINE("Adrenaline", "Boots", 10, 5),
     ROCKET("Rocket", "Boots", 15, 5),
     SPRINGS("Springs", "Boots"),
     ANTIGRAVITY("AntiGravity", "Boots"),
     //	----------------Bows----------------  \\
-    BOOM("Boom", "Bow", 20, 10),
     PULL("Pull", "Bow", 25, 10),
     VENOM("Venom", "Bow", 10, 5),
     DOCTOR("Doctor", "Bow"),
@@ -37,7 +35,6 @@ public enum CEnchantments {
     SNIPER("Sniper", "Bow", 25, 5),
     //	----------------Helmets----------------  \\
     IMPLANTS("Implants", "Helmet", 5, 5),
-    COMMANDER("Commander", "Helmet"),
     //	----------------Swords----------------  \\
     TRAP("Trap", "Sword", 10, 5),
     RAGE("Rage", "Sword"),
@@ -52,17 +49,11 @@ public enum CEnchantments {
     PARALYZE("Paralyze", "Sword", 15, 5),
     BLINDNESS("Blindness", "Sword", 5, 1),
     LIFESTEAL("LifeSteal", "Sword", 15, 5),
-    NUTRITION("Nutrition", "Sword", 15, 5),
-    SKILLSWIPE("SkillSwipe", "Sword", 5, 5),
     INQUISITIVE("Inquisitive", "Sword", 50, 25),
-    LIGHTWEIGHT("LightWeight", "Sword", 15, 5),
     DOUBLEDAMAGE("DoubleDamage", "Sword", 5, 1),
     DISORDER("Disorder", "Sword", 1, 0),
     CHARGE("Charge", "Sword"),
-    LIFEBLOOM("Lifebloom", "Sword"),
-    FAMISHED("Famished", "Sword", 10, 5),
     //	----------------Armor----------------  \\
-    HULK("Hulk", "Armor"),
     VALOR("Valor", "Armor"),
     DRUNK("Drunk", "Helmet"),
     NINJA("Ninja", "Armor"),
@@ -70,13 +61,11 @@ public enum CEnchantments {
     TAMER("Tamer", "Armor"),
     GUARDS("Guards", "Armor"),
     VOODOO("Voodoo", "Armor", 15, 5),
-    MOLTEN("Molten", "Armor", 10, 1),
     SAVIOR("Savior", "Armor", 15, 5),
     CACTUS("Cactus", "Armor", 25, 25),
     FREEZE("Freeze", "Armor", 10, 5),
     RECOVER("Recover", "Armor"),
     NURSERY("Nursery", "Armor", 5, 5),
-    RADIANT("Radiant", "Armor"),
     FORTIFY("Fortify", "Armor", 10, 5),
     OVERLOAD("OverLoad", "Armor"),
     BLIZZARD("Blizzard", "Armor"),
@@ -91,7 +80,6 @@ public enum CEnchantments {
     NECROMANCER("Necromancer", "Armor"),
     STORMCALLER("StormCaller", "Armor", 10, 5),
     ENLIGHTENED("Enlightened", "Armor", 10, 5),
-    SELFDESTRUCT("SelfDestruct", "Armor"),
     CYBORG("Cyborg", "Armor"),
     BEEKEEPER("BeeKeeper", "Armor"),
     MANEUVER("Maneuver", "Armor", 10, 5),
@@ -101,8 +89,6 @@ public enum CEnchantments {
     //	----------------Axes----------------  \\
     REKT("Rekt", "Axe", 5, 1),
     CURSED("Cursed", "Axe", 10, 5),
-    FEEDME("FeedMe", "Axe", 10, 5),
-    BERSERK("Berserk", "Axe", 10, 1),
     BLESSED("Blessed", "Axe", 10, 5),
     BATTLECRY("BattleCry", "Axe", 10, 5),
     DEMONFORGED("DemonForged", "Axe", 10, 5),
@@ -110,7 +96,6 @@ public enum CEnchantments {
     VEINMINER("VeinMiner", "Pickaxe"),
     BLAST("Blast", "Pickaxe"),
     //	----------------Tools----------------  \\
-    TELEPATHY("Telepathy", "Tool"),
     //	----------------Hoes----------------  \\
     GREENTHUMB("GreenThumb", "Hoe", 10, 10),
     HARVESTER("Harvester", "Hoe"),
@@ -118,8 +103,8 @@ public enum CEnchantments {
     PLANTER("Planter", "Hoe"),
     //	----------------All----------------  \\
     HELLFORGED("HellForged", "Damaged-Items", 5, 5),
-    //Imperiem Simple Enchantments
-    //armour
+    //IMPERIUM: Simple Enchantments
+    //Armour
     AQUATIC("Aquatic", "Helmet"),
     GLOWING("Glowing", "Helmet"),
     SHUFFLE("Shuffle", "Armor", 4, 2, 400L, 40L),
@@ -143,14 +128,35 @@ public enum CEnchantments {
     //ETHERAL haste upon killing mobs kinda pointless
     //Strike strikes lighting on impact with the ground
 
+    //IMPERIUM: Unique Enchantments
+    //ARMOUR
+    LIFEBLOOM("Lifebloom", "Sword", 20, 10, 200L, -25L),
+    FAMISHED("Famished", "Sword", 12, 4, 8L), //famine
+    OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15, 160L, 20L),//obsidian destoryer
+    BERSERK("Berserk", "Axe", 4, 4, 160L, 20L),
+    WARD("Ward", "Armor", 3, 4, 100L),
+    CURSE("Curse", "Armor", 10, 2, "Chestplate"), //10, 2, 140L)
+    HULK("Hulk", "Armor"),//curse??
+    ADRENALINE("Adrenaline", "Boots", 15, 15, 120L, -40L),//endershift
+    BOOM("Boom", "Bow", 20, 10, 8L),//explosive
+    LIGHTWEIGHT("LightWeight", "Sword", 35, 20, 40L),//featherweight
+    MOLTEN("Molten", "Armor", 30, 10, 40L),//molten
+    RADIANT("Radiant", "Armor"),//molten??
+    FEEDME("FeedMe", "Axe", 14, 4, 40L),//ravenous
+    NUTRITION("Nutrition", "Sword", 14, 4, 40L),//ravenous but for swords
+    COMMANDER("Commander", "Helmet", 9, 3, 120L),
+    SELFDESTRUCT("SelfDestruct", "Armor", 24, 10, 80L),
+    TELEPATHY("Telepathy", "Tool", 40, 20),
+    //sustain missing SUSTAIN("Sustain", "Armor", 12, 2, 160L)
+    SKILLSWIPE("SkillSwipe", "Sword", 15, 2, 100L),
+    //plague carrier PLAGUECARRIER("PlagueCarrier", "Armor", 20, 10, 60L)
+    VIRUS("Virus", "Bow", 16, 4),
+
     //NEW - Imperium
     POISONED("Poisoned", "Armor", 10, 5),
     HARDENED("Hardened", "Armor", 30, 10),
     LONGBOW("Longbow", "Bow", 30, 10),
     UNFOCUS("Unfocus", "Bow", 10, 5),
-    WARD("Ward", "Armor", 10, 5),
-    VIRUS("Virus", "Bow", 16, 4),
-    OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15),
     ENDERSLAYER("Enderslayer", "Sword", 50, 10),
     REAPER("Reaper", "Axe", 10, 3),
     //Modified: Reaper now scales damage based on XP, and will no longer apply wither effects.
@@ -197,7 +203,6 @@ public enum CEnchantments {
     STUN("Stun", "Sword", 10, 10),
     JUDGEMENT("Judgement", "Armor", 10, 10),
     BLACKSMITH("Blacksmith", "Axe", 30, 10),
-    CURSE("Curse", "Armor", 40, 10, "Chestplate"),
     RAGDOLL("Ragdoll", "Armor", 30, 5),
     ARROWBREAK("Arrowbreak", "Axe", 10, 10),
     ARROWDEFLECT("Arrowdeflect", "Armor", 10, 10),
