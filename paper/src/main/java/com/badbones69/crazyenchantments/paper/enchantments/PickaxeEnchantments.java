@@ -57,8 +57,6 @@ public class PickaxeEnchantments implements Listener {
 
     private final HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
 
-    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockClick(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -155,7 +153,6 @@ public class PickaxeEnchantments implements Listener {
         CEnchantment autosmeltEnchant = CEnchantments.AUTOSMELT.getEnchantment();
 
         if (EnchantUtils.isEventActive(CEnchantments.AUTOSMELT, player, itemInHand, enchants)) {
-            //this.enchantmentBookSettings.tryCooldown(furnanceEnchant, CEnchantments.AUTOSMELT, itemInHand, player.getUniqueId(), 1L);
             int level = enchantmentBookSettings.getLevel(itemInHand, autosmeltEnchant);
 
             for (Item itemEntity : drops) {
@@ -180,16 +177,10 @@ public class PickaxeEnchantments implements Listener {
                     ItemStack drop = itemEntity.getItemStack();
                     if (!isSmeltable(drop.getType())) continue;
 
-                    player.sendMessage("Furnance success.");
                     itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
                     changeDrop(event.getBlock().getLocation(), event);
                 }
-            } else {
-                player.sendMessage("Furnace on cooldown.");
             }
-        } else {
-            Bukkit.getLogger().warning("It looks like this item does not have Furnace");
-            Bukkit.getLogger().warning("Or the key is null for some reason.");
         }
     }
     //AutoSmelt/furnace ^^^
@@ -197,14 +188,13 @@ public class PickaxeEnchantments implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onExperience(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        UUID playerUUID = player.getUniqueId();
         ItemStack item = player.getInventory().getItemInMainHand();
         //check enchantments
         Map<CEnchantment, Integer> enchants = Optional.of(this.enchantmentBookSettings.getEnchantments(item)).orElse(Collections.emptyMap());
 
         if (EnchantUtils.isEventActive(CEnchantments.EXPERIENCE, player, item, enchants)) {
             CEnchantment enchant = CEnchantments.EXPERIENCE.getEnchantment();
-            int level = this.enchantmentBookSettings.getLevel(item, CEnchantments.EXPERIENCE.getEnchantment());
+            int level = this.enchantmentBookSettings.getLevel(item, enchant);
 
             if (CEnchantments.EXPERIENCE.isOffCooldown(player.getUniqueId(), level, true)) {
 
@@ -224,20 +214,6 @@ public class PickaxeEnchantments implements Listener {
         }
     }
     //Experience ^^^
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onObsidianBlockBreak(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-
-        Block block = event.getClickedBlock();
-        if (block == null) return;
-
-        if (!block.getType().equals(Material.OBSIDIAN)) return;
-        player.playSound(player, Sound.BLOCK_CALCITE_BREAK, 10, 10);
-        block.setType(Material.AIR);
-
-
-    }
 
     private HashSet<Block> getOreBlocks(Location loc, int amount) {
         HashSet<Block> blocks = new HashSet<>(Set.of(loc.getBlock()));

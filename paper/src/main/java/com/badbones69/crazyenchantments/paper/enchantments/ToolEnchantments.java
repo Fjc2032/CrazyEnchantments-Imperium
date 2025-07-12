@@ -8,6 +8,7 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,6 +60,11 @@ public class ToolEnchantments implements Listener {
         if (!block.isSolid()) return;
 
         if (EnchantUtils.isEventActive(CEnchantments.REFORGED, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) reforgedTrigger(player, tool);
+        if (EnchantUtils.isEventActive(CEnchantments.OBBYDESTROYER, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) {
+            if (!block.getType().equals(Material.OBSIDIAN)) return;
+            player.playSound(player, Sound.BLOCK_CALCITE_BREAK, 1.0F, 2.0F);
+            block.setType(Material.AIR);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -76,10 +82,9 @@ public class ToolEnchantments implements Listener {
         Player player = event.getPlayer();
         ItemStack item = this.methods.getItemInHand(player);
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
+        Block block = player.getLocation().getBlock();
 
         if (EnchantUtils.isEventActive(CEnchantments.OXYGENATE, player, item, enchantments)) {
-            Material blockType = player.getLocation().getBlock().getType();
-
             if (player.isInWater()) {
 
                 int level = this.enchantmentBookSettings.getLevel(item, CEnchantments.OXYGENATE.getEnchantment());
@@ -94,6 +99,10 @@ public class ToolEnchantments implements Listener {
                     player.sendMessage("Oxygenate on cooldown!");
                 }
             }
+        }
+        if (EnchantUtils.isEventActive(CEnchantments.ABIDING, player, item, enchantments)) {
+            if (item.getItemMeta().isUnbreakable()) return;
+            keepDurability(player, item);
         }
     }
 
@@ -124,10 +133,13 @@ public class ToolEnchantments implements Listener {
         player.sendMessage("New durability: " + newDurability);
     }
     private void keepDurability(@NotNull Player player, @Nullable ItemStack tool) {
-        if (tool == null) return;
+        if (tool == null) {
+            this.plugin.getLogger().warning("[DEBUG] [Abiding] Something is wrong with the tool you are using.");
+            this.plugin.getLogger().warning("[DEBUG] [Abiding] Null.");
+            return;
+        } else this.plugin.getLogger().info("[DEBUG] [Abiding] Got the tool. Continuing...");
         ItemMeta meta = tool.getItemMeta();
-        Damageable damageable = (Damageable) meta;
-        damageable.setUnbreakable(true);
+        meta.setUnbreakable(true);
         tool.setItemMeta(meta);
     }
 }

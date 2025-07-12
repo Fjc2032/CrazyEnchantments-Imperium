@@ -19,7 +19,6 @@ import com.badbones69.crazyenchantments.paper.controllers.BossBarController;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.scheduler.FoliaRunnable;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import org.bukkit.Bukkit;
@@ -52,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class SwordEnchantments implements Listener {
 
@@ -84,6 +84,8 @@ public class SwordEnchantments implements Listener {
     @NotNull
     private final CurrencyAPI currencyAPI = this.starter.getCurrencyAPI();
 
+    //Other
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
         if (EventUtils.isIgnoredEvent(event) || EventUtils.isIgnoredUUID(event.getDamager().getUniqueId())) return;
@@ -113,6 +115,8 @@ public class SwordEnchantments implements Listener {
 
         CEPlayer cePlayer = this.crazyManager.getCEPlayer(damager);
         ItemStack item = this.methods.getItemInHand(damager);
+
+        @NotNull final Double maxhealth = damager.getAttribute(Attribute.MAX_HEALTH).getValue();
 
         if (event.getEntity().isDead()) return;
 
@@ -228,11 +232,10 @@ public class SwordEnchantments implements Listener {
         if (damager.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.LIFESTEAL, damager, item, enchantments)) {
             int steal = enchantments.get(CEnchantments.LIFESTEAL.getEnchantment());
             // Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
-            double maxHealth = damager.getAttribute(Attribute.MAX_HEALTH).getValue();
 
-            if (damager.getHealth() + steal < maxHealth) damager.setHealth(damager.getHealth() + steal);
+            if (damager.getHealth() + steal < maxhealth) damager.setHealth(damager.getHealth() + steal);
 
-            if (damager.getHealth() + steal >= maxHealth) damager.setHealth(maxHealth);
+            if (damager.getHealth() + steal >= maxhealth) damager.setHealth(maxhealth);
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.NUTRITION, damager, item, enchantments)) {
@@ -245,12 +248,11 @@ public class SwordEnchantments implements Listener {
 
         if (damager.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.VAMPIRE, damager, item, enchantments)) {
             // Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
-            double maxHealth = damager.getAttribute(Attribute.MAX_HEALTH).getValue();
 
-            if (damager.getHealth() + event.getDamage() / 2 < maxHealth)
+            if (damager.getHealth() + event.getDamage() / 2 < maxhealth)
                 damager.setHealth(damager.getHealth() + event.getDamage() / 2);
 
-            if (damager.getHealth() + event.getDamage() / 2 >= maxHealth) damager.setHealth(maxHealth);
+            if (damager.getHealth() + event.getDamage() / 2 >= maxhealth) damager.setHealth(maxhealth);
         }
 
         //Imperium Enchants: Insomnia
@@ -358,31 +360,38 @@ public class SwordEnchantments implements Listener {
         }
         //IMPERIUM
         if (EnchantUtils.isEventActive(CEnchantments.ENDERSLAYER, damager, item, enchantments)) {
-            if (!(event.getEntity() instanceof EnderMan) || !(event.getEntity() instanceof EnderDragon)) return;
-            double damage = event.getDamage();
-            event.setDamage(damage * (this.enchantmentBookSettings.getLevel(item, CEnchantments.ENDERSLAYER.getEnchantment())));
+            @NotNull final Set<Class<? extends LivingEntity>> endmobs = Set.of(
+                    Enderman.class,
+                    Endermite.class,
+                    Shulker.class,
+                    EnderDragon.class
+            );
+            CEnchantment enderslayerEnchant = CEnchantments.ENDERSLAYER.getEnchantment();
+            double damage = event.getDamage() * this.enchantmentBookSettings.getLevel(item, enderslayerEnchant);
+            if (endmobs.contains(en.getClass())) en.damage(damage);
+            event.setDamage(damage);
         }
+        //todo lol does this even work?
         if (EnchantUtils.isEventActive(CEnchantments.NETHERSLAYER, damager, item, enchantments)) {
+            @NotNull final Set<Class<? extends LivingEntity>> nethermobs = Set.of(
+                    Blaze.class,
+                    Piglin.class,
+                    PiglinBrute.class,
+                    MagmaCube.class,
+                    PigZombie.class,
+                    WitherSkeleton.class,
+                    Zoglin.class
+            );
             CEnchantment netherslayerEnchant = CEnchantments.NETHERSLAYER.getEnchantment();
-            double damage = event.getDamage();
-            switch (event.getEntity()) {
-                case Blaze blaze -> blaze.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                case Piglin piglin -> piglin.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                case PiglinBrute piglinBrute -> piglinBrute.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                case MagmaCube magmaCube -> magmaCube.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                case PigZombie pigZombie -> pigZombie.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                case WitherSkeleton witherSkeleton -> witherSkeleton.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                case Zoglin zoglin -> zoglin.damage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
-                default -> {
-                    return;
-                }
-            }
-            event.setDamage(damage * (this.enchantmentBookSettings.getLevel(item, netherslayerEnchant)));
+            double damage = event.getDamage() * this.enchantmentBookSettings.getLevel(item, netherslayerEnchant);
+            if (nethermobs.contains(en.getClass())) en.damage(damage);
+            event.setDamage(damage);
         }
         if (EnchantUtils.isEventActive(CEnchantments.SHACKLE, damager, item, enchantments)) {
+            CEnchantment shackleEnchant = CEnchantments.SHACKLE.getEnchantment();
             Location playerPos = damager.getLocation();
             Vector vector = playerPos.toVector().subtract(en.getLocation().toVector());
-            vector.normalize().multiply(1);
+            vector.normalize().multiply(2 + this.enchantmentBookSettings.getLevel(item, shackleEnchant));
             en.setVelocity(vector);
         }
         if (EnchantUtils.isEventActive(CEnchantments.GREATSWORD, damager, item, enchantments)) {
@@ -418,19 +427,32 @@ public class SwordEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.SILENCE, damager, item, enchantments)) {
             if (!(en instanceof Player target)) return;
 
-            ItemStack[] playerItems = target.getInventory().getContents();
+            List<ItemStack> inv = new ArrayList<>();
+            Collections.addAll(inv, target.getInventory().getArmorContents());
+            Collections.addAll(inv, target.getInventory().getContents());
+            inv.add(target.getInventory().getItemInOffHand());
 
-            for (ItemStack targetItem : playerItems) {
-                @NotNull Map<CEnchantment, Integer> enchantmentIntegerMap = this.enchantmentBookSettings.getEnchantments(targetItem);
-                @NotNull Set<CEnchantment> enchantmentSet = enchantmentIntegerMap.keySet();
+            for (ItemStack targetItem : inv) {
+                @NotNull Map<CEnchantment, Integer> enchantmentMap = this.enchantmentBookSettings.getEnchantments(targetItem);
                 @NotNull List<BukkitTask> silenceTask = new ArrayList<>();
 
-                for (CEnchantment enchantment : enchantmentSet) {
+                if (targetItem == null || targetItem.getType().isAir()) continue;
+
+                if (enchantmentMap.containsKey(null)) {
+                    this.plugin.getLogger().warning("[DEBUG] [Silence] One or more objects in the keyset is null!");
+                    this.plugin.getLogger().warning("[DEBUG] [Silence] This might cause some problems.");
+                }
+
+                for (CEnchantment enchantment : enchantmentMap.keySet()) {
                     silenceTask.add(this.scheduler.runTaskTimer(plugin, () -> enchantment.setActivated(false), 20L, 20L));
+                    this.plugin.getLogger().info("[DEBUG] [Silence] Silence task added!");
 
                     for (BukkitTask task : silenceTask) {
-                        this.scheduler.runTaskLater(plugin, task::cancel, 60L);
-                        enchantment.setActivated(true);
+                        this.scheduler.runTaskLater(plugin, () -> {
+                            task.cancel();
+                            enchantment.setActivated(true);
+                            this.plugin.getLogger().info("[DEBUG] [Silence] Runnable for silence stopped!");
+                        }, 60L);
                     }
                 }
             }

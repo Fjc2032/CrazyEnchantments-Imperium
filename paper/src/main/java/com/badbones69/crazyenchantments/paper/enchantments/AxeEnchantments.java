@@ -4,6 +4,7 @@ import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
 import com.badbones69.crazyenchantments.paper.Methods;
 import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.CrazyManager;
+import com.badbones69.crazyenchantments.paper.api.FileManager;
 import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.events.PreBookApplyEvent;
 import com.badbones69.crazyenchantments.paper.api.objects.CEBook;
@@ -15,10 +16,13 @@ import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -33,6 +37,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -64,6 +69,10 @@ public class AxeEnchantments implements Listener {
     @NotNull
     private final PluginSupport pluginSupport = this.starter.getPluginSupport();
 
+    //Local management
+    @NotNull
+    private final HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
+
     private double getCurrentBleedStack() {
         return this.bleedStack;
     }
@@ -86,7 +95,7 @@ public class AxeEnchantments implements Listener {
     private double handleBleedCap(@NotNull CEnchantments data, double bleed, double cap) {
         this.bleedStack = bleed;
         this.bleedCap = cap;
-        if (bleed > cap) bleed = (cap + data.getChance());
+        if (bleed > cap) bleed = Math.min(cap, cap + data.getChance() * 0.5);
         this.starter.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
         this.starter.getLogger().warning("New bleed stack: " + bleed);
         return this.bleedStack = bleed;
@@ -174,9 +183,6 @@ public class AxeEnchantments implements Listener {
             CEnchantment cleaveEnchant = CEnchantments.CLEAVE.getEnchantment();
             //Get the world the player is in.
             World world = damager.getWorld();
-
-            //Cancel if you're in a claim
-            if (this.pluginSupport.inClaim(damager)) return;
 
             int cleaveLvl = this.enchantmentBookSettings.getLevel(item, cleaveEnchant);
 
@@ -415,6 +421,42 @@ public class AxeEnchantments implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        final Player player = event.getPlayer();
+        final ItemStack axe = player.getInventory().getItemInMainHand();
+
+        final Block initialBlock = event.getBlock();
+        final Location position = initialBlock.getLocation();
+        final HashSet<Block> targets = getSurroundingBlocks(position);
+        final Set<Block> allblocks = reachMoreBlocks(
+                position,
+                this.blocks.get(player).get(initialBlock),
+                this.enchantmentBookSettings.getLevel(axe, CEnchantments.TIMBER.getEnchantment())
+        );
+
+        //Using the Blast boolean cause im lazy AF and cant be bothered to make another one
+        boolean damage = FileManager.Files.CONFIG.getFile().getBoolean(
+                "Settings.EnchantmentOptions.Blast-Full-Durability"
+        );
+
+        Collections.addAll(Arrays.asList(allblocks.toArray()), targets);
+        this.blocks.remove(player);
+
+        final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(axe);
+
+        final Sound sound = Sound.BLOCK_WOOD_BREAK;
+
+        if (!EnchantUtils.isEventActive(CEnchantments.TIMBER, player, axe, enchants)) return;
+        for (Block block: allblocks) {
+            if (block.isEmpty()) continue;
+            block.breakNaturally(axe, true, true);
+            player.playSound(player, sound, 1.0F, 2.0F);
+            if (damage) this.methods.removeDurability(axe, player);
+        }
+        if (!damage) this.methods.removeDurability(axe, player);
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBookApply(PreBookApplyEvent event) {
         CEBook book = event.getCEBook();
@@ -439,5 +481,66 @@ public class AxeEnchantments implements Listener {
         }};
 
         bad.forEach(player::removePotionEffect);
+    }
+    @NotNull private HashSet<Block> getSurroundingBlocks(Location area) {
+        HashSet<Block> adj = new HashSet<>();
+        adj.add(area.clone().add(0, 1, 0).getBlock());
+        adj.add(area.clone().add(0, -1, 0).getBlock());
+        adj.add(area.clone().add(1, 0, 1).getBlock());
+        adj.add(area.clone().add(-1, 0, 0).getBlock());
+        adj.add(area.clone().add(0, 0, 1).getBlock());
+        adj.add(area.clone().add(0, 0, -1).getBlock());
+
+        return adj;
+    }
+
+    @NotNull private HashSet<Block> reachMoreBlocks(Location area, BlockFace region, Integer depth) {
+        Location secondary = area.clone();
+
+        switch (region) {
+            case UP -> {
+                area.add(-1, -depth, -1);
+                secondary.add(-1, 0, -1);
+            }
+            case DOWN -> {
+                area.add(1, depth, 1);
+                secondary.add(-1, 0, -1);
+            }
+            case EAST -> {
+                area.add(-depth, 1, 1);
+                secondary.add(0, -1, -1);
+            }
+            case WEST -> {
+                area.add(depth, 1, -1);
+                secondary.add(0, -1, 1);
+            }
+            case NORTH -> {
+                area.add(1, 1, depth);
+                secondary.add(-1, -1, 0);
+            }
+            case SOUTH -> {
+                area.add(-1, 1, -depth);
+                secondary.add(0, -1, 1);
+            }
+            case SELF -> {
+                area.add(-depth, 0, depth);
+                secondary.add(0, 0 ,0);
+            }
+            case NORTH_EAST -> {
+
+            }
+            case NORTH_WEST -> {
+
+            }
+            case SOUTH_EAST -> {
+
+            }
+            case SOUTH_WEST -> {
+
+            }
+            case null, default -> {}
+        }
+
+        return this.methods.getEnchantBlocks(area, secondary);
     }
 }
