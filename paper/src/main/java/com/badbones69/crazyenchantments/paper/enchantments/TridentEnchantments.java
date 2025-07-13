@@ -7,8 +7,8 @@ import com.badbones69.crazyenchantments.paper.api.enums.CEnchantments;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import io.papermc.paper.event.player.PlayerArmSwingEvent;
+import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
@@ -23,9 +23,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TridentEnchantments implements Listener {
 
@@ -56,6 +55,50 @@ public class TridentEnchantments implements Listener {
         if (!item.equals(ItemStack.of(Material.TRIDENT))) return;
 
         Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(item);
+
+        World world = shooter.getWorld();
+
+        if (EnchantUtils.isEventActive(CEnchantments.AURA, shooter, item, enchants)) {
+            CEnchantment auraEnchant = CEnchantments.AURA.getEnchantment();
+            List<BukkitTask> runnables = new ArrayList<>();
+            AtomicInteger time = new AtomicInteger();
+            int newtime = time.get();
+            double level = this.enchantmentBookSettings.getLevel(item, auraEnchant);
+
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> {
+                @NotNull Collection<LivingEntity> targets = world.getNearbyLivingEntities(
+                        trident.getLocation(),
+                        4 + level
+                );
+                for (LivingEntity entity : targets) {
+                    if (entity.equals(shooter)) continue;
+                    entity.damage(level);
+                }
+                Material material = Material.BREEZE_ROD;
+                world.spawnParticle(
+                        Particle.SMOKE,
+                        trident.getLocation(),
+                        20,
+                        material.createBlockData()
+                );
+            }, 0L, 20L));
+
+            //todo tf am i doing with this?
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> time.getAndIncrement(), 0L, 20L));
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> shooter.sendMessage("AURA active for " + newtime / 20), 1L, 20L));
+
+            this.scheduler.runTaskTimer(plugin, () -> {
+                for (BukkitTask task : runnables) {
+                    if (!trident.isValid() || trident.isInBlock() || trident.hasDealtDamage()) task.cancel();
+                }
+            }, 0L, 20L);
+
+            //Stop the aura if it takes too long to cancel by itself
+            this.scheduler.runTaskLater(plugin, () -> {
+                for (BukkitTask task : runnables) task.cancel();
+            }, 300L);
+        }
+
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTridentHit(EntityDamageByEntityEvent event) {
@@ -67,7 +110,6 @@ public class TridentEnchantments implements Listener {
         if (!(event.getEntity() instanceof LivingEntity target)) return;
 
         ItemStack item = this.methods.getItemInHand(shooter);
-        if (!(item.equals(ItemStack.of(Material.TRIDENT)))) return;
 
         Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(item);
 
@@ -86,7 +128,7 @@ public class TridentEnchantments implements Listener {
 
         if (EnchantUtils.isEventActive(CEnchantments.TWINGE, attacker, item, enchants)) {
             CEnchantment twingeEnchant = CEnchantments.TWINGE.getEnchantment();
-            double twingeStack = (event.getDamage() / (4.37 - this.enchantmentBookSettings.getLevel(item, twingeEnchant)));
+            double twingeStack = (event.getDamage() / (twingeEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, twingeEnchant)));
 
             List<BukkitTask> twingeTasks = new ArrayList<>();
 
@@ -98,5 +140,15 @@ public class TridentEnchantments implements Listener {
                 for (BukkitTask task : twingeTasks) task.cancel();
             }, 80L);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onTridentSwing(PlayerArmSwingEvent event) {
+        Player player = event.getPlayer();
+        Location target = player.getEyeLocation();
+        Location location = player.getLocation();
+
+        double distance = target.distance(location);
+
     }
 }

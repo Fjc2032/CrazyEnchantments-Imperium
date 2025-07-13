@@ -111,3 +111,22 @@ GKitz: #GKit options.
       - 'Item:BOOK, Amount:1, Name:&b&lOverLoad V, Lore:&7Gives health boost,&7when you put it on.,'
     Commands:
       - 'ce book overload 5 1 %Player%'
+  Alpha-God:
+    Display:
+      Slot: 18
+      Item: 'NETHER_STAR'
+      Glowing: true
+      Name: '&dAlpha God Testing Kit'
+      Lore:
+        - '&7A god set built using the new enchantment API.'
+        - '&7Should only be used for testing purposes.'
+    Auto-Equip: false
+    Cooldown: '60s'
+    Items:
+      - 'Item:NETHERITE_HELMET, Amount:1, Name:Helmet, Protection:8, Unbreaking:3, Mending:1, Ward:4, Angelic:5, Implants:5, Glowing:1'
+      - 'Item:NETHERITE_CHESTPLATE, Amount:1, Name:Chestplate, Protection:8, Unbreaking:3, Mending:1, Angelic:5, Ward:4, Diminsh:6, Overload:5, Armored:4, Hulk:5'
+      - 'Item:NETHERITE_LEGGINGS, Amount:1, Name:Leggings, Protection:8, Unbreaking:3, Mending:1, Angelic:5, Ward:4'
+      - 'Item:NETHERITE_BOOTS, Amount:1, Name:Boots, Protection:8, Unbreaking:3, Mending:1, Gears:3, Quiver:6, Anti-Gravity:3, Angelic:5, Ward:4'
+      - 'Item:NETHERITE_AXE, Amount:1, Name:Axe, Sharpness:10, Unbreaking:3, Mending:1, Rage:3, Bleed:8, Devour:4, Reaper:4, Corrupt:4, Cleave:7, Blessed:3, Berserk:3, Barbarian:4, Insanity:8, Arrow_break:6'
+      - 'Item:NETHERITE_SWORD, Amount:1, Name:Sword, Sharpness:10, Unbreaking:3, Mending:1, Rage:3, Trap:2, Execute:5, Vampire:5, LifeSteal:5, Inversion:4, Disarmer:3, DoubleDamage:3'
+      - 'Item:BOW, Amount:1, Name:BOW, Power:10, Unbreaking:3, Infinity:1, Sniper:3, Farcast:5, MultiArrow:5, Unfocus:5, Longbow:4'

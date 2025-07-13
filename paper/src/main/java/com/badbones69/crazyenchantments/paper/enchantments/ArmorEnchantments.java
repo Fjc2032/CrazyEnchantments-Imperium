@@ -396,7 +396,7 @@ public class ArmorEnchantments implements Listener {
                 victim.setHealth(victim.getHealth() + (1 + ((double) CEnchantments.ENDERWALKER.getChance() / 20)));
             }
             if (EnchantUtils.isEventActive(CEnchantments.TANK, player, armor, enchants)) {
-                @NotNull ItemStack weapon = damager.getActiveItem();
+                @NotNull ItemStack weapon = this.methods.getItemInHand(player);
                 @NotNull Set<ItemStack> axes = Set.of(
                         ItemStack.of(Material.WOODEN_AXE),
                         ItemStack.of(Material.STONE_AXE),

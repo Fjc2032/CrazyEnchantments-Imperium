@@ -36,8 +36,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -61,10 +61,6 @@ public class AxeEnchantments implements Listener {
     @NotNull
     private final BukkitScheduler scheduler = Bukkit.getScheduler();
 
-    //Private fields that handles bleed damage amounts.
-    private double bleedStack;
-    private double bleedCap;
-
     // Plugin Support.
     @NotNull
     private final PluginSupport pluginSupport = this.starter.getPluginSupport();
@@ -72,6 +68,20 @@ public class AxeEnchantments implements Listener {
     //Local management
     @NotNull
     private final HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
+
+    private double bleedStack;
+
+    private double bleedCap;
+
+    @NotNull
+    private final Set<ItemStack> axes = Set.of(
+            ItemStack.of(Material.WOODEN_AXE),
+            ItemStack.of(Material.STONE_AXE),
+            ItemStack.of(Material.IRON_AXE),
+            ItemStack.of(Material.GOLDEN_AXE),
+            ItemStack.of(Material.DIAMOND_AXE),
+            ItemStack.of(Material.NETHERITE_AXE)
+    );
 
     private double getCurrentBleedStack() {
         return this.bleedStack;
@@ -230,16 +240,7 @@ public class AxeEnchantments implements Listener {
             if (!(event.getEntity() instanceof LivingEntity target)) return;
             ItemStack axe = target.getActiveItem();
 
-            @NotNull Set<ItemStack> axes = Set.of(
-                    ItemStack.of(Material.WOODEN_AXE),
-                    ItemStack.of(Material.STONE_AXE),
-                    ItemStack.of(Material.IRON_AXE),
-                    ItemStack.of(Material.GOLDEN_AXE),
-                    ItemStack.of(Material.DIAMOND_AXE),
-                    ItemStack.of(Material.NETHERITE_AXE)
-            );
-
-            for (ItemStack selectedItem : axes) {
+            for (ItemStack selectedItem : this.axes) {
                 if (selectedItem.equals(axe)) {
                     event.setDamage(event.getDamage() + (1 + (double) CEnchantments.INSANITY.getChance() / 100));
                 }
@@ -421,10 +422,19 @@ public class AxeEnchantments implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @ApiStatus.Experimental()
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final ItemStack axe = player.getInventory().getItemInMainHand();
+        CEnchantment timberEnchant = CEnchantments.TIMBER.getEnchantment();
+
+        final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(axe);
+
+        if (!EnchantUtils.isEventActive(CEnchantments.TIMBER, player, axe, enchants)) return;
+
+        if (!this.enchantmentBookSettings.hasEnchantment(axe.getItemMeta(), timberEnchant)) return;
+        if (!this.axes.contains(axe)) return;
 
         final Block initialBlock = event.getBlock();
         final Location position = initialBlock.getLocation();
@@ -432,7 +442,7 @@ public class AxeEnchantments implements Listener {
         final Set<Block> allblocks = reachMoreBlocks(
                 position,
                 this.blocks.get(player).get(initialBlock),
-                this.enchantmentBookSettings.getLevel(axe, CEnchantments.TIMBER.getEnchantment())
+                this.enchantmentBookSettings.getLevel(axe, timberEnchant)
         );
 
         //Using the Blast boolean cause im lazy AF and cant be bothered to make another one
@@ -443,11 +453,8 @@ public class AxeEnchantments implements Listener {
         Collections.addAll(Arrays.asList(allblocks.toArray()), targets);
         this.blocks.remove(player);
 
-        final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(axe);
-
         final Sound sound = Sound.BLOCK_WOOD_BREAK;
 
-        if (!EnchantUtils.isEventActive(CEnchantments.TIMBER, player, axe, enchants)) return;
         for (Block block: allblocks) {
             if (block.isEmpty()) continue;
             block.breakNaturally(axe, true, true);
