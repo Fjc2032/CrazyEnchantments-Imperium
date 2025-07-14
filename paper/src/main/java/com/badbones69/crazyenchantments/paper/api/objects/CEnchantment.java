@@ -109,6 +109,9 @@ public class CEnchantment {
     public boolean isActivated() {
         return this.activated;
     }
+    public boolean isNotActivated() {
+        return !this.activated;
+    }
 
     public CEnchantment setActivated(boolean activated) {
         this.activated = activated;

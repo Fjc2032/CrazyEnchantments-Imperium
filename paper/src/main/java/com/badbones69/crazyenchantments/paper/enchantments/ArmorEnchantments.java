@@ -386,7 +386,7 @@ public class ArmorEnchantments implements Listener {
             if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, player, armor, enchants)) {
                 CEnchantment angelicEnchant = CEnchantments.ANGELIC.getEnchantment();
                 double modifier = player.getHealth() + (this.enchantmentBookSettings.getLevel(armor, angelicEnchant));
-                if (modifier > maxhealth.getValue()) modifier = maxhealth.getValue();
+                if (modifier >= maxhealth.getValue()) modifier = maxhealth.getValue();
                 player.setHealth(modifier);
             }
             if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, player, armor, enchants)) {

@@ -9,6 +9,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,6 +28,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,6 +57,7 @@ public class ToolEnchantments implements Listener {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         ItemStack tool = event.getItem();
+        World world = player.getWorld();
 
         if (block == null) return;
         if (!block.isSolid()) return;
@@ -64,6 +67,7 @@ public class ToolEnchantments implements Listener {
             if (!block.getType().equals(Material.OBSIDIAN)) return;
             player.playSound(player, Sound.BLOCK_CALCITE_BREAK, 1.0F, 2.0F);
             block.setType(Material.AIR);
+            world.dropItemNaturally(block.getLocation(), ItemStack.of(Material.OBSIDIAN));
         }
     }
 
@@ -82,7 +86,6 @@ public class ToolEnchantments implements Listener {
         Player player = event.getPlayer();
         ItemStack item = this.methods.getItemInHand(player);
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
-        Block block = player.getLocation().getBlock();
 
         if (EnchantUtils.isEventActive(CEnchantments.OXYGENATE, player, item, enchantments)) {
             if (player.isInWater()) {
@@ -114,8 +117,14 @@ public class ToolEnchantments implements Listener {
 
         if (EnchantUtils.isEventActive(CEnchantments.HASTE, player, item, enchantments)) {
             int power = enchantments.get(CEnchantments.HASTE.getEnchantment());
-            player.removePotionEffect(PotionEffectType.HASTE);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, potionTime, power - 1));
+
+            Collection<PotionEffect> effects = player.getActivePotionEffects();
+            for (PotionEffect effect : effects) {
+                if (effect.getType().equals(PotionEffectType.HASTE) && effect.getAmplifier() < 4) {
+                    player.removePotionEffect(PotionEffectType.HASTE);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, potionTime, power - 1));
+                }
+            }
         }
     }
     private void reforgedTrigger(Player player, ItemStack tool) {

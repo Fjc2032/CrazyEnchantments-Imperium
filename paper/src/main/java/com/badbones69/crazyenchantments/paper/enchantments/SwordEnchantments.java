@@ -421,40 +421,38 @@ public class SwordEnchantments implements Listener {
                     this.enchantmentBookSettings.getLevel(item, CEnchantments.DISTANCE.getEnchantment())));
         }
         if (EnchantUtils.isEventActive(CEnchantments.INVERSION, damager, item, enchantments)) {
-            event.setCancelled(true);
-            damager.setHealth(damager.getHealth() + (this.enchantmentBookSettings.getLevel(item, CEnchantments.INVERSION.getEnchantment())));
+            CEnchantment inversionEnchant = CEnchantments.INVERSION.getEnchantment();
+            event.setDamage(event.getDamage() / 2);
+            double heal = (damager.getHealth() + this.enchantmentBookSettings.getLevel(item, inversionEnchant));
+            if (heal >= maxhealth) heal = maxhealth;
+            damager.setHealth(heal);
         }
         if (EnchantUtils.isEventActive(CEnchantments.SILENCE, damager, item, enchantments)) {
             if (!(en instanceof Player target)) return;
+            int level = this.enchantmentBookSettings.getLevel(item, CEnchantments.SILENCE.getEnchantment());
 
             List<ItemStack> inv = new ArrayList<>();
             Collections.addAll(inv, target.getInventory().getArmorContents());
-            Collections.addAll(inv, target.getInventory().getContents());
             inv.add(target.getInventory().getItemInOffHand());
+            inv.add(target.getInventory().getItemInMainHand());
 
             for (ItemStack targetItem : inv) {
-                @NotNull Map<CEnchantment, Integer> enchantmentMap = this.enchantmentBookSettings.getEnchantments(targetItem);
-                @NotNull List<BukkitTask> silenceTask = new ArrayList<>();
-
                 if (targetItem == null || targetItem.getType().isAir()) continue;
+                @NotNull Map<CEnchantment, Integer> enchantmentMap = this.enchantmentBookSettings.getEnchantments(targetItem);
+                Random random = new Random();
+                int number = random.nextInt(level + 1);
 
-                if (enchantmentMap.containsKey(null)) {
-                    this.plugin.getLogger().warning("[DEBUG] [Silence] One or more objects in the keyset is null!");
-                    this.plugin.getLogger().warning("[DEBUG] [Silence] This might cause some problems.");
-                }
-
-                for (CEnchantment enchantment : enchantmentMap.keySet()) {
-                    silenceTask.add(this.scheduler.runTaskTimer(plugin, () -> enchantment.setActivated(false), 20L, 20L));
-                    this.plugin.getLogger().info("[DEBUG] [Silence] Silence task added!");
-
-                    for (BukkitTask task : silenceTask) {
-                        this.scheduler.runTaskLater(plugin, () -> {
-                            task.cancel();
-                            enchantment.setActivated(true);
-                            this.plugin.getLogger().info("[DEBUG] [Silence] Runnable for silence stopped!");
-                        }, 60L);
-                    }
-                }
+                enchantmentMap.keySet().stream()
+                        .limit(number)
+                        .filter(CEnchantment::isActivated)
+                        .forEach(enchantment -> {
+                            enchantment.setActivated(false);
+                            this.plugin.getLogger().info("[DEBUG] [Silence] Silence task added!");
+                            this.scheduler.runTaskLater(plugin, () -> {
+                                enchantment.setActivated(true);
+                                this.plugin.getLogger().info("[DEBUG] [Silence] Runnable for silence stopped!");
+                            }, 60L);
+                        });
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.STUN, damager, item, enchantments)) {

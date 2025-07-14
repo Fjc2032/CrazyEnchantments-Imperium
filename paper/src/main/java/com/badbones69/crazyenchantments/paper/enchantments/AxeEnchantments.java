@@ -106,6 +106,7 @@ public class AxeEnchantments implements Listener {
         this.bleedStack = bleed;
         this.bleedCap = cap;
         if (bleed > cap) bleed = Math.min(cap, cap + data.getChance() * 0.5);
+        if (Double.isNaN(bleed)) bleed = cap;
         this.starter.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
         this.starter.getLogger().warning("New bleed stack: " + bleed);
         return this.bleedStack = bleed;
@@ -215,10 +216,11 @@ public class AxeEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.CORRUPT, damager, item, enchantments)) {
             CEnchantment corruptEnchant = CEnchantments.CORRUPT.getEnchantment();
+            double level = this.enchantmentBookSettings.getLevel(item, corruptEnchant);
             damager.sendMessage("** CORRUPT **");
             if (!(event.getEntity() instanceof LivingEntity target)) return;
-            double cap = corruptEnchant.getChance();
-            double damageAmt = Math.min(cap, (event.getDamage() / (4 - this.enchantmentBookSettings.getLevel(item, corruptEnchant))));
+            double cap = corruptEnchant.getChanceIncrease() + level;
+            double damageAmt = Math.min(cap, (event.getDamage() / (4 - level)));
             List<BukkitTask> runnables = new ArrayList<>();
 
             runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 2, 0), 0L, 5L));
@@ -252,13 +254,13 @@ public class AxeEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
             CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
-            bleedEnchant.setActivated(true);
+            double level = this.enchantmentBookSettings.getLevel(item, bleedEnchant);
             //Check if the target is a LivingEntity
             if (!(event.getEntity() instanceof LivingEntity player)) return;
 
             //Create a bleed stack
-            double stack = (event.getDamage() / (bleedEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, bleedEnchant)));
-            double cap = bleedEnchant.getChance();
+            double stack = (event.getDamage() / (bleedEnchant.getMaxLevel() - level));
+            double cap = bleedEnchant.getChanceIncrease() + level;
             this.bleedStack = handleBleedCap(CEnchantments.BLEED, stack, cap);
 
             //Particle builder
@@ -295,13 +297,14 @@ public class AxeEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.DEVOUR, damager, item, enchantments)) {
             CEnchantment devourEnchant = CEnchantments.DEVOUR.getEnchantment();
+            double level = this.enchantmentBookSettings.getLevel(item, devourEnchant);
             List<BukkitTask> devourTasks = new ArrayList<>();
 
             if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
                 if (!(event.getEntity() instanceof LivingEntity player)) return;
 
-                double devourStack = (event.getDamage() / (devourEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, devourEnchant)));
-                double cap = devourEnchant.getChance();
+                double devourStack = (event.getDamage() / (devourEnchant.getMaxLevel() - level));
+                double cap = devourEnchant.getChanceIncrease() + level;
                 this.bleedStack = handleBleedCap(CEnchantments.DEVOUR, devourStack, cap);
 
                 devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
