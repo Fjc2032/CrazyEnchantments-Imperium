@@ -216,14 +216,209 @@ public class ArmorEnchantments implements Listener {
         return topEnchants;
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void potionHandler(EntityDamageByEntityEvent event) {
+        if (EventUtils.isIgnoredEvent(event) || EventUtils.isIgnoredUUID(event.getDamager().getUniqueId())) return;
+        if (this.pluginSupport.isFriendly(event.getDamager(), event.getEntity())) return;
+
+        if (!(event.getDamager() instanceof LivingEntity damager) || !(event.getEntity() instanceof Player player)) return;
+
+        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+            Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
+            if (enchants.isEmpty()) continue;
+
+            for (ArmorEnchantment armorEnchantment : this.armorEnchantmentManager.getArmorEnchantments()) {
+                CEnchantments enchantment = armorEnchantment.getEnchantment();
+
+                if (EnchantUtils.isEventActive(enchantment, player, armor, enchants)) {
+
+                    if (armorEnchantment.isPotionEnchantment()) {
+                        for (PotionEffects effect : armorEnchantment.getPotionEffects()) {
+                            damager.addPotionEffect(new PotionEffect(effect.potionEffect(), effect.duration(), (armorEnchantment.isLevelAddedToAmplifier() ? enchants.get(enchantment.getEnchantment()) : 0) + effect.amplifier()));
+                        }
+                    } else {
+                        event.setDamage(event.getDamage() * ((armorEnchantment.isLevelAddedToAmplifier() ? enchants.get(enchantment.getEnchantment()) : 0) + armorEnchantment.getDamageAmplifier()));
+                    }
+                }
+            }
+
+            if (player.getHealth() <= 4 && EnchantUtils.isEventActive(CEnchantments.ADRENALINE, player, armor, enchants)) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3 + (enchants.get(CEnchantments.ADRENALINE.getEnchantment())) * 20, 10));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 3 + (enchants.get(CEnchantments.ADRENALINE.getEnchantment())) * 20, 3));
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.POISONED, player, armor, enchants)) {
+                if (!(damager instanceof Player target)) return;
+                int duration = CEnchantments.POISONED.getChance() / 8;
+                PotionEffect poison = new PotionEffect(PotionEffectType.POISON, duration, 2, true, false, true);
+                target.addPotionEffect(poison);
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.JUDGEMENT, player, armor, enchants)) {
+                CEnchantment judgementEnchant = CEnchantments.JUDGEMENT.getEnchantment();
+                if (!damager.hasPotionEffect(PotionEffectType.POISON)) damager.addPotionEffect(new PotionEffect(PotionEffectType.POISON, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
+                if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
+                CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
+                if (player.getHealth() < 6) {
+                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
+                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 1));
+                }
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.CLARITY, player, armor, enchants)) {
+                if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) player.removePotionEffect(PotionEffectType.BLINDNESS);
+            }
+        }
+
+    }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+    public void healthHandler(EntityDamageByEntityEvent event) {
         if (EventUtils.isIgnoredEvent(event) || EventUtils.isIgnoredUUID(event.getDamager().getUniqueId())) return;
         if (this.pluginSupport.isFriendly(event.getDamager(), event.getEntity())) return;
 
         if (!(event.getDamager() instanceof LivingEntity damager) || !(event.getEntity() instanceof Player player)) return;
 
         final @Nullable AttributeInstance maxhealth = player.getAttribute(Attribute.MAX_HEALTH);
+        double maxhealthdouble = maxhealth.getValue();
+
+        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+            Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
+            if (enchants.isEmpty()) continue;
+
+            for (ArmorEnchantment armorEnchantment : this.armorEnchantmentManager.getArmorEnchantments()) {
+                CEnchantments enchantment = armorEnchantment.getEnchantment();
+
+                if (EnchantUtils.isEventActive(enchantment, player, armor, enchants)) {
+
+                    if (armorEnchantment.isPotionEnchantment()) {
+                        for (PotionEffects effect : armorEnchantment.getPotionEffects()) {
+                            damager.addPotionEffect(new PotionEffect(effect.potionEffect(), effect.duration(), (armorEnchantment.isLevelAddedToAmplifier() ? enchants.get(enchantment.getEnchantment()) : 0) + effect.amplifier()));
+                        }
+                    } else {
+                        event.setDamage(event.getDamage() * ((armorEnchantment.isLevelAddedToAmplifier() ? enchants.get(enchantment.getEnchantment()) : 0) + armorEnchantment.getDamageAmplifier()));
+                    }
+                }
+            }
+            if (player.getHealth() <= event.getFinalDamage() && EnchantUtils.isEventActive(CEnchantments.SYSTEMREBOOT, player, armor, enchants)) {
+                player.setHealth(maxhealth.getValue());
+                event.setCancelled(true);
+
+                return;
+            }
+            if (player.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.ENLIGHTENED, player, armor, enchants)) {
+                double heal = enchants.get(CEnchantments.ENLIGHTENED.getEnchantment());
+                // Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
+
+                if (player.getHealth() + heal < maxhealth.getValue()) player.setHealth(player.getHealth() + heal);
+
+                if (player.getHealth() + heal >= maxhealth.getValue()) player.setHealth(maxhealth.getValue());
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.WARD, player, armor, enchants)) {
+                CEnchantment wardEnchant = CEnchantments.WARD.getEnchantment();
+                double amount = event.getDamage() + this.enchantmentBookSettings.getLevel(armor, wardEnchant);
+                double playerHealth = player.getHealth() + amount;
+                event.setDamage(0.01);
+                if (playerHealth >= maxhealthdouble) playerHealth = maxhealthdouble;
+                player.setHealth(playerHealth);
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, player, armor, enchants)) {
+                CEnchantment angelicEnchant = CEnchantments.ANGELIC.getEnchantment();
+                double modifier = player.getHealth() + (this.enchantmentBookSettings.getLevel(armor, angelicEnchant));
+                if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
+                player.setHealth(modifier);
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.CREEPERARMOR, player, armor, enchants)) {
+                CEnchantment targetEnchant = CEnchantments.CREEPERARMOR.getEnchantment();
+                if (player.getLastDamageCause().getCause().equals(DamageCause.BLOCK_EXPLOSION) || player.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+                    event.setDamage(0.01);
+                }
+                if (CEnchantments.CREEPERARMOR.getChance() >= 15) {
+                    double value = player.getHealth() + this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+                    if (value >= maxhealthdouble) value = maxhealthdouble;
+                    player.setHealth(value);
+                    double rep = player.getHealth() - this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+                    player.sendMessage("** CREEPER ARMOR **\nHealed for " + rep);
+                }
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, player, armor, enchants)) {
+                double modifier = player.getHealth() / 2;
+                if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
+                if (player.getHealth() < modifier) {
+                    player.setHealth(player.getHealth() + (CEnchantments.DEATHGOD.getChance() + 5));
+                }
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, player, armor, enchants)) {
+                CEnchantment endwalkerEnchant = CEnchantments.ENDERWALKER.getEnchantment();
+                if (!(event.getEntity() instanceof Player victim)) return;
+                if (victim.hasPotionEffect(PotionEffectType.POISON)) victim.removePotionEffect(PotionEffectType.POISON);
+                if (victim.hasPotionEffect(PotionEffectType.WITHER)) victim.removePotionEffect(PotionEffectType.WITHER);
+                double modifier = player.getHealth() + this.enchantmentBookSettings.getLevel(armor, endwalkerEnchant);
+                if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
+                victim.setHealth(modifier);
+            }
+            if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
+                //Declare a new empty collection of blazes as an ArrayList
+                Collection<Blaze> blazes = new ArrayList<>();
+                List<BukkitTask> spiritTasks = new ArrayList<>();
+
+                //Get the world, position, and region the player is in.
+                CEnchantment targetEnchant = CEnchantments.SPIRITS.getEnchantment();
+                World world = player.getWorld();
+                Location playerPos = player.getLocation();
+                BoundingBox box = player.getBoundingBox();
+
+                //Get the level of the enchantment as a variable
+                int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+
+                //Iterate through the enchantment levels. For every level, another blaze can be spawned.
+                for (int i = 0; i < level; i++) {
+                    world.spawn(playerPos, Blaze.class);
+                }
+                //Builds a new runnable that checks the amount of blazes in player region, then adds them to the
+                //new Collection.
+                spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
+                    Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
+                    for (Entity entity : nearbyEntities) {
+                        if (!(entity instanceof Blaze blaze)) continue;
+                        blaze.setTarget(damager);
+                        blazes.add(blaze);
+                    }
+
+                }, 40L));
+                //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
+                spiritTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
+                    if (!blazes.isEmpty()) {
+                        double modifier = player.getHealth() + (blazes.size() + level);
+                        double newPlayerHealth = Math.min(modifier, maxhealthdouble);
+                        player.setHealth(newPlayerHealth);
+                    }
+                }, 0L, 20L));
+
+                //Builds a new runnable that removes the blazes after a period of time.
+                spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
+                    for (Blaze blaze : blazes) {
+                        if (!blaze.isDead()) blaze.remove();
+                    }
+                }, 200L));
+
+                this.scheduler.runTaskLater(plugin, () -> {
+                    for (BukkitTask task : spiritTasks) {
+                        if (blazes.isEmpty()) task.cancel();
+                    }
+                }, 400L);
+
+                this.scheduler.runTaskLater(plugin, () -> {
+                    for (BukkitTask task : spiritTasks) task.cancel();
+                }, 500L);
+            }
+        }
+    }
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+        if (EventUtils.isIgnoredEvent(event) || EventUtils.isIgnoredUUID(event.getDamager().getUniqueId())) return;
+        if (this.pluginSupport.isFriendly(event.getDamager(), event.getEntity())) return;
+
+        if (!(event.getDamager() instanceof LivingEntity damager) || !(event.getEntity() instanceof Player player)) return;
 
         for (ItemStack armor : player.getEquipment().getArmorContents()) {
             Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
@@ -262,18 +457,6 @@ public class ArmorEnchantments implements Listener {
                 damager.setVelocity(player.getLocation().getDirection().multiply(2).setY(1.25));
             }
 
-            if (player.getHealth() <= event.getFinalDamage() && EnchantUtils.isEventActive(CEnchantments.SYSTEMREBOOT, player, armor, enchants)) {
-                player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
-                event.setCancelled(true);
-
-                return;
-            }
-
-            if (player.getHealth() <= 4 && EnchantUtils.isEventActive(CEnchantments.ADRENALINE, player, armor, enchants)) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3 + (enchants.get(CEnchantments.ADRENALINE.getEnchantment())) * 20, 10));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 3 + (enchants.get(CEnchantments.ADRENALINE.getEnchantment())) * 20, 3));
-            }
-
             if (player.getHealth() <= 8 && EnchantUtils.isEventActive(CEnchantments.ROCKET, player, armor, enchants)) {
                 // Anti cheat support here with AAC or any others.
                 player.getScheduler().runDelayed(this.plugin, playerTask -> player.setVelocity(player.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(1)), null, 1);
@@ -283,16 +466,6 @@ public class ArmorEnchantments implements Listener {
                 player.getWorld().spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
 
                 player.getScheduler().runDelayed(this.plugin, playerTask -> fallenPlayers.remove(player.getUniqueId()), null, 8 * 20);
-            }
-
-            if (player.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.ENLIGHTENED, player, armor, enchants)) {
-                double heal = enchants.get(CEnchantments.ENLIGHTENED.getEnchantment());
-                // Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
-                double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
-
-                if (player.getHealth() + heal < maxHealth) player.setHealth(player.getHealth() + heal);
-
-                if (player.getHealth() + heal >= maxHealth) player.setHealth(maxHealth);
             }
             //depricated INSOMNIA function 
             //if (EnchantUtils.isEventActive(CEnchantments.INSOMNIA, player, armor, enchants)) damager.damage(event.getDamage() + enchants.get(CEnchantments.INSOMNIA.getEnchantment()));
@@ -313,7 +486,6 @@ public class ArmorEnchantments implements Listener {
 
                 damager.damage(5D);
             }
-            //Stuff for Imperium
             if (damager instanceof Player target) {
                 if (EnchantUtils.isEventActive(CEnchantments.SHUFFLE, player, armor, enchants)) {
                     CEnchantment shuffleEnchant = CEnchantments.SHUFFLE.getEnchantment();
@@ -341,12 +513,6 @@ public class ArmorEnchantments implements Listener {
                     }
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.POISONED, player, armor, enchants)) {
-                if (!(damager instanceof Player target)) return;
-                int duration = CEnchantments.POISONED.getChance() / 8;
-                PotionEffect poison = new PotionEffect(PotionEffectType.POISON, duration, 2, true, false, true);
-                target.addPotionEffect(poison);
-            }
             if (EnchantUtils.isEventActive(CEnchantments.HARDENED, player, armor, enchants)) {
                 CEnchantment hardenedEnchant = CEnchantments.HARDENED.getEnchantment();
                 @Nullable ItemStack @NotNull [] playerArmor = player.getInventory().getArmorContents();
@@ -359,41 +525,24 @@ public class ArmorEnchantments implements Listener {
                     equipment.setItemMeta(meta);
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.WARD, player, armor, enchants)) {
-                if (maxhealth == null) return;
-                double amount = event.getDamage();
-                double playerHealth = player.getHealth();
-                double playerMaxHealth = maxhealth.getValue();
-                event.setCancelled(true);
-                if (playerHealth + amount > playerMaxHealth) {
-                    player.setHealth(playerHealth + (amount / 2));
-                } else {
-                    player.setHealth(playerHealth + amount);
-                }
-            }
             if (EnchantUtils.isEventActive(CEnchantments.TRICKSTER, player, armor, enchants)) {
                 Location playerPos = player.getLocation();
                 Location targetPos = event.getEntity().getLocation();
 
-                Vector direction = playerPos.toVector().subtract(targetPos.toVector());
-                direction.normalize().multiply(2);
-                player.setVelocity(direction);
+                Vector direction = playerPos.toVector().normalize().subtract(targetPos.toVector());
+                direction = direction.normalize().multiply(2);
+
+                try {
+                    player.setVelocity(direction);
+                } catch (IllegalArgumentException error) {
+                    this.plugin.getLogger().severe("Something has gone horribly wrong while attempting this action.");
+                    this.plugin.getLogger().severe("Here is some information:");
+                    this.plugin.getLogger().severe("Directional velocity: " + direction);
+                    this.plugin.getLogger().severe("Error: " + error.getCause());
+                }
             }
             if (EnchantUtils.isEventActive(CEnchantments.MARKSMAN, player, armor, enchants)) {
-                if (!player.getActiveItem().getType().equals(Material.BOW)) return;
-                event.setDamage(event.getDamage() + ((double) CEnchantments.MARKSMAN.getChance() / 100));
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, player, armor, enchants)) {
-                CEnchantment angelicEnchant = CEnchantments.ANGELIC.getEnchantment();
-                double modifier = player.getHealth() + (this.enchantmentBookSettings.getLevel(armor, angelicEnchant));
-                if (modifier >= maxhealth.getValue()) modifier = maxhealth.getValue();
-                player.setHealth(modifier);
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, player, armor, enchants)) {
-                if (!(event.getEntity() instanceof Player victim)) return;
-                if (victim.hasPotionEffect(PotionEffectType.POISON)) victim.removePotionEffect(PotionEffectType.POISON);
-                if (victim.hasPotionEffect(PotionEffectType.WITHER)) victim.removePotionEffect(PotionEffectType.WITHER);
-                victim.setHealth(victim.getHealth() + (1 + ((double) CEnchantments.ENDERWALKER.getChance() / 20)));
+                event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(armor, CEnchantments.MANEUVER.getEnchantment()));
             }
             if (EnchantUtils.isEventActive(CEnchantments.TANK, player, armor, enchants)) {
                 @NotNull ItemStack weapon = this.methods.getItemInHand(player);
@@ -407,50 +556,41 @@ public class ArmorEnchantments implements Listener {
                 );
                 for (ItemStack item : axes) {
                     if (weapon.equals(item)) {
-                        event.setDamage(event.getDamage() - (event.getDamage() * ((double) CEnchantments.TANK.getChance() / 20)));
+                        event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(weapon, CEnchantments.TANK.getEnchantment())));
                         player.sendMessage("TANK activated.");
                     }
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.CREEPERARMOR, player, armor, enchants)) {
-                CEnchantment targetEnchant = CEnchantments.CREEPERARMOR.getEnchantment();
-                if (player.getLastDamageCause().getCause().equals(DamageCause.BLOCK_EXPLOSION) || player.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-                    event.setDamage(0);
-                }
-                if (CEnchantments.CREEPERARMOR.getChance() >= 15) {
-                    player.setHealth(player.getHealth() + this.enchantmentBookSettings.getLevel(armor, targetEnchant));
-                    double rep = player.getHealth() - this.enchantmentBookSettings.getLevel(armor, targetEnchant);
-                    player.sendMessage("** CREEPER ARMOR **\nHealed for " + rep);
-                }
-            }
             if (EnchantUtils.isEventActive(CEnchantments.FAT, player, armor, enchants)) {
                 CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
+                double level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
                 event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(armor, fatEnchant)));
-                if (this.enchantmentBookSettings.getLevel(armor, fatEnchant) >= 5) player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 10, 2));
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, player, armor, enchants)) {
-                event.setDamage(event.getDamage() * 2);
+                if (level >= 5) {
+                    player.setAbsorptionAmount(level * 2);
+                }
             }
             if (EnchantUtils.isEventActive(CEnchantments.DESTRUCTION, player, armor, enchants)) {
+                CEnchantment destructionEnchant = CEnchantments.DESTRUCTION.getEnchantment();
                 //Get the world and region the player is in.
                 World world = player.getWorld();
                 BoundingBox region = player.getBoundingBox();
 
                 //Expand the region to account for nearby entities.
-                region.expand(8, 0, 8);
+                region = region.expand(8);
 
                 //Dump all entities in the BoundingBox into a new Collection
                 Collection<Entity> nearbyEntities = world.getNearbyEntities(region);
+                int limit = 2 + this.enchantmentBookSettings.getLevel(armor, destructionEnchant);
 
-                //Iterate through the collection and damage all entities in the list.
-                for (Entity target : nearbyEntities) {
-                    if (!(target instanceof LivingEntity livingEntity)) return;
-                    livingEntity.damage(event.getDamage() / 2);
-                    target.sendMessage("** Destruction **");
-                }
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, player, armor, enchants)) {
-                if (player.getHealth() < (CEnchantments.DEATHGOD.getChance() + 4)) player.setHealth(player.getHealth() + (CEnchantments.DEATHGOD.getChance() + 5));
+                //Build a stream to damage entities based on the following conditions
+                nearbyEntities.stream()
+                        .filter(entity -> entity instanceof LivingEntity)
+                        .map(entity -> (LivingEntity) entity)
+                        .limit(limit)
+                        .forEach(entity -> {
+                            entity.damage(event.getDamage() / 2);
+                            entity.sendMessage("** DESTRUCTION **");
+                        });
             }
             if (EnchantUtils.isEventActive(CEnchantments.DIMINISH, player, armor, enchants)) {
                 double lastAttack = player.getLastDamage();
@@ -466,27 +606,12 @@ public class ArmorEnchantments implements Listener {
                         ItemStack.of(Material.NETHERITE_SWORD)
                 );
                 for (ItemStack sword : swords) {
-                    if (damager.getActiveItem() == sword) {
-                        double modifier = (event.getDamage() * 0.02);
-                        if (modifier < 0) return;
-                        event.setDamage(event.getDamage() - (modifier * enchantmentBookSettings.getLevel(armor, CEnchantments.ARMORED.getEnchantment())));
-                    }
-                }
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.CLARITY, player, armor, enchants)) {
-                if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) player.removePotionEffect(PotionEffectType.BLINDNESS);
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.JUDGEMENT, player, armor, enchants)) {
-                CEnchantment judgementEnchant = CEnchantments.JUDGEMENT.getEnchantment();
-                if (!damager.hasPotionEffect(PotionEffectType.POISON)) damager.addPotionEffect(new PotionEffect(PotionEffectType.POISON, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
-                if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
-            }
-            if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
-                CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
-                if (player.getHealth() < 6) {
-                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
-                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 1));
+                    if (!(damager instanceof Player attacker)) return;
+                    if (!(attacker.getInventory().getItemInMainHand() == sword)) return;
+                    double modifier = (event.getDamage() * 0.02);
+                    if (modifier <= 0) return;
+                    event.setDamage(event.getDamage() - ((1 + modifier) * enchantmentBookSettings.getLevel(armor, CEnchantments.ARMORED.getEnchantment())));
+
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.RAGDOLL, player, armor, enchants)) {
@@ -510,73 +635,22 @@ public class ArmorEnchantments implements Listener {
                 event.setDamage(newDamage);
             }
             if (EnchantUtils.isEventActive(CEnchantments.REINFORCED, player, armor, enchants)) {
-                CEnchantment targetEnchant = CEnchantments.REINFORCED.getEnchantment();
+                CEnchantment reinforcedEnchant = CEnchantments.REINFORCED.getEnchantment();
+                double level = this.enchantmentBookSettings.getLevel(armor, reinforcedEnchant);
 
-                BoundingBox box = player.getBoundingBox();
+                BoundingBox box = player.getBoundingBox().expand(3 + level);
                 World world = player.getWorld();
                 Collection<Entity> aggressors = world.getNearbyEntities(box);
+                double radius = box.getWidthX() + box.getWidthZ();
 
-                box.expand(3, 3, 3);
 
                 for (Entity entity : aggressors) {
-                    if (!(entity instanceof LivingEntity)) return;
-                    if (entity.getLocation().equals(player.getLocation().add(-3, 0, -3))) event.setDamage(event.getDamage() / (1.5 + enchantmentBookSettings.getLevel(armor, targetEnchant)));
+                    if (!(entity instanceof LivingEntity livingEntity)) return;
+                    if (isInRadius(box.getCenter().toLocation(world), livingEntity, world, radius)) {
+                        event.setDamage(event.getDamage() / (1.5 * level));
+                    }
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
-                //Declare a new empty collection of blazes as an ArrayList
-                Collection<Blaze> blazes = new ArrayList<>();
-                List<BukkitTask> spiritTasks = new ArrayList<>();
-
-                //Get the world, position, and region the player is in.
-                CEnchantment targetEnchant = CEnchantments.SPIRITS.getEnchantment();
-                World world = player.getWorld();
-                Location playerPos = player.getLocation();
-                BoundingBox box = player.getBoundingBox();
-
-                final double maxHealth = maxhealth.getValue();
-
-                //Get the level of the enchantment as a variable
-                int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
-
-                //Iterate through the enchantment levels. For every level, another blaze can be spawned.
-                for (int i = 0; i < level; i++) {
-                    world.spawn(playerPos, Blaze.class);
-                }
-                //Builds a new runnable that checks the amount of blazes in player region, then adds them to the
-                //new Collection.
-                spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
-                    Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
-                    for (Entity entity : nearbyEntities) {
-                        if (!(entity instanceof Blaze blaze)) continue;
-                        blaze.setTarget(damager);
-                        blazes.add(blaze);
-                    }
-
-                }, 40L));
-                //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
-                spiritTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
-                    if (!blazes.isEmpty()) {
-                        double modifier = player.getHealth() + (blazes.size() + level);
-                        double newPlayerHealth = Math.min(modifier, maxHealth);
-                        player.setHealth(newPlayerHealth);
-                    }
-                }, 0L, 20L));
-
-                //Builds a new runnable that removes the blazes after a period of time.
-                spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
-                    for (Blaze blaze : blazes) {
-                        if (!blaze.isDead()) blaze.remove();
-                    }
-                }, 200L));
-
-                this.scheduler.runTaskLater(plugin, () -> {
-                    for (BukkitTask task : spiritTasks) {
-                        if (blazes.isEmpty()) task.cancel();
-                    }
-                }, 400L);
-            }
-            //Stuff for Imperium
         }
 
         if (!(damager instanceof Player)) return;
@@ -591,6 +665,17 @@ public class ArmorEnchantments implements Listener {
             if (players > 0 && EnchantUtils.isEventActive(CEnchantments.LEADERSHIP, player, armor, enchants)) {
                 event.setDamage(event.getDamage() + (players / 2d));
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerAttack(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+
+        ItemStack item = this.methods.getItemInHand(attacker);
+        @NotNull final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(item);
+        if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, attacker, item, enchants)) {
+            event.setDamage(event.getDamage() * 2);
         }
     }
 
@@ -696,5 +781,9 @@ public class ArmorEnchantments implements Listener {
         if (book.getEnchantment().equals(CEnchantments.MIGHTYCACTUS.getEnchantment())) {
             this.enchantmentBookSettings.swapToHeroicEnchant(CEnchantments.MIGHTYCACTUS, event.getEnchantedItem(), event.getPlayer());
         }
+    }
+
+    private boolean isInRadius(@NotNull Location location, @NotNull LivingEntity entity, World world, double radius) {
+        return world.getNearbyLivingEntities(location, radius).contains(entity);
     }
 }

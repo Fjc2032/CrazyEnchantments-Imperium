@@ -67,7 +67,7 @@ public class AxeEnchantments implements Listener {
 
     //Local management
     @NotNull
-    private final HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
+    private HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
 
     private double bleedStack;
 
@@ -121,8 +121,6 @@ public class AxeEnchantments implements Listener {
         if (!(event.getDamager() instanceof Player damager)) return;
 
         ItemStack item = this.methods.getItemInHand(damager);
-
-        if (entity.isDead()) return;
 
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
@@ -214,114 +212,21 @@ public class AxeEnchantments implements Listener {
                         target.damage(damage);
                     });
         }
-        if (EnchantUtils.isEventActive(CEnchantments.CORRUPT, damager, item, enchantments)) {
-            CEnchantment corruptEnchant = CEnchantments.CORRUPT.getEnchantment();
-            double level = this.enchantmentBookSettings.getLevel(item, corruptEnchant);
-            damager.sendMessage("** CORRUPT **");
-            if (!(event.getEntity() instanceof LivingEntity target)) return;
-            double cap = corruptEnchant.getChanceIncrease() + level;
-            double damageAmt = Math.min(cap, (event.getDamage() / (4 - level)));
-            List<BukkitTask> runnables = new ArrayList<>();
-
-            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 2, 0), 0L, 5L));
-            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 1, 0), 0L, 5L));
-            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 1, 0, 1), 0L, 5L));
-            this.scheduler.runTaskLater(plugin, () -> target.damage(damageAmt), 20L);
-            this.scheduler.runTaskLater(plugin, () -> target.damage(damageAmt), 40L);
-            this.scheduler.runTaskLater(plugin, () -> target.damage(damageAmt), 60L);
-            this.scheduler.runTaskLater(plugin, () -> target.damage(damageAmt), 80L);
-
-            for (BukkitTask task : runnables) {
-                if (target.isDead()) task.cancel();
-            }
-            this.scheduler.runTaskLater(plugin, () -> {
-                for (BukkitTask task : runnables) task.cancel();
-            }, 100L);
-        }
         if (EnchantUtils.isEventActive(CEnchantments.INSANITY, damager, item, enchantments)) {
-            if (!(event.getEntity() instanceof LivingEntity target)) return;
-            ItemStack axe = target.getActiveItem();
+            CEnchantment insanityEnchant = CEnchantments.INSANITY.getEnchantment();
+            if (!(event.getEntity() instanceof Player target)) return;
+            ItemStack axe = this.methods.getItemInHand(target);
 
             for (ItemStack selectedItem : this.axes) {
                 if (selectedItem.equals(axe)) {
-                    event.setDamage(event.getDamage() + (1 + (double) CEnchantments.INSANITY.getChance() / 100));
+                    event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(item, insanityEnchant));
+                    damager.sendMessage("* INSANITY *");
                 }
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BARBARIAN, damager, item, enchantments)) {
             CEnchantment barbarianEnchant = CEnchantments.BARBARIAN.getEnchantment();
             event.setDamage(event.getDamage() * (this.enchantmentBookSettings.getLevel(item, barbarianEnchant)));
-        }
-        if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
-            CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
-            double level = this.enchantmentBookSettings.getLevel(item, bleedEnchant);
-            //Check if the target is a LivingEntity
-            if (!(event.getEntity() instanceof LivingEntity player)) return;
-
-            //Create a bleed stack
-            double stack = (event.getDamage() / (bleedEnchant.getMaxLevel() - level));
-            double cap = bleedEnchant.getChanceIncrease() + level;
-            this.bleedStack = handleBleedCap(CEnchantments.BLEED, stack, cap);
-
-            //Particle builder
-            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 2.0F);
-            World world = player.getWorld();
-            final Location playerPos = player.getLocation();
-            final Location offset = player.getLocation().offset(0, 2, 0).toLocation(world);
-            final Location offset1 = player.getLocation().offset(0, 1, 0).toLocation(world);
-
-            //Array that will store all tasks related to Bleed
-            List<BukkitTask> bleedTasks = new ArrayList<>();
-
-            //These tasks are stored and run
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> world.spawnParticle(Particle.DUST, playerPos, 12, dustOptions), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> world.spawnParticle(Particle.DUST, offset, 12, dustOptions), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> world.spawnParticle(Particle.DUST, offset1, 12, dustOptions), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.sendMessage("You are bleeding!"), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
-
-            //Cancel the runnable if the player is dead
-            this.scheduler.runTask(plugin, () -> {
-                for (BukkitTask task : bleedTasks) {
-                    if (player.isDead()) task.cancel();
-                }
-            });
-
-            //Removes the tasks from the plugin after 80 ticks to avoid a memory leak
-            this.scheduler.runTaskLater(plugin, () -> {
-                for (BukkitTask task : bleedTasks) {
-                    task.cancel();
-                }
-            }, 80L);
-        }
-        if (EnchantUtils.isEventActive(CEnchantments.DEVOUR, damager, item, enchantments)) {
-            CEnchantment devourEnchant = CEnchantments.DEVOUR.getEnchantment();
-            double level = this.enchantmentBookSettings.getLevel(item, devourEnchant);
-            List<BukkitTask> devourTasks = new ArrayList<>();
-
-            if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
-                if (!(event.getEntity() instanceof LivingEntity player)) return;
-
-                double devourStack = (event.getDamage() / (devourEnchant.getMaxLevel() - level));
-                double cap = devourEnchant.getChanceIncrease() + level;
-                this.bleedStack = handleBleedCap(CEnchantments.DEVOUR, devourStack, cap);
-
-                devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
-                devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** DEVOUR **"), 40L, 20L));
-
-                event.setDamage(event.getDamage());
-
-                for (BukkitTask task : devourTasks) {
-                    if (player.isDead()) task.cancel();
-                }
-
-                this.scheduler.runTaskLater(plugin, () -> {
-                    for (BukkitTask task : devourTasks) {
-                        task.cancel();
-                    }
-                }, 80L);
-            }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
             CEnchantment blacksmithEnchant = CEnchantments.BLACKSMITH.getEnchantment();
@@ -337,7 +242,9 @@ public class AxeEnchantments implements Listener {
                 damager.playSound((net.kyori.adventure.sound.Sound) Sound.BLOCK_CALCITE_BREAK);
             }
         }
-        //todo() this needs to match Bleed but I'm tired rn so lol
+
+        //todo() I'll set this up later
+        /*
         if (EnchantUtils.isEventActive(CEnchantments.DEEPBLEED, damager, item, enchantments)) {
             //Literally the same thing as bleed but more damage
             CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
@@ -362,6 +269,139 @@ public class AxeEnchantments implements Listener {
             }, 80L);
         }
         //Imperium
+        */
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void bleedHandler(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player damager)) return;
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+
+        ItemStack item = this.methods.getItemInHand(damager);
+        final Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
+
+        if (EnchantUtils.isEventActive(CEnchantments.DEVOUR, damager, item, enchantments)) {
+            CEnchantment devourEnchant = CEnchantments.DEVOUR.getEnchantment();
+            double level = this.enchantmentBookSettings.getLevel(item, devourEnchant);
+            List<BukkitTask> devourTasks = new ArrayList<>();
+
+            if (!EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) return;
+
+            double devourStack = (event.getDamage() / (devourEnchant.getMaxLevel() - level));
+            double cap = devourEnchant.getChanceIncrease() + level;
+            this.bleedStack = handleBleedCap(CEnchantments.DEVOUR, devourStack, cap);
+
+            devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> target.damage(this.bleedStack), 30L, 20L));
+            devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** DEVOUR **"), 30L, 20L));
+
+            event.setDamage(event.getDamage());
+
+            for (BukkitTask task : devourTasks) {
+                if (target.isDead()) task.cancel();
+            }
+
+            this.scheduler.runTaskLater(plugin, () -> {
+                for (BukkitTask task : devourTasks) {
+                    task.cancel();
+                }
+            }, 71L);
+        }
+        if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
+            CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();
+            double level = this.enchantmentBookSettings.getLevel(item, bleedEnchant);
+
+            //Create a bleed stack
+            double stack = (event.getDamage() / (bleedEnchant.getMaxLevel() - level));
+            double cap = bleedEnchant.getChanceIncrease() + level;
+            this.bleedStack = handleBleedCap(CEnchantments.BLEED, stack, cap);
+
+            //Particle builder
+            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 2.0F);
+            World world = target.getWorld();
+            final Location playerPos = target.getLocation();
+            final Location offset = target.getLocation().offset(0, 2, 0).toLocation(world);
+            final Location offset1 = target.getLocation().offset(0, 1, 0).toLocation(world);
+
+            //Array that will store all tasks related to Bleed
+            List<BukkitTask> bleedTasks = new ArrayList<>();
+
+            //These tasks are stored and run
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> world.spawnParticle(Particle.DUST, playerPos, 12, dustOptions), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> world.spawnParticle(Particle.DUST, offset, 12, dustOptions), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> world.spawnParticle(Particle.DUST, offset1, 12, dustOptions), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> target.damage(this.bleedStack), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> target.sendMessage("You are bleeding!"), 40L, 20L));
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
+
+            //Cancel the runnable if the target is dead
+            this.scheduler.runTask(plugin, () -> {
+                for (BukkitTask task : bleedTasks) {
+                    if (target.isDead()) task.cancel();
+                }
+            });
+
+            //Removes the tasks from the plugin after 80 ticks to avoid a memory leak
+            this.scheduler.runTaskLater(plugin, () -> {
+                for (BukkitTask task : bleedTasks) {
+                    task.cancel();
+                }
+            }, 80L);
+        }
+        if (EnchantUtils.isEventActive(CEnchantments.CORRUPT, damager, item, enchantments)) {
+            CEnchantment corruptEnchant = CEnchantments.CORRUPT.getEnchantment();
+            double level = this.enchantmentBookSettings.getLevel(item, corruptEnchant);
+            double cap = corruptEnchant.getChanceIncrease() + level;
+            double damageAmt = Math.min(cap, (event.getDamage() / (4 - level)));
+            List<BukkitTask> runnables = new ArrayList<>();
+
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 2, 0), 0L, 5L));
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 0, 1, 0), 0L, 5L));
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation(), 10, 1, 0, 1), 0L, 5L));
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** CORRUPT **"), 20L, 20L));
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.damage(damageAmt), 20L, 20L));
+
+            for (BukkitTask task : runnables) {
+                if (target.isDead()) task.cancel();
+            }
+            this.scheduler.runTaskLater(plugin, () -> {
+                for (BukkitTask task : runnables) task.cancel();
+            }, 100L);
+        }
+    }
+
+    @EventHandler()
+    public void durabilityHandler(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player damager)) return;
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+
+        ItemStack item = this.methods.getItemInHand(damager);
+        final Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
+
+        if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
+            CEnchantment blacksmithEnchant = CEnchantments.BLACKSMITH.getEnchantment();
+            ItemStack[] equipment = damager.getEquipment().getArmorContents();
+            for (ItemStack armor : equipment) {
+                if (armor == null) return;
+                ItemMeta meta = armor.getItemMeta();
+                Damageable damageable = (Damageable) meta;
+                int modifier = damageable.getDamage() - (2 + this.enchantmentBookSettings.getLevel(item, blacksmithEnchant));
+                if (modifier < 0) return;
+                damageable.setDamage(modifier);
+                armor.setItemMeta(meta);
+                damager.playSound((net.kyori.adventure.sound.Sound) Sound.BLOCK_CALCITE_BREAK);
+            }
+        }
+        if (EnchantUtils.isEventActive(CEnchantments.DEMONFORGED, damager, item, enchantments) && target instanceof Player player) {
+
+            ItemStack armorItem = switch (this.methods.percentPick(4, 0)) {
+                case 1 -> player.getEquipment().getHelmet();
+                case 2 -> player.getEquipment().getChestplate();
+                case 3 -> player.getEquipment().getLeggings();
+                default -> player.getEquipment().getBoots();
+            };
+
+            this.methods.removeDurability(armorItem, player);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -376,7 +416,7 @@ public class AxeEnchantments implements Listener {
 
         if (EnchantUtils.isEventActive(CEnchantments.ARROWBREAK, target, item, enchantments)) {
             Vector power = proj.getVelocity().multiply(-1.5);
-            Location tp = proj.getLocation().add(proj.getVelocity().normalize().multiply(0.1));
+            Location tp = proj.getLocation().add(proj.getVelocity().normalize().multiply(0.3));
             power = power.setY(0.4);
 
             proj.teleport(tp);

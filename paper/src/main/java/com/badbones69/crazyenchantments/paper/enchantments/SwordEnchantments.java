@@ -295,7 +295,7 @@ public class SwordEnchantments implements Listener {
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.EXECUTE, damager, item, enchantments)) {
-            damager.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 3 + (enchantments.get(CEnchantments.EXECUTE.getEnchantment())) * 20, 3));
+            damager.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 3 + (getLevel(item, CEnchantments.EXECUTE)) * 20, 3));
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.FASTTURN, damager, item, enchantments)) {
@@ -344,7 +344,8 @@ public class SwordEnchantments implements Listener {
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.TRAP, damager, item, enchantments)) {
-            en.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 3 * 20, 2));
+            int level = getLevel(item, CEnchantments.TRAP);
+            en.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 3 * 20, 2 + level));
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.VIPER, damager, item, enchantments)) {
@@ -391,7 +392,7 @@ public class SwordEnchantments implements Listener {
             CEnchantment shackleEnchant = CEnchantments.SHACKLE.getEnchantment();
             Location playerPos = damager.getLocation();
             Vector vector = playerPos.toVector().subtract(en.getLocation().toVector());
-            vector.normalize().multiply(2 + this.enchantmentBookSettings.getLevel(item, shackleEnchant));
+            vector = vector.normalize().multiply(2 + this.enchantmentBookSettings.getLevel(item, shackleEnchant));
             en.setVelocity(vector);
         }
         if (EnchantUtils.isEventActive(CEnchantments.GREATSWORD, damager, item, enchantments)) {
@@ -422,14 +423,14 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.INVERSION, damager, item, enchantments)) {
             CEnchantment inversionEnchant = CEnchantments.INVERSION.getEnchantment();
-            event.setDamage(event.getDamage() / 2);
+            event.setDamage(0.01);
             double heal = (damager.getHealth() + this.enchantmentBookSettings.getLevel(item, inversionEnchant));
             if (heal >= maxhealth) heal = maxhealth;
             damager.setHealth(heal);
         }
         if (EnchantUtils.isEventActive(CEnchantments.SILENCE, damager, item, enchantments)) {
             if (!(en instanceof Player target)) return;
-            int level = this.enchantmentBookSettings.getLevel(item, CEnchantments.SILENCE.getEnchantment());
+            int level = getLevel(item, CEnchantments.SILENCE);
 
             List<ItemStack> inv = new ArrayList<>();
             Collections.addAll(inv, target.getInventory().getArmorContents());
@@ -441,6 +442,7 @@ public class SwordEnchantments implements Listener {
                 @NotNull Map<CEnchantment, Integer> enchantmentMap = this.enchantmentBookSettings.getEnchantments(targetItem);
                 Random random = new Random();
                 int number = random.nextInt(level + 1);
+                if (number == 0) number = 1;
 
                 enchantmentMap.keySet().stream()
                         .limit(number)
@@ -465,13 +467,12 @@ public class SwordEnchantments implements Listener {
                 damager.removePotionEffect(PotionEffectType.SLOWNESS);
         }
         if (EnchantUtils.isEventActive(CEnchantments.SWARM, damager, item, enchantments)) {
-            CEnchantment swarmEnchant = CEnchantments.SWARM.getEnchantment();
             //The more entities there are in an area, the higher the buff to damage.
             //Radius considered is raised by each level.
-            //Maximum level should be 5.
-            BoundingBox radius = damager.getBoundingBox();
-            radius.expand(5 + this.enchantmentBookSettings.getLevel(item, swarmEnchant));
-            List<Entity> total = damager.getNearbyEntities(radius.getWidthX(), radius.getMaxY(), radius.getWidthZ());
+            //Maximum level should be 5.\
+            World world = damager.getWorld();
+            double radius = 5 + getLevel(item, CEnchantments.SWARM);
+            Collection<LivingEntity> total = world.getNearbyLivingEntities(damager.getLocation(), radius);
             event.setDamage(event.getDamage() * ((double) total.size() / 2));
         }
         //IMPERIUM
@@ -570,5 +571,15 @@ public class SwordEnchantments implements Listener {
         } else {
             player.sendMessage(message.getMessage());
         }
+    }
+
+    /**
+     * Local function to get the level because I'm tired of typing it every time
+     * @param itemStack Item you're getting the level from
+     * @param data The enchantment you're checking
+     * @return The level of the enchantment, as an integer.
+     */
+    private int getLevel(ItemStack itemStack, @NotNull CEnchantments data) {
+        return this.enchantmentBookSettings.getLevel(itemStack, data.getEnchantment());
     }
 }
