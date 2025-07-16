@@ -315,9 +315,16 @@ public class ArmorEnchantments implements Listener {
             }
             if (EnchantUtils.isEventActive(CEnchantments.WARD, player, armor, enchants)) {
                 CEnchantment wardEnchant = CEnchantments.WARD.getEnchantment();
+                int level = this.enchantmentBookSettings.getLevel(armor, wardEnchant);
+
+                if (!CEnchantments.WARD.isOffCooldown(player.getUniqueId(), level, true)) return;
+
                 double amount = event.getDamage() + this.enchantmentBookSettings.getLevel(armor, wardEnchant);
                 double playerHealth = player.getHealth() + amount;
-                event.setDamage(0.01);
+                event.setCancelled(true);
+
+                //Will this stop the propelling issue? Who knows
+                this.scheduler.runTaskLater(plugin, () -> player.setVelocity(new Vector(0, 0, 0)), 2L);
                 if (playerHealth >= maxhealthdouble) playerHealth = maxhealthdouble;
                 player.setHealth(playerHealth);
             }

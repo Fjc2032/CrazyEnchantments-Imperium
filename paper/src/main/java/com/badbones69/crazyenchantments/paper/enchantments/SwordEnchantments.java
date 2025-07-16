@@ -423,8 +423,10 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.INVERSION, damager, item, enchantments)) {
             CEnchantment inversionEnchant = CEnchantments.INVERSION.getEnchantment();
-            event.setDamage(0.01);
-            double heal = (damager.getHealth() + this.enchantmentBookSettings.getLevel(item, inversionEnchant));
+            int level = this.enchantmentBookSettings.getLevel(item, inversionEnchant);
+            if (!CEnchantments.INVERSION.isOffCooldown(damager.getUniqueId(), level, true)) return;
+            event.setCancelled(true);
+            double heal = (damager.getHealth() + level);
             if (heal >= maxhealth) heal = maxhealth;
             damager.setHealth(heal);
         }

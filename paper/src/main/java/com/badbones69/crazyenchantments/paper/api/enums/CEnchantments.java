@@ -193,7 +193,7 @@ public enum CEnchantments {
     BARBARIAN("Barbarian", "Axe", 20, 4),
     ABIDING("Abiding", "Tool"),
     QUIVER("Quiver", "Boots", 10, 7),
-    INVERSION("Inversion", "Sword", 20, 4),
+    INVERSION("Inversion", "Sword", 20, 4, 200L),
     BLEED("Bleed", "Axe", 28, 4),
     DEVOUR("Devour", "Axe", 10, 5),
     ARMORED("Armored", "Armor", 60, 10),

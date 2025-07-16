@@ -180,9 +180,12 @@ public class AxeEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.REAPER, damager, item, enchantments)) {
             CEnchantment reaperEnchant = CEnchantments.REAPER.getEnchantment();
             double damageAmount = event.getDamage() + (double) damager.getExpToLevel() / 1500;
-            double cap = Math.min(event.getDamage(), (reaperEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, reaperEnchant)));
+            double cap = Math.min(event.getDamage(), reaperEnchant.getChance());
             if (damageAmount > cap) damageAmount = cap;
-            event.setDamage(damageAmount);
+            if (damageAmount == 0) return;
+            event.setDamage(event.getDamage() + damageAmount);
+            if (damageAmount == cap) damager.sendMessage("Reaper capped: " + cap);
+            damager.sendMessage("Reaper damage: " + (event.getDamage() + damageAmount));
         }
         if (EnchantUtils.isEventActive(CEnchantments.PUMMEL, damager, item, enchantments)) {
             if (!(event.getDamager() instanceof LivingEntity target)) return;
@@ -204,12 +207,14 @@ public class AxeEnchantments implements Listener {
             targets.stream()
                     .filter(target -> target instanceof LivingEntity)
                     .filter(target -> !target.equals(damager))
+                    .filter(target -> !target.equals(entity))
                     .limit(4 + cleaveLvl)
                     .map(target -> (LivingEntity) target)
                     .forEach(target -> {
                         double damage = (event.getDamage() - ((double) cleaveEnchant.getMaxLevel() / cleaveLvl));
                         if (damage <= 0) damage = 5;
                         target.damage(damage);
+                        this.plugin.getLogger().info("Cleave activated! Damage output: " + damage);
                     });
         }
         if (EnchantUtils.isEventActive(CEnchantments.INSANITY, damager, item, enchantments)) {
@@ -295,10 +300,14 @@ public class AxeEnchantments implements Listener {
             devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** DEVOUR **"), 30L, 20L));
 
             event.setDamage(event.getDamage());
+            damager.sendMessage("Devour damage: " + this.bleedStack);
 
-            for (BukkitTask task : devourTasks) {
-                if (target.isDead()) task.cancel();
-            }
+            this.scheduler.runTaskLater(plugin, () -> {
+                for (BukkitTask task : devourTasks) {
+                    if (target.isDead()) task.cancel();
+                }
+            }, 20L);
+
 
             this.scheduler.runTaskLater(plugin, () -> {
                 for (BukkitTask task : devourTasks) {
@@ -360,6 +369,8 @@ public class AxeEnchantments implements Listener {
             runnables.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** CORRUPT **"), 20L, 20L));
             runnables.add(this.scheduler.runTaskTimer(plugin, () -> target.damage(damageAmt), 20L, 20L));
 
+            damager.sendMessage("Corrupt damage: " + damageAmt);
+
             for (BukkitTask task : runnables) {
                 if (target.isDead()) task.cancel();
             }
@@ -367,6 +378,7 @@ public class AxeEnchantments implements Listener {
                 for (BukkitTask task : runnables) task.cancel();
             }, 100L);
         }
+        damager.sendMessage("Base damage: " + event.getDamage());
     }
 
     @EventHandler()
