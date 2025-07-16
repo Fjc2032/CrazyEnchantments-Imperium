@@ -69,6 +69,7 @@ public class AxeEnchantments implements Listener {
     @NotNull
     private HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
 
+    //todo() Change this to local variable to prevent overwriting
     private double bleedStack;
 
     private double bleedCap;
@@ -107,8 +108,26 @@ public class AxeEnchantments implements Listener {
         this.bleedCap = cap;
         if (bleed > cap) bleed = Math.min(cap, cap + data.getChance() * 0.5);
         if (Double.isNaN(bleed)) bleed = cap;
-        this.starter.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
-        this.starter.getLogger().warning("New bleed stack: " + bleed);
+        this.plugin.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
+        this.plugin.getLogger().warning("New bleed stack: " + bleed);
+        return this.bleedStack = bleed;
+    }
+
+    /**
+     *
+     * @param data The enum data value of the enchantment
+     * @param item The item with the enchantment
+     * @param bleed The bleed damage amount
+     * @param cap The maximum damage that can be reached
+     * @return The new bleed damage, as a double.
+     */
+    private double handleBleedCap(@NotNull CEnchantments data, @NotNull ItemStack item, double bleed, double cap) {
+        this.bleedStack = bleed;
+        this.bleedCap = cap;
+        if (bleed > cap) bleed = cap + this.enchantmentBookSettings.getLevel(item, data.getEnchantment()) * 0.5;
+        if (Double.isNaN(bleed)) bleed = cap;
+        this.plugin.getLogger().warning("[DEBUG] Bleed cap exceeded! Implementing soft cap...");
+        this.plugin.getLogger().warning("New bleed stack: " + bleed);
         return this.bleedStack = bleed;
     }
 
@@ -215,6 +234,7 @@ public class AxeEnchantments implements Listener {
                         if (damage <= 0) damage = 5;
                         target.damage(damage);
                         this.plugin.getLogger().info("Cleave activated! Damage output: " + damage);
+                        damager.sendMessage("Cleave damage: " + damage);
                     });
         }
         if (EnchantUtils.isEventActive(CEnchantments.INSANITY, damager, item, enchantments)) {
@@ -302,11 +322,11 @@ public class AxeEnchantments implements Listener {
             event.setDamage(event.getDamage());
             damager.sendMessage("Devour damage: " + this.bleedStack);
 
-            this.scheduler.runTaskLater(plugin, () -> {
+            devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
                 for (BukkitTask task : devourTasks) {
                     if (target.isDead()) task.cancel();
                 }
-            }, 20L);
+            }, 1L, 20L));
 
 
             this.scheduler.runTaskLater(plugin, () -> {
@@ -343,11 +363,11 @@ public class AxeEnchantments implements Listener {
             bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
 
             //Cancel the runnable if the target is dead
-            this.scheduler.runTask(plugin, () -> {
+            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
                 for (BukkitTask task : bleedTasks) {
                     if (target.isDead()) task.cancel();
                 }
-            });
+            }, 1L, 20L));
 
             //Removes the tasks from the plugin after 80 ticks to avoid a memory leak
             this.scheduler.runTaskLater(plugin, () -> {
@@ -371,9 +391,11 @@ public class AxeEnchantments implements Listener {
 
             damager.sendMessage("Corrupt damage: " + damageAmt);
 
-            for (BukkitTask task : runnables) {
-                if (target.isDead()) task.cancel();
-            }
+            runnables.add(this.scheduler.runTaskTimer(plugin, () -> {
+                for (BukkitTask task : runnables) {
+                    if (target.isDead()) task.cancel();
+                }
+            }, 1L, 20L));
             this.scheduler.runTaskLater(plugin, () -> {
                 for (BukkitTask task : runnables) task.cancel();
             }, 100L);

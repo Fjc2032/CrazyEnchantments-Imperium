@@ -29,11 +29,8 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityResurrectEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -548,11 +545,10 @@ public class ArmorEnchantments implements Listener {
                     this.plugin.getLogger().severe("Error: " + error.getCause());
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.MARKSMAN, player, armor, enchants)) {
-                event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(armor, CEnchantments.MANEUVER.getEnchantment()));
-            }
+
             if (EnchantUtils.isEventActive(CEnchantments.TANK, player, armor, enchants)) {
-                @NotNull ItemStack weapon = this.methods.getItemInHand(player);
+                if (!(event.getEntity() instanceof Player attacker)) return;
+                @NotNull ItemStack weapon = this.methods.getItemInHand(attacker);
                 @NotNull Set<ItemStack> axes = Set.of(
                         ItemStack.of(Material.WOODEN_AXE),
                         ItemStack.of(Material.STONE_AXE),
@@ -561,18 +557,18 @@ public class ArmorEnchantments implements Listener {
                         ItemStack.of(Material.DIAMOND_AXE),
                         ItemStack.of(Material.NETHERITE_AXE)
                 );
-                for (ItemStack item : axes) {
-                    if (weapon.equals(item)) {
-                        event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(weapon, CEnchantments.TANK.getEnchantment())));
-                        player.sendMessage("TANK activated.");
-                    }
+                if (axes.contains(weapon)) {
+                    event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(weapon, CEnchantments.TANK.getEnchantment())));
+                    player.sendMessage("* TANK *");
                 }
+
             }
             if (EnchantUtils.isEventActive(CEnchantments.FAT, player, armor, enchants)) {
                 CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
-                double level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
+                int level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
                 event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(armor, fatEnchant)));
-                if (level >= 5) {
+                if (level >= 3) {
+                    player.getAttribute(Attribute.MAX_ABSORPTION).setBaseValue(20);
                     player.setAbsorptionAmount(level * 2);
                 }
             }
@@ -604,6 +600,8 @@ public class ArmorEnchantments implements Listener {
                 event.setDamage(lastAttack / 2);
             }
             if (EnchantUtils.isEventActive(CEnchantments.ARMORED, player, armor, enchants)) {
+                CEnchantment armoredEnchant = CEnchantments.ARMORED.getEnchantment();
+                if (!(event.getEntity() instanceof Player attacker)) return;
                 @NotNull Set<ItemStack> swords = Set.of(
                         ItemStack.of(Material.WOODEN_SWORD),
                         ItemStack.of(Material.STONE_SWORD),
@@ -612,13 +610,10 @@ public class ArmorEnchantments implements Listener {
                         ItemStack.of(Material.DIAMOND_SWORD),
                         ItemStack.of(Material.NETHERITE_SWORD)
                 );
-                for (ItemStack sword : swords) {
-                    if (!(damager instanceof Player attacker)) return;
-                    if (!(attacker.getInventory().getItemInMainHand() == sword)) return;
-                    double modifier = (event.getDamage() * 0.02);
-                    if (modifier <= 0) return;
-                    event.setDamage(event.getDamage() - ((1 + modifier) * enchantmentBookSettings.getLevel(armor, CEnchantments.ARMORED.getEnchantment())));
-
+                ItemStack item = this.methods.getItemInHand(attacker);
+                if (swords.contains(item)) {
+                    event.setDamage(event.getDamage() - this.enchantmentBookSettings.getLevel(armor, armoredEnchant));
+                    player.sendMessage("* ARMORED *");
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.RAGDOLL, player, armor, enchants)) {
@@ -655,6 +650,7 @@ public class ArmorEnchantments implements Listener {
                     if (!(entity instanceof LivingEntity livingEntity)) return;
                     if (isInRadius(box.getCenter().toLocation(world), livingEntity, world, radius)) {
                         event.setDamage(event.getDamage() / (1.5 * level));
+                        player.sendMessage("** REINFORCED **");
                     }
                 }
             }
@@ -684,6 +680,22 @@ public class ArmorEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, attacker, item, enchants)) {
             event.setDamage(event.getDamage() * 2);
         }
+    }
+
+    @EventHandler()
+    public void onArrowHit(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+        if (!(arrow.getShooter() instanceof Player player)) return;
+
+        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+            if (armor == null || !armor.hasItemMeta()) continue;
+            Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
+
+            if (this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), CEnchantments.MARKSMAN.getEnchantment())) {
+                event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(armor, CEnchantments.MARKSMAN.getEnchantment()));
+            }
+        }
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
