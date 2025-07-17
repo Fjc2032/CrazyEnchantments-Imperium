@@ -202,7 +202,7 @@ public class AxeEnchantments implements Listener {
             double cap = Math.min(event.getDamage(), reaperEnchant.getChance());
             if (damageAmount > cap) damageAmount = cap;
             if (damageAmount == 0) return;
-            entity.damage(event.getDamage() + damageAmount, damager);
+            entity.damage(event.getDamage() + damageAmount);
             if (damageAmount == cap) damager.sendMessage("Reaper capped: " + cap);
             damager.sendMessage("Reaper damage: " + (damageAmount));
         }

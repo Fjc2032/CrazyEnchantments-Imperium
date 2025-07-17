@@ -684,7 +684,7 @@ public class ArmorEnchantments implements Listener {
         for (ItemStack armor : attacker.getEquipment().getArmorContents()) {
             @NotNull final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
             if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, attacker, armor, enchants)) {
-                victim.damage(event.getDamage() * 2, attacker);
+                victim.damage(event.getDamage() * 2);
                 attacker.sendMessage("* DEATHBRINGER *");
                 attacker.sendMessage("Deathbringer damage: " + event.getDamage() * 2);
             }
