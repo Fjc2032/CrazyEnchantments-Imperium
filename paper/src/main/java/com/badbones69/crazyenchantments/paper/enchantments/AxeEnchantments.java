@@ -98,7 +98,7 @@ public class AxeEnchantments implements Listener {
 
     /**
      *
-     * @param data Uses this enum value to do some stuff
+     * @param data The enum data value of the enchantment
      * @param bleed The bleed damage amount
      * @param cap The soft-maximum that the bleed damage can reach.
      * @return The new bleed damage amount based on data provided.
@@ -114,7 +114,7 @@ public class AxeEnchantments implements Listener {
     }
 
     /**
-     *
+     * This function uses harsher calculations to define the bleed cap.
      * @param data The enum data value of the enchantment
      * @param item The item with the enchantment
      * @param bleed The bleed damage amount
@@ -198,13 +198,13 @@ public class AxeEnchantments implements Listener {
         //Imperium
         if (EnchantUtils.isEventActive(CEnchantments.REAPER, damager, item, enchantments)) {
             CEnchantment reaperEnchant = CEnchantments.REAPER.getEnchantment();
-            double damageAmount = event.getDamage() + (double) damager.getExpToLevel() / 1500;
+            double damageAmount = event.getDamage() + (double) damager.getExpToLevel() / 3000;
             double cap = Math.min(event.getDamage(), reaperEnchant.getChance());
             if (damageAmount > cap) damageAmount = cap;
             if (damageAmount == 0) return;
-            event.setDamage(event.getDamage() + damageAmount);
+            entity.damage(event.getDamage() + damageAmount, damager);
             if (damageAmount == cap) damager.sendMessage("Reaper capped: " + cap);
-            damager.sendMessage("Reaper damage: " + (event.getDamage() + damageAmount));
+            damager.sendMessage("Reaper damage: " + (damageAmount));
         }
         if (EnchantUtils.isEventActive(CEnchantments.PUMMEL, damager, item, enchantments)) {
             if (!(event.getDamager() instanceof LivingEntity target)) return;

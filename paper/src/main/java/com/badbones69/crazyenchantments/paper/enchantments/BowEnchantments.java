@@ -16,12 +16,10 @@ import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import net.minecraft.world.entity.projectile.Fireball;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -39,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -58,6 +57,9 @@ public class BowEnchantments implements Listener {
 
     @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
+
+    @NotNull
+    private final BukkitScheduler scheduler = this.plugin.getServer().getScheduler();
 
     // Plugin Support.
     @NotNull
@@ -243,15 +245,20 @@ public class BowEnchantments implements Listener {
             target.setVelocity(direction);
         }
         if (EnchantUtils.isEventActive(CEnchantments.ARROWLIFESTEAL, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
+            CEnchantment arrowLS = CEnchantments.ARROWLIFESTEAL.getEnchantment();
             if (!(enchantedArrow.getShooter() instanceof Player shooter)) return;
             final double maxhealth = shooter.getAttribute(Attribute.MAX_HEALTH).getValue();
             double shooterHealth = shooter.getHealth();
-            double absorb = shooterHealth - maxhealth;
+            double absorb = maxhealth - shooterHealth;
             if (shooterHealth > maxhealth) shooterHealth = maxhealth;
-            double modifier = event.getDamage();
+            double healing = shooterHealth + this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), arrowLS);
 
-            shooter.setHealth(Math.min(shooterHealth + modifier, maxhealth));
+            shooter.setHealth(Math.min(healing, maxhealth));
+
+            AttributeModifier attributeModifier = new AttributeModifier(new NamespacedKey(plugin, "arrowlifesteal"), absorb, AttributeModifier.Operation.ADD_NUMBER);
+            shooter.getAttribute(Attribute.MAX_ABSORPTION).addModifier(attributeModifier);
             shooter.setAbsorptionAmount(shooter.getAbsorptionAmount() + absorb);
+            this.scheduler.runTaskLater(plugin, () -> shooter.getAttribute(Attribute.MAX_ABSORPTION).removeModifier(attributeModifier), 80L);
         }
         if (EnchantUtils.isEventActive(CEnchantments.BIDIRECTIONAL, enchantedArrow.getShooter(), enchantedArrow.bow(), enchantedArrow.enchantments())) {
             CEnchantment targetEnchant = CEnchantments.BIDIRECTIONAL.getEnchantment();

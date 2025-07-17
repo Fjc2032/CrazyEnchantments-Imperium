@@ -371,6 +371,7 @@ public class SwordEnchantments implements Listener {
             double damage = event.getDamage() * this.enchantmentBookSettings.getLevel(item, enderslayerEnchant);
             if (endmobs.contains(en.getClass())) en.damage(damage);
             event.setDamage(damage);
+            damager.sendMessage("* ENDER SLAYER * (" + en.getClass() + ")");
         }
         //todo lol does this even work?
         if (EnchantUtils.isEventActive(CEnchantments.NETHERSLAYER, damager, item, enchantments)) {
@@ -387,6 +388,7 @@ public class SwordEnchantments implements Listener {
             double damage = event.getDamage() * this.enchantmentBookSettings.getLevel(item, netherslayerEnchant);
             if (nethermobs.contains(en.getClass())) en.damage(damage);
             event.setDamage(damage);
+            damager.sendMessage("* NETHER SLAYER * (" + en.getClass() + ")");
         }
         if (EnchantUtils.isEventActive(CEnchantments.SHACKLE, damager, item, enchantments)) {
             CEnchantment shackleEnchant = CEnchantments.SHACKLE.getEnchantment();
@@ -396,8 +398,8 @@ public class SwordEnchantments implements Listener {
             en.setVelocity(vector);
         }
         if (EnchantUtils.isEventActive(CEnchantments.GREATSWORD, damager, item, enchantments)) {
-            if (!(event.getEntity() instanceof LivingEntity target)) return;
-            if (target.getActiveItem().getType().equals(Material.BOW)) {
+            if (!(event.getEntity() instanceof Player target)) return;
+            if (target.getInventory().getItemInMainHand().equals(ItemStack.of(Material.BOW))) {
                 event.setDamage(event.getDamage() * (damager.getVelocity().normalize().length() / 2));
             }
         }
@@ -429,6 +431,7 @@ public class SwordEnchantments implements Listener {
             double heal = (damager.getHealth() + level);
             if (heal >= maxhealth) heal = maxhealth;
             damager.setHealth(heal);
+            damager.sendMessage("Inversion healed you for " + level);
         }
         if (EnchantUtils.isEventActive(CEnchantments.SILENCE, damager, item, enchantments)) {
             if (!(en instanceof Player target)) return;
