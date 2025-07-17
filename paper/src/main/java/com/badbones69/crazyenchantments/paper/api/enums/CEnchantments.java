@@ -170,7 +170,7 @@ public enum CEnchantments {
     PUMMEL("Pummel", "Axe", 30, 5),
     FARCAST("Farcast", "Bow", 10, 5),
     MARKSMAN("Marksman", "Armor"),
-    ANGELIC("Angelic", "Armor", 20, 5),
+    ANGELIC("Angelic", "Armor", 20, 5, 200L),
     JELLYLEGS("Jellylegs", "Boots", 10, 3),
     CLEAVE("Cleave", "Axe", 15, 5),
     DOMINATE("Dominate", "Swords", 10, 3),

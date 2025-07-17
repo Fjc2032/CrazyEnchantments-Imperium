@@ -282,6 +282,7 @@ public class ArmorEnchantments implements Listener {
         for (ItemStack armor : player.getEquipment().getArmorContents()) {
             Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
             if (enchants.isEmpty()) continue;
+            if (player.isDead()) continue;
 
             for (ArmorEnchantment armorEnchantment : this.armorEnchantmentManager.getArmorEnchantments()) {
                 CEnchantments enchantment = armorEnchantment.getEnchantment();
@@ -316,8 +317,9 @@ public class ArmorEnchantments implements Listener {
                 int level = this.enchantmentBookSettings.getLevel(armor, wardEnchant);
 
                 if (!CEnchantments.WARD.isOffCooldown(player.getUniqueId(), level, true)) return;
+                if (player.isDead()) return;
 
-                double amount = event.getDamage() + this.enchantmentBookSettings.getLevel(armor, wardEnchant);
+                double amount = player.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, wardEnchant) / 4);
                 double playerHealth = player.getHealth() + amount;
                 event.setCancelled(true);
 
@@ -325,17 +327,26 @@ public class ArmorEnchantments implements Listener {
                 this.scheduler.runTaskLater(plugin, () -> player.setVelocity(new Vector(0, 0, 0)), 2L);
                 if (playerHealth >= maxhealthdouble) playerHealth = maxhealthdouble;
                 player.setHealth(playerHealth);
+                player.sendMessage("* WARD * (Healed you for: " + playerHealth + ")");
             }
             if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, player, armor, enchants)) {
                 CEnchantment angelicEnchant = CEnchantments.ANGELIC.getEnchantment();
-                double modifier = player.getHealth() + (this.enchantmentBookSettings.getLevel(armor, angelicEnchant));
+                if (!CEnchantments.ANGELIC.isOffCooldown(
+                        player.getUniqueId(),
+                        this.enchantmentBookSettings.getLevel(armor, angelicEnchant),
+                        true
+                )) return;
+                double modifier = player.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, angelicEnchant) / 4);
+                if (player.isDead()) return;
                 if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
                 player.setHealth(modifier);
+                player.sendMessage("** ANGELIC ** (Healed you for: " + modifier + ")");
             }
             if (EnchantUtils.isEventActive(CEnchantments.CREEPERARMOR, player, armor, enchants)) {
                 CEnchantment targetEnchant = CEnchantments.CREEPERARMOR.getEnchantment();
                 if (player.getLastDamageCause().getCause().equals(DamageCause.BLOCK_EXPLOSION) || player.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-                    event.setDamage(0.01);
+                    event.setCancelled(true);
+                    this.scheduler.runTaskLater(plugin, () -> player.setVelocity(new Vector(0, 0, 0)), 2L);
                 }
                 if (CEnchantments.CREEPERARMOR.getChance() >= 15) {
                     double value = player.getHealth() + this.enchantmentBookSettings.getLevel(armor, targetEnchant);
@@ -346,10 +357,12 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, player, armor, enchants)) {
+                CEnchantment deathgodEnchant = CEnchantments.DEATHGOD.getEnchantment();
                 double modifier = player.getHealth() / 2;
                 if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
                 if (player.getHealth() < modifier) {
-                    player.setHealth(player.getHealth() + (CEnchantments.DEATHGOD.getChance() + 5));
+                    player.setHealth(player.getHealth() + 5 + (double) (this.enchantmentBookSettings.getLevel(armor, deathgodEnchant)) / 4);
+                    player.sendMessage("** DEATH GOD ** (Healed you for: " + modifier + ")");
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, player, armor, enchants)) {
@@ -360,6 +373,7 @@ public class ArmorEnchantments implements Listener {
                 double modifier = player.getHealth() + this.enchantmentBookSettings.getLevel(armor, endwalkerEnchant);
                 if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
                 victim.setHealth(modifier);
+                player.sendMessage("* ENDER WALKER * (Healed you for: " + modifier + ")");
             }
             if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
                 //Declare a new empty collection of blazes as an ArrayList
@@ -562,7 +576,6 @@ public class ArmorEnchantments implements Listener {
                     event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(weapon, CEnchantments.TANK.getEnchantment())));
                     player.sendMessage("* TANK *");
                 }
-
             }
             if (EnchantUtils.isEventActive(CEnchantments.FAT, player, armor, enchants)) {
                 CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();

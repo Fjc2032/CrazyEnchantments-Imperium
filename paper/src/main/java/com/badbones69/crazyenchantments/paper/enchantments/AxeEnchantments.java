@@ -198,7 +198,7 @@ public class AxeEnchantments implements Listener {
         //Imperium
         if (EnchantUtils.isEventActive(CEnchantments.REAPER, damager, item, enchantments)) {
             CEnchantment reaperEnchant = CEnchantments.REAPER.getEnchantment();
-            double damageAmount = event.getDamage() + (double) damager.getExpToLevel() / 3000;
+            double damageAmount = event.getDamage() + (double) damager.getExpToLevel() / 2500;
             double cap = Math.min(event.getDamage(), reaperEnchant.getChance());
             if (damageAmount > cap) damageAmount = cap;
             if (damageAmount == 0) return;
@@ -414,6 +414,7 @@ public class AxeEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
             CEnchantment blacksmithEnchant = CEnchantments.BLACKSMITH.getEnchantment();
             ItemStack[] equipment = damager.getEquipment().getArmorContents();
+            Sound sound = Sound.BLOCK_CALCITE_BREAK;
             for (ItemStack armor : equipment) {
                 if (armor == null) return;
                 ItemMeta meta = armor.getItemMeta();
@@ -422,7 +423,7 @@ public class AxeEnchantments implements Listener {
                 if (modifier < 0) return;
                 damageable.setDamage(modifier);
                 armor.setItemMeta(meta);
-                damager.playSound((net.kyori.adventure.sound.Sound) Sound.BLOCK_CALCITE_BREAK);
+                damager.playSound(damager.getLocation(), sound, 1.0F, 2.0F);
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.DEMONFORGED, damager, item, enchantments) && target instanceof Player player) {
@@ -449,11 +450,12 @@ public class AxeEnchantments implements Listener {
         Sound sound = Sound.ITEM_SHIELD_BLOCK;
 
         if (EnchantUtils.isEventActive(CEnchantments.ARROWBREAK, target, item, enchantments)) {
-            Vector power = proj.getVelocity().multiply(-1.5);
-            Location tp = proj.getLocation().add(proj.getVelocity().normalize().multiply(0.3));
-            power = power.setY(0.4);
+            event.setCancelled(true);
+            Vector power = proj.getVelocity().normalize().multiply(-1.5).setY(0.4);
+            Location tp = proj.getLocation().add(proj.getVelocity().normalize().multiply(0.5));
 
-            proj.teleport(tp);
+            boolean success = proj.teleport(tp);
+            if (!success) target.sendMessage("Something went wrong while trying to handle the projectile!");
             proj.setVelocity(power);
             proj.setFireTicks(0);
             proj.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
