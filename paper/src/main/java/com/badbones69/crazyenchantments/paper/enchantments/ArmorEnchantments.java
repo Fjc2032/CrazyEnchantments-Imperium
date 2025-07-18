@@ -257,10 +257,11 @@ public class ArmorEnchantments implements Listener {
             }
             if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
                 CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
+                int level = this.enchantmentBookSettings.getLevel(armor, curseEnchant);
                 if (player.getHealth() < 6) {
-                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
-                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance(), this.enchantmentBookSettings.getLevel(armor, curseEnchant)));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 1));
+                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance(), level - 1));
+                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance(), level - 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, level));
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.CLARITY, player, armor, enchants)) {
@@ -577,18 +578,6 @@ public class ArmorEnchantments implements Listener {
                     player.sendMessage("* TANK *");
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.FAT, player, armor, enchants)) {
-                CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
-                int level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
-                event.setDamage(Math.max(event.getDamage() - level, 0));
-                if (level >= 3) {
-                    AttributeModifier modifier = new AttributeModifier(new NamespacedKey(plugin, "fat"), level * 2, AttributeModifier.Operation.ADD_NUMBER);
-                    player.getAttribute(Attribute.MAX_ABSORPTION).addModifier(modifier);
-                    player.setAbsorptionAmount(level * 2);
-
-                    this.scheduler.runTaskLater(plugin, () -> player.getAttribute(Attribute.MAX_ABSORPTION).removeModifier(modifier), 120L);
-                }
-            }
             if (EnchantUtils.isEventActive(CEnchantments.DESTRUCTION, player, armor, enchants)) {
                 CEnchantment destructionEnchant = CEnchantments.DESTRUCTION.getEnchantment();
                 //Get the world and region the player is in.
@@ -685,6 +674,29 @@ public class ArmorEnchantments implements Listener {
 
             if (players > 0 && EnchantUtils.isEventActive(CEnchantments.LEADERSHIP, player, armor, enchants)) {
                 event.setDamage(event.getDamage() + (players / 2d));
+            }
+        }
+    }
+
+    @EventHandler()
+    private void absorptionHandler(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+
+        for (ItemStack armor : victim.getEquipment().getArmorContents()) {
+            @NotNull final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
+
+            if (EnchantUtils.isEventActive(CEnchantments.FAT, victim, armor, enchants)) {
+                CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
+                int level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
+                event.setDamage(Math.max(event.getDamage() - level, 0));
+                if (level >= 3) {
+                    AttributeModifier modifier = new AttributeModifier(new NamespacedKey(plugin, "fat"), level * 8, AttributeModifier.Operation.ADD_NUMBER);
+                    victim.getAttribute(Attribute.MAX_ABSORPTION).addModifier(modifier);
+                    victim.setAbsorptionAmount(level * 2);
+
+                    this.scheduler.runTaskLater(plugin, () -> victim.getAttribute(Attribute.MAX_ABSORPTION).removeModifier(modifier), 120L);
+                }
             }
         }
     }

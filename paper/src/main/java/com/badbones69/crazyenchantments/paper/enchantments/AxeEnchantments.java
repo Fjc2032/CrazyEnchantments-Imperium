@@ -75,13 +75,13 @@ public class AxeEnchantments implements Listener {
     private double bleedCap;
 
     @NotNull
-    private final Set<ItemStack> axes = Set.of(
-            ItemStack.of(Material.WOODEN_AXE),
-            ItemStack.of(Material.STONE_AXE),
-            ItemStack.of(Material.IRON_AXE),
-            ItemStack.of(Material.GOLDEN_AXE),
-            ItemStack.of(Material.DIAMOND_AXE),
-            ItemStack.of(Material.NETHERITE_AXE)
+    private final Set<Material> axes = Set.of(
+            Material.WOODEN_AXE,
+            Material.STONE_AXE,
+            Material.IRON_AXE,
+            Material.GOLDEN_AXE,
+            Material.DIAMOND_AXE,
+            Material.NETHERITE_AXE
     );
 
     private double getCurrentBleedStack() {
@@ -242,11 +242,9 @@ public class AxeEnchantments implements Listener {
             if (!(event.getEntity() instanceof Player target)) return;
             ItemStack axe = this.methods.getItemInHand(target);
 
-            for (ItemStack selectedItem : this.axes) {
-                if (selectedItem.equals(axe)) {
-                    event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(item, insanityEnchant));
-                    damager.sendMessage("* INSANITY *");
-                }
+            if (this.axes.contains(axe.getType())) {
+                event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(item, insanityEnchant));
+                damager.sendMessage("* INSANITY *");
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BARBARIAN, damager, item, enchantments)) {
@@ -256,6 +254,7 @@ public class AxeEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
             CEnchantment blacksmithEnchant = CEnchantments.BLACKSMITH.getEnchantment();
             ItemStack[] equipment = damager.getEquipment().getArmorContents();
+            Sound sound = Sound.BLOCK_CALCITE_BREAK;
             for (ItemStack armor : equipment) {
                 if (armor == null) return;
                 ItemMeta meta = armor.getItemMeta();
@@ -264,7 +263,8 @@ public class AxeEnchantments implements Listener {
                 if (modifier < 0) return;
                 damageable.setDamage(modifier);
                 armor.setItemMeta(meta);
-                damager.playSound((net.kyori.adventure.sound.Sound) Sound.BLOCK_CALCITE_BREAK);
+                damager.playSound(damager.getLocation(), sound, 1.0F, 2.0F);
+                damager.sendMessage("** BLACKSMITH **");
             }
         }
 

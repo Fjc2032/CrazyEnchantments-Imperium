@@ -231,10 +231,11 @@ public class BowEnchantments implements Listener {
             double arrowPosY = arrowPos.getY();
 
             if (arrowPosY >= headshotThreshold) {
-                event.setDamage(event.getDamage() * (2.5 + (this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), sniperEnchantment))));
+                double damage = Math.min(event.getDamage() * (1.5 + (this.enchantmentBookSettings.getLevel(enchantedArrow.bow(), sniperEnchantment))), CEnchantments.SNIPER.getChance());
+                event.setDamage(damage);
                 enchantedArrow.getShooter().sendMessage("**HEADSHOT**");
-                if (entity instanceof Player player) player.sendMessage("Headshot from SNIPER hit you for " + event.getDamage());
-                if (enchantedArrow.getShooter() instanceof LivingEntity damager) damager.sendMessage("You hit your target for " + event.getDamage());
+                if (entity instanceof Player player) player.sendMessage("Headshot from SNIPER hit you for " + damage);
+                if (enchantedArrow.getShooter() instanceof LivingEntity damager) damager.sendMessage("You hit your target for " + damage);
             }
 
         }

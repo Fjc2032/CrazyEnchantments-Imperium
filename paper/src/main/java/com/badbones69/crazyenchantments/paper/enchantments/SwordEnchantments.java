@@ -399,7 +399,7 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.GREATSWORD, damager, item, enchantments)) {
             if (!(event.getEntity() instanceof Player target)) return;
-            if (target.getInventory().getItemInMainHand().equals(ItemStack.of(Material.BOW))) {
+            if (target.getInventory().getItemInMainHand().getType().equals(Material.BOW)) {
                 event.setDamage(event.getDamage() * (damager.getVelocity().normalize().length() / 2));
             }
         }
