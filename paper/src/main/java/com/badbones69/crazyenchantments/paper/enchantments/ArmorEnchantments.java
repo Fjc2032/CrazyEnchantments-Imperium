@@ -563,6 +563,7 @@ public class ArmorEnchantments implements Listener {
             }
 
             if (EnchantUtils.isEventActive(CEnchantments.TANK, player, armor, enchants)) {
+                CEnchantment tankEnchant = CEnchantments.TANK.getEnchantment();
                 if (!(event.getDamager() instanceof Player attacker)) return;
                 @NotNull ItemStack weapon = this.methods.getItemInHand(attacker);
                 @NotNull final Set<Material> axes = Set.of(
@@ -573,8 +574,10 @@ public class ArmorEnchantments implements Listener {
                         Material.DIAMOND_AXE,
                         Material.NETHERITE_AXE
                 );
+                if (axes.contains(null)) return;
                 if (axes.contains(weapon.getType())) {
-                    event.setDamage(event.getDamage() - (this.enchantmentBookSettings.getLevel(weapon, CEnchantments.TANK.getEnchantment())));
+                    double damage = event.getDamage() - this.enchantmentBookSettings.getLevel(weapon, tankEnchant);
+                    event.setDamage(damage);
                     player.sendMessage("* TANK *");
                 }
             }
