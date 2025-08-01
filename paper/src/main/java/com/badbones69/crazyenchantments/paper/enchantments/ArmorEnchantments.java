@@ -240,9 +240,11 @@ public class ArmorEnchantments implements Listener {
                 }
             }
 
-            if (player.getHealth() <= 4 && EnchantUtils.isEventActive(CEnchantments.ADRENALINE, player, armor, enchants)) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3 + (enchants.get(CEnchantments.ADRENALINE.getEnchantment())) * 20, 10));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 3 + (enchants.get(CEnchantments.ADRENALINE.getEnchantment())) * 20, 3));
+            if (player.getHealth() <= 6 && EnchantUtils.isEventActive(CEnchantments.ENDERSHIFT, player, armor, enchants)) {
+                if (CEnchantments.ENDERSHIFT.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.ENDERSHIFT.getEnchantment())), true)) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 120 + (enchants.get(CEnchantments.ENDERSHIFT.getEnchantment())) * 20 * 2, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 80 * 20, -1 + (enchants.get(CEnchantments.ENDERSHIFT.getEnchantment()))));
+                }
             }
             if (EnchantUtils.isEventActive(CEnchantments.POISONED, player, armor, enchants)) {
                 if (!(damager instanceof Player target)) return;
