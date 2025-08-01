@@ -86,6 +86,8 @@ public class ArmorEnchantments implements Listener {
 
     private final List<UUID> fallenPlayers = new ArrayList<>();
 
+    private @NotNull ItemStack item;
+    
     public ArmorEnchantments() {
         armorProcessor.start();
     }
