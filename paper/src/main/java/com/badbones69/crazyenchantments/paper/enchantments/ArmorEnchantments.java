@@ -117,7 +117,7 @@ public class ArmorEnchantments implements Listener {
         if ((!newHasMeta || !newItem.getItemMeta().getPersistentDataContainer().has(key))
              && (!oldHasMeta || !oldItem.getItemMeta().getPersistentDataContainer().has(key))) return;
 
-        // Added to prevent armor change event being called on damage.
+        // Added to prevent armor change event being called on damage. test
         if (newHasMeta && oldHasMeta
             && Objects.equals(newItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING),
                               oldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING))) return;
