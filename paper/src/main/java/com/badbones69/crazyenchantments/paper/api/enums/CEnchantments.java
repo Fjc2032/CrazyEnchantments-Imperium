@@ -130,27 +130,35 @@ public enum CEnchantments {
 
     //IMPERIUM: Unique Enchantments
     //ARMOUR
-    LIFEBLOOM("Lifebloom", "Sword", 20, 10, 200L, -25L),
-    FAMISHED("Famished", "Sword", 12, 4, 8L), //famine
-    OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15, 160L, 20L),//obsidian destoryer
-    BERSERK("Berserk", "Axe", 4, 4, 160L, 20L),
     WARD("Ward", "Armor", 3, 4, 100L),
     CURSE("Curse", "Armor", 10, 2, "Chestplate"), //10, 2, 140L)
-    HULK("Hulk", "Armor"),//curse??
-    ADRENALINE("Adrenaline", "Boots", 15, 15, 120L, -40L),//endershift
-    BOOM("Boom", "Bow", 20, 10, 8L),//explosive
-    LIGHTWEIGHT("LightWeight", "Sword", 35, 20, 40L),//featherweight
-    MOLTEN("Molten", "Armor", 30, 10, 40L),//molten
-    RADIANT("Radiant", "Armor"),//molten??
-    FEEDME("FeedMe", "Axe", 14, 4, 40L),//ravenous
-    NUTRITION("Nutrition", "Sword", 14, 4, 40L),//ravenous but for swords
-    COMMANDER("Commander", "Helmet", 9, 3, 120L),
+    HULK("Hulk", "Armor"),//disabled
+    MOLTEN("Molten", "Armor", 30, 10, 40L),
+    RADIANT("Radiant", "Armor"),//disabled
     SELFDESTRUCT("SelfDestruct", "Armor", 24, 10, 80L),
-    TELEPATHY("Telepathy", "Tool", 40, 20),
     //sustain missing SUSTAIN("Sustain", "Armor", 12, 2, 160L)
-    SKILLSWIPE("SkillSwipe", "Sword", 15, 2, 100L),
     //plague carrier PLAGUECARRIER("PlagueCarrier", "Armor", 20, 10, 60L)
+    
+    COMMANDER("Commander", "Helmet", 9, 3, 120L),
+    ENDERSHIFT("EnderShift", "Boots", 15, 15, 120L, -40L),//was ADRENALINE
+
+    //WEAPONS
+    FAMISHED("FeedMe", "Axe", 14, 4, 40L),//was FEEDME
+    BERSERK("Berserk", "Axe", 4, 4, 160L, 20L),
+    
+    NUTRITION("Nutrition", "Sword", 14, 4, 40L),
+    LIFEBLOOM("Lifebloom", "Sword", 20, 10, 200L, -25L),
+    FAMINE("Famine", "Sword", 12, 4, 8L), //was FAMISHED
+    FEATHERWEIGHT("FeatherWeight", "Sword", 35, 20, 40L),//was LIGHTWEIGHT
+    SKILLSWIPE("SkillSwipe", "Sword", 15, 2, 100L),
+    
+    EXPLOSIVE("Explosive", "Bow", 20, 10, 8L),//was BOOM
     VIRUS("Virus", "Bow", 16, 4),
+
+    //TOOLS
+    TELEPATHY("Telepathy", "Tool", 40, 20),
+    OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15, 160L, 20L),
+    
 
     //NEW - Imperium
     POISONED("Poisoned", "Armor", 10, 5),
