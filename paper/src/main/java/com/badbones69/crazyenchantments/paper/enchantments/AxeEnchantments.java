@@ -159,7 +159,7 @@ public class AxeEnchantments implements Listener {
             int FamishedLevel = enchantmentBookSettings.getLevel(item, CEnchantments.FAMISHED.getEnchantment());
             int food = 2 * enchantments.get(CEnchantments.FAMISHED.getEnchantment());
 
-            if (CEnchantments.FAMISHED.isOffCooldown(damager.getUniqueId(), FeedMeLevel, true)) {
+            if (CEnchantments.FAMISHED.isOffCooldown(damager.getUniqueId(), FamishedLevel, true)) {
                 if (damager.getFoodLevel() + food < 20) damager.setFoodLevel((int) (damager.getSaturation() + food));
 
                 if (damager.getFoodLevel() + food > 20) damager.setFoodLevel(20);
