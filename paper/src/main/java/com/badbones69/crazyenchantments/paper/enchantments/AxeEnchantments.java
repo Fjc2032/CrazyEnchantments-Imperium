@@ -144,18 +144,26 @@ public class AxeEnchantments implements Listener {
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
         if (EnchantUtils.isEventActive(CEnchantments.BERSERK, damager, item, enchantments)) {
-                damager.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (enchantments.get(CEnchantments.BERSERK.getEnchantment()) + 5) * 20, 1));
-                damager.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, (enchantments.get(CEnchantments.BERSERK.getEnchantment()) + 5) * 20, 0));
+            int berserkLevel = enchantmentBookSettings.getLevel(item, CEnchantments.BERSERK.getEnchantment());
+            int amplifier  = (berserkLevel >= 4) ? 1 : 0;
+
+            if (CEnchantments.BERSERK.isOffCooldown(damager.getUniqueId(), berserkLevel, true)) {
+                damager.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 + (enchantments.get(CEnchantments.BERSERK.getEnchantment())) * 20, amplifier));
+                damager.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 + (enchantments.get(CEnchantments.BERSERK.getEnchantment())) * 20, amplifier));
+            }
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.BLESSED, damager, item, enchantments)) removeBadPotions(damager);
 
-        if (EnchantUtils.isEventActive(CEnchantments.FEEDME, damager, item, enchantments)&& damager.getFoodLevel() < 20) {
-            int food = 2 * enchantments.get(CEnchantments.FEEDME.getEnchantment());
+        if (EnchantUtils.isEventActive(CEnchantments.FAMISHED, damager, item, enchantments)&& damager.getFoodLevel() < 20) {
+            int FamishedLevel = enchantmentBookSettings.getLevel(item, CEnchantments.FAMISHED.getEnchantment());
+            int food = 2 * enchantments.get(CEnchantments.FAMISHED.getEnchantment());
 
-            if (damager.getFoodLevel() + food < 20) damager.setFoodLevel((int) (damager.getSaturation() + food));
+            if (CEnchantments.FAMISHED.isOffCooldown(damager.getUniqueId(), FeedMeLevel, true)) {
+                if (damager.getFoodLevel() + food < 20) damager.setFoodLevel((int) (damager.getSaturation() + food));
 
-            if (damager.getFoodLevel() + food > 20) damager.setFoodLevel(20);
+                if (damager.getFoodLevel() + food > 20) damager.setFoodLevel(20);
+            }
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.REKT, damager, item, enchantments)) event.setDamage(event.getDamage() * 2);
