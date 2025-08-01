@@ -64,10 +64,13 @@ public class ToolEnchantments implements Listener {
 
         if (EnchantUtils.isEventActive(CEnchantments.REFORGED, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) reforgedTrigger(player, tool);
         if (EnchantUtils.isEventActive(CEnchantments.OBBYDESTROYER, player, tool, this.enchantmentBookSettings.getEnchantments(tool))) {
-            if (!block.getType().equals(Material.OBSIDIAN)) return;
-            player.playSound(player, Sound.BLOCK_CALCITE_BREAK, 1.0F, 2.0F);
-            block.setType(Material.AIR);
-            world.dropItemNaturally(block.getLocation(), ItemStack.of(Material.OBSIDIAN));
+            int level = this.enchantmentBookSettings.getLevel(Objects.requireNonNull(tool), CEnchantments.OXYGENATE.getEnchantment());
+
+            if (CEnchantments.OBBYDESTROYER.isOffCooldown(player.getUniqueId(), level, true)) {
+                if (!block.getType().equals(Material.OBSIDIAN)) return;
+                player.playSound(player, Sound.BLOCK_CALCITE_BREAK, 1.0F, 2.0F);
+                block.setType(Material.AIR);
+            }
         }
     }
 
