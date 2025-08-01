@@ -24,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class CrazyEnchantStats extends ItemStat<RandomStatData<CrazyEnchantsData>, CrazyEnchantsData> implements InternalStat {
-
+public abstract class CrazyEnchantStats extends ItemStat<RandomStatData<CrazyEnchantsData>, CrazyEnchantsData> implements InternalStat {
 
     public CrazyEnchantStats() {
         super("CRAZY_ENCHANTS", Material.BOOK, "CrazyEnchantments", new String[0], new String[]{"all"}, new Material[0]);
@@ -47,9 +46,8 @@ public class CrazyEnchantStats extends ItemStat<RandomStatData<CrazyEnchantsData
     }
 
 
-    @Override
-    public void whenApplied(@NotNull ItemStackBuilder itemStackBuilder, @NotNull CrazyEnchantsData crazyEnchantsData) {
-        Map<CEnchantment, Integer> enchants = com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.CrazyEnchantsData.getEnchants();
+    public void whenApplied(@NotNull ItemStackBuilder itemStackBuilder, @NotNull com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.CrazyEnchantsData data) {
+        Map<CEnchantment, Integer> enchants = data.getEnchants();
         Iterator var4 = enchants.entrySet().iterator();
 
         while (var4.hasNext()) {
