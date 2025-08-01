@@ -215,17 +215,23 @@ public class SwordEnchantments implements Listener {
         }
 
         if (en instanceof Player player && EnchantUtils.isEventActive(CEnchantments.SKILLSWIPE, damager, item, enchantments)) {
-            int amount = 4 + enchantments.get(CEnchantments.SKILLSWIPE.getEnchantment());
+            int SkillSwipeLevel = enchantments.get(CEnchantments.SKILLSWIPE.getEnchantment());
+            int min = 25;
+            int max = 100 + (25 * SkillSwipeLevel);
+            int amount = new Random().nextInt(max - min + 1) + min;
 
-            if (player.getTotalExperience() > 0) {
+            if (CEnchantments.SKILLSWIPE.isOffCooldown(damager.getUniqueId(), SkillSwipeLevel, true)) {
 
-                if (this.currencyAPI.getCurrency(player, Currency.XP_TOTAL) >= amount) {
-                    this.currencyAPI.takeCurrency(player, Currency.XP_TOTAL, amount);
-                } else {
-                    player.setTotalExperience(0);
+                if (player.getTotalExperience() > 0) {
+
+                    if (this.currencyAPI.getCurrency(player, Currency.XP_TOTAL) >= amount) {
+                        this.currencyAPI.takeCurrency(player, Currency.XP_TOTAL, amount);
+                    } else {
+                        player.setTotalExperience(0);
+                    }
+
+                    this.currencyAPI.giveCurrency(damager, Currency.XP_TOTAL, amount);
                 }
-
-                this.currencyAPI.giveCurrency(damager, Currency.XP_TOTAL, amount);
             }
         }
 
@@ -239,11 +245,13 @@ public class SwordEnchantments implements Listener {
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.NUTRITION, damager, item, enchantments)) {
-            if (damager.getSaturation() + (2 * enchantments.get(CEnchantments.NUTRITION.getEnchantment())) <= 20)
-                damager.setSaturation(damager.getSaturation() + (2 * enchantments.get(CEnchantments.NUTRITION.getEnchantment())));
+            if (CEnchantments.NUTRITION.isOffCooldown(damager.getUniqueId(), enchantments.get(CEnchantments.NUTRITION.getEnchantment()), true)) {
+                if (damager.getSaturation() + (2 * enchantments.get(CEnchantments.NUTRITION.getEnchantment())) <= 20)
+                    damager.setSaturation(damager.getSaturation() + (2 * enchantments.get(CEnchantments.NUTRITION.getEnchantment())));
 
-            if (damager.getSaturation() + (2 * enchantments.get(CEnchantments.NUTRITION.getEnchantment())) >= 20)
-                damager.setSaturation(20);
+                if (damager.getSaturation() + (2 * enchantments.get(CEnchantments.NUTRITION.getEnchantment())) >= 20)
+                    damager.setSaturation(20);
+            }
         }
 
         if (damager.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.VAMPIRE, damager, item, enchantments)) {
@@ -302,8 +310,11 @@ public class SwordEnchantments implements Listener {
             event.setDamage(event.getDamage() + (event.getDamage() / 3));
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.LIGHTWEIGHT, damager, item, enchantments)) {
-            damager.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 5 * 20, enchantments.get(CEnchantments.LIGHTWEIGHT.getEnchantment()) - 1));
+        if (EnchantUtils.isEventActive(CEnchantments.FEATHERWEIGHT, damager, item, enchantments)) {
+            int FeatherWeightlevel = enchantmentBookSettings.getLevel(item, CEnchantments.FEATHERWEIGHT.getEnchantment());
+            if (CEnchantments.FEATHERWEIGHT.isOffCooldown(damager.getUniqueId(), FeatherWeightlevel, true)) {
+                damager.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, FeatherWeightlevel * 2 * 20, FeatherWeightlevel - 1));
+            }
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.OBLITERATE, damager, item, enchantments)) {
@@ -356,8 +367,9 @@ public class SwordEnchantments implements Listener {
             en.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 2 * 20, 2));
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.FAMISHED, damager, item, enchantments)) {
-            en.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 10 * 20, 1));
+        if (EnchantUtils.isEventActive(CEnchantments.FAMINE, damager, item, enchantments)) {
+            int famineLevel = enchantmentBookSettings.getLevel(item, CEnchantments.FAMINE.getEnchantment());
+            en.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, famineLevel * 2 * 20, famineLevel - 1));
         }
         //IMPERIUM
         if (EnchantUtils.isEventActive(CEnchantments.ENDERSLAYER, damager, item, enchantments)) {
@@ -498,13 +510,13 @@ public class SwordEnchantments implements Listener {
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.LIFEBLOOM, damager, item, enchantments)) {
-            for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
-                if (!pluginSupport.isFriendly(entity, player)) continue;
-                Player ally = (Player) entity;
+            if (CEnchantments.LIFEBLOOM.isOffCooldown(damager.getUniqueId(), enchantmentBookSettings.getLevel(item, CEnchantments.LIFEBLOOM.getEnchantment()), true)) {
+                for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
+                    if (!pluginSupport.isFriendly(entity, player)) continue;
+                    Player ally = (Player) entity;
 
-                ally.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5 * 20, 1));
-                ally.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 5 * 20, 0));
-                ally.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 5 * 20, 1));
+                    ally.addPotionEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 5));
+                }
             }
         }
     }
