@@ -76,21 +76,25 @@ public class ArmorProcessor extends PoolProcessor {
     private void checkCommander(ItemStack armor, Player player, Map<CEnchantment, Integer> enchantments) {
 
         if (!EnchantUtils.isMoveEventActive(CEnchantments.COMMANDER, player, enchantments)) return;
+        int commanderLevel = enchantmentBookSettings.getLevel(armor, CEnchantments.COMMANDER.getEnchantment());
 
-        int radius = 4 + enchantments.get(CEnchantments.COMMANDER.getEnchantment());
+        if (CEnchantments.COMMANDER.isOffCooldown(player.getUniqueId(), commanderLevel, true)) {
 
-        player.getScheduler().run(this.plugin, playerTask -> {
-            if (EnchantUtils.normalEnchantEvent(CEnchantments.COMMANDER, player, armor)) {
-                PotionEffect fastDigging = new PotionEffect(PotionEffectType.HASTE, 3 * 20, 1);
-                for (Entity e : player.getNearbyEntities(radius, radius, radius)) {
-                    e.getScheduler().run(plugin, task -> {
-                        if (e instanceof Player otherPlayer && this.pluginSupport.isFriendly(player, otherPlayer)) {
-                            otherPlayer.addPotionEffect(fastDigging);
-                        }
-                    }, null);
+            int radius = 4 + enchantments.get(CEnchantments.COMMANDER.getEnchantment());
+
+            player.getScheduler().run(this.plugin, playerTask -> {
+                if (EnchantUtils.normalEnchantEvent(CEnchantments.COMMANDER, player, armor)) {
+                    PotionEffect fastDigging = new PotionEffect(PotionEffectType.HASTE, 3 * 20, 1);
+                    for (Entity e : player.getNearbyEntities(radius, radius, radius)) {
+                        e.getScheduler().run(plugin, task -> {
+                            if (e instanceof Player otherPlayer && this.pluginSupport.isFriendly(player, otherPlayer)) {
+                                otherPlayer.addPotionEffect(fastDigging);
+                            }
+                        }, null);
+                    }
                 }
-            }
-        }, null);
+            }, null);
+        }
 
     }
 
