@@ -256,12 +256,24 @@ public class ArmorEnchantments implements Listener {
                 if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
             }
             if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
-                CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
-                int level = this.enchantmentBookSettings.getLevel(armor, curseEnchant);
-                if (player.getHealth() < 6) {
-                    if (!player.hasPotionEffect(PotionEffectType.STRENGTH)) player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, CEnchantments.CURSE.getChance(), level - 1));
-                    if (!player.hasPotionEffect(PotionEffectType.RESISTANCE)) player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, CEnchantments.CURSE.getChance(), level - 1));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, level));
+                int curseLevel = enchantmentBookSettings.getLevel(item, CEnchantments.CURSE.getEnchantment());
+                int amplifier =
+                        (curseLevel >= 5) ? 2 :
+                        (curseLevel >= 3 ? 1 : 0);
+                int duration =
+                        (curseLevel == 5) ? 70 :
+                        (curseLevel == 4) ? 120 :
+                        (curseLevel == 3) ? 80 :
+                        (curseLevel == 2 ? 140 : 100);
+                if (CEnchantments.CURSE.isOffCooldown(damager.getUniqueId(), curseLevel, true)) {
+                    CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
+                    if (player.getHealth() < 6) {
+                        if (!player.hasPotionEffect(PotionEffectType.STRENGTH))
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, duration, amplifier));
+                        if (!player.hasPotionEffect(PotionEffectType.RESISTANCE))
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, amplifier));
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS,  duration, amplifier));
+                    }
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.CLARITY, player, armor, enchants)) {
