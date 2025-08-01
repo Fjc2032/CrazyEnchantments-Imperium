@@ -50,5 +50,11 @@ subprojects {
         processResources {
             filteringCharset = Charsets.UTF_8.name()
         }
+
+        register("printVersion") {
+            doLast {
+                println(rootProject.version)
+            }
+        }
     }
 }
