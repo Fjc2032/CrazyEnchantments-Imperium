@@ -56,7 +56,6 @@ public enum CEnchantments {
     //	----------------Armor----------------  \\
     VALOR("Valor", "Armor"),
     DRUNK("Drunk", "Helmet"),
-    NINJA("Ninja", "Armor"),
     ANGEL("Angel", "Armor"),
     TAMER("Tamer", "Armor"),
     GUARDS("Guards", "Armor"),
@@ -135,6 +134,7 @@ public enum CEnchantments {
     HULK("Hulk", "Armor"),//disabled
     MOLTEN("Molten", "Armor", 30, 10, 40L),
     RADIANT("Radiant", "Armor"),//disabled
+    NINJA("Ninja", "Armor"),//disabled
     SELFDESTRUCT("SelfDestruct", "Armor", 24, 10, 80L),
     //sustain missing SUSTAIN("Sustain", "Armor", 12, 2, 160L)
     //plague carrier PLAGUECARRIER("PlagueCarrier", "Armor", 20, 10, 60L)
