@@ -502,7 +502,11 @@ public class ArmorEnchantments implements Listener {
             //depricated INSOMNIA function 
             //if (EnchantUtils.isEventActive(CEnchantments.INSOMNIA, player, armor, enchants)) damager.damage(event.getDamage() + enchants.get(CEnchantments.INSOMNIA.getEnchantment()));
 
-            if (EnchantUtils.isEventActive(CEnchantments.MOLTEN, player, armor, enchants)) damager.setFireTicks((enchants.get(CEnchantments.MOLTEN.getEnchantment()) * 2) * 20);
+            int WardLevel = enchantmentBookSettings.getLevel(item, CEnchantments.MOLTEN.getEnchantment());
+                if (CEnchantments.MOLTEN.isOffCooldown(damager.getUniqueId(), WardLevel, true)) {
+                    if (EnchantUtils.isEventActive(CEnchantments.MOLTEN, player, armor, enchants))
+                        damager.setFireTicks((enchants.get(CEnchantments.MOLTEN.getEnchantment()) * 2) * 20);
+                }
 
             if (EnchantUtils.isEventActive(CEnchantments.SAVIOR, player, armor, enchants)) event.setDamage(event.getDamage() / 2);
 
@@ -810,15 +814,19 @@ public class ArmorEnchantments implements Listener {
             Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
             if (EnchantUtils.isEventActive(CEnchantments.SELFDESTRUCT, player, item, enchantments)) {
-                if (player.getHealth() <= 2) {
-                    this.methods.explode(player);
-                    World world = player.getWorld();
-                    if (Boolean.TRUE.equals(world.getGameRuleValue(GameRule.KEEP_INVENTORY))) return;
-                    List<ItemStack> items = event.getDrops().stream().filter(drop ->
-                            ProtectionCrystalSettings.isProtected(drop) && this.protectionCrystalSettings.isProtectionSuccessful(player)).toList();
+                int selfdestructLevel = enchantmentBookSettings.getLevel(item, CEnchantments.SELFDESTRUCT.getEnchantment());
 
-                    event.getDrops().clear();
-                    event.getDrops().addAll(items);
+                if (CEnchantments.SELFDESTRUCT.isOffCooldown(player.getUniqueId(), selfdestructLevel, true)) {
+                    if (player.getHealth() <= 2) {
+                        this.methods.explode(player);
+                        World world = player.getWorld();
+                        if (Boolean.TRUE.equals(world.getGameRuleValue(GameRule.KEEP_INVENTORY))) return;
+                        List<ItemStack> items = event.getDrops().stream().filter(drop ->
+                                ProtectionCrystalSettings.isProtected(drop) && this.protectionCrystalSettings.isProtectionSuccessful(player)).toList();
+
+                        event.getDrops().clear();
+                        event.getDrops().addAll(items);
+                    }
                 }
             }
 
