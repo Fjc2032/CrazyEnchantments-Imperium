@@ -307,7 +307,7 @@ Enchantments:
       - 'Unique'
   #Do not change this line.
   Hulk:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§aHulk'
     MaxPower: 2
@@ -322,7 +322,7 @@ Enchantments:
       - 'Unique'
   #Do not change this line.
   Ninja:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§aNinja'
     MaxPower: 2
@@ -336,17 +336,17 @@ Enchantments:
     Categories:
       - 'Unique'
   #Do not change this line.
-  Boom:
+  Explosive:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aBoom'
+    Name: '§aExplosive'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
       Base: 20
       Increase: 10
     Info:
-      Name: '§a§lBoom §r§7(I-III)'
+      Name: '§a§lExplosive §r§7(I-III)'
       Description:
         - '§eHas a chance to spawn'
         - '§eTnT where the arrow lands.'
@@ -354,17 +354,17 @@ Enchantments:
     Categories:
       - 'Unique'
   #Do not change this line.
-  LightWeight:
+  FeatherWeight:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aLightWeight'
+    Name: '§aFeather Weight'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
       Base: 15
       Increase: 5
     Info:
-      Name: '§a§lLight Weight §r§7(I-III)'
+      Name: '§a§lFeather Weight §r§7(I-III)'
       Description:
         - '§eHas a chance to give'
         - '§eyou haste when fighting.'
@@ -372,17 +372,17 @@ Enchantments:
     Categories:
       - 'Unique'
   #Do not change this line.
-  FeedMe:
+  Famished:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aFeedMe'
+    Name: '§aFamished'
     MaxPower: 5
     Enchantment-Type: 'Axe'
     Chance-System:
       Base: 10
       Increase: 5
     Info:
-      Name: '§a§lFeedMe §r§7(I-V)'
+      Name: '§a§lFamished §r§7(I-V)'
       Description:
         - '§eHas a chance to'
         - '§efeed you while fighting.'
@@ -459,17 +459,17 @@ Enchantments:
     Categories:
       - 'Unique'
   #Do not change this line.
-  Adrenaline:
+  EnderShift:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aAdrenaline'
+    Name: '§aEnder Shift'
     MaxPower: 3
     Enchantment-Type: 'Boots'
     Chance-System:
       Base: 15
       Increase: 5
     Info:
-      Name: '§a§lAdrenaline §r§7(I-III)'
+      Name: '§a§lEnder Shift §r§7(I-III)'
       Description:
         - '§eIf low on health there is a chance'
         - '§eyou will gain a speed boost.'
@@ -493,7 +493,7 @@ Enchantments:
       - 'Unique'
   #Do not change this line.
   Radiant:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§aRadiant'
     MaxPower: 3
@@ -507,17 +507,17 @@ Enchantments:
     Categories:
       - 'Unique'
   #Do not change this line.
-  Famished:
+  Famine:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aFamished'
+    Name: '§aFamine'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
       Base: 10
       Increase: 5
     Info:
-      Name: '§a§lFamished §r§7(I-III)'
+      Name: '§a§lFamine §r§7(I-III)'
       Description:
         - '§eDuring combat it has a'
         - '§e10%(+5% per level) §7chance'
@@ -527,7 +527,7 @@ Enchantments:
       - 'Unique'
   #Do not change this line.
   Revenge:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§aRevenge'
     MaxPower: 1
