@@ -24,7 +24,11 @@ import com.badbones69.crazyenchantments.paper.support.PluginSupport.SupportedPlu
 import com.badbones69.crazyenchantments.paper.support.SkullCreator;
 import com.badbones69.crazyenchantments.paper.support.claims.GriefPreventionSupport;
 import com.badbones69.crazyenchantments.paper.support.claims.SuperiorSkyBlockSupport;
+import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.MMOItemsSupport;
+import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.CrazyEnchantsStat;
 import com.badbones69.crazyenchantments.paper.support.misc.OraxenSupport;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.stat.type.ItemStat;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +60,7 @@ public class Starter {
     private PluginSupport pluginSupport;
     private VaultSupport vaultSupport;
     private OraxenSupport oraxenSupport;
+    private CrazyEnchantsStat crazyEnchantsStat;
 
     // Plugin Managers.
     private ArmorEnchantmentManager armorEnchantmentManager;
@@ -84,6 +89,30 @@ public class Starter {
         if (SupportedPlugins.SUPERIORSKYBLOCK.isPluginLoaded()) this.superiorSkyBlockSupport = new SuperiorSkyBlockSupport();
 
         if (SupportedPlugins.ORAXEN.isPluginLoaded()) this.oraxenSupport = new OraxenSupport();
+
+        if (SupportedPlugins.MMOITEMS.isPluginLoaded()) {
+            Boolean success = null;
+            try {
+                /*
+                Class.forName("net/Indyuce/mmoitems/comp/enchants/EnchantPlugin");
+                this.logger.info("[DEBUG] Success! Found class EnchantPlugin<? extends Enchantment>");
+                 */
+                this.crazyEnchantsStat = new CrazyEnchantsStat();
+                MMOItems.plugin.getStats().register(this.crazyEnchantsStat);
+                success = true;
+            } catch (Exception e) {
+                this.logger.warning("[DEBUG] Something has went wrong while attempting to load this artifact.");
+                this.logger.warning(e.toString());
+
+                if (e.getCause() != null) this.logger.warning(e.getCause().toString());
+                else this.logger.warning("Cause is unknown.");
+                success = false;
+            } finally {
+                this.getLogger().info("[DEBUG] MMOItems actions completed.");
+                if (Boolean.TRUE.equals(success)) this.logger.info("[DEBUG] MMOItems actions were all a success.");
+                else this.logger.info("[DEBUG] One or more MMOItems tasks failed.");
+            }
+        }
 
         // Methods
         this.methods = new Methods();
@@ -176,6 +205,11 @@ public class Starter {
     public GriefPreventionSupport getGriefPreventionSupport() {
         return this.griefPreventionSupport;
     }
+
+    public CrazyEnchantsStat getCrazyEnchantsStat() {
+        return this.crazyEnchantsStat;
+    }
+
     public void initializeGPSupport(GriefPreventionSupport griefPreventionSupport) {
         if (!SupportedPlugins.GRIEF_PREVENTION.isPluginEnabled()) return;
         this.griefPreventionSupport = griefPreventionSupport;

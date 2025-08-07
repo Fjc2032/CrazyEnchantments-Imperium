@@ -4,11 +4,11 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import net.Indyuce.mmoitems.api.item.build.ItemStackBuilder;
 import org.bukkit.NamespacedKey;
 
-public interface EnchantPluginBuilder<T extends CEnchantment> {
+public interface CEPlugin <T extends CEnchantment> {
 
-    boolean isCrazyEnchantment(CEnchantment enchantment);
+    boolean isCustomEnchant(CEnchantment var1);
 
-    void handleEnchant(ItemStackBuilder builder, T var, int level);
+    void handleEnchant(ItemStackBuilder var1, T var2, int var3);
 
-    NamespacedKey getNameSpacedKey(String key);
+    NamespacedKey getNamespacedKey(String var1);
 }

@@ -102,6 +102,7 @@ public class ColorUtils {
         return ChatColor.stripColor(msg);
     }
 
+    @SuppressWarnings({"LegacyFormattingDetected"})
     public static net.kyori.adventure.text.TextComponent legacyTranslateColourCodes(String input) {
         return (net.kyori.adventure.text.TextComponent) LegacyComponentSerializer.legacyAmpersand().deserialize(input).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
     }

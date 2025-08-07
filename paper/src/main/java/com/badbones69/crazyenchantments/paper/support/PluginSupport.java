@@ -11,6 +11,7 @@ import com.badbones69.crazyenchantments.paper.support.factions.FactionsUUIDSuppo
 import com.badbones69.crazyenchantments.paper.support.interfaces.claims.ClaimSupport;
 import com.gmail.nossr50.api.PartyAPI;
 import com.google.common.collect.Maps;
+import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -180,6 +181,10 @@ public class PluginSupport {
             this.pluginName = pluginName;
         }
 
+        SupportedPlugins(@NotNull Plugin backup) {
+            this.pluginName = backup.getName();
+        }
+
         @NotNull
         private final CrazyEnchantments plugin = JavaPlugin.getPlugin(CrazyEnchantments.class);
 
@@ -211,7 +216,10 @@ public class PluginSupport {
         }
 
         public boolean isPluginEnabled() {
-            return this.pluginSupport.cachedPlugins.get(this);
+            if (this.pluginSupport.cachedPlugins.get(this) == null) {
+                this.plugin.getLogger().warning("It appears plugin " + this + " is disabled, null, or missing.");
+            }
+            return this.pluginSupport.cachedPlugins.get(this) != null && this.pluginSupport.cachedPlugins.get(this);
         }
     }
 }

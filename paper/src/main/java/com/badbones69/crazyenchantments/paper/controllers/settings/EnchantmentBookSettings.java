@@ -11,6 +11,7 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.objects.Category;
 import com.badbones69.crazyenchantments.paper.api.objects.LostBook;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
+import com.badbones69.crazyenchantments.paper.api.objects.enchants.EnchantmentType;
 import com.badbones69.crazyenchantments.paper.api.utils.ColorUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.google.common.collect.Lists;
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -443,5 +445,35 @@ public class EnchantmentBookSettings {
         } else {
             this.logger.warning("Something has went wrong!");
         }
+    }
+
+    @ApiStatus.Experimental
+    @NotNull
+    public EnchantmentTarget getTarget(@NotNull CEnchantments data) {
+        String target = data.getTypeName();
+        switch (target) {
+            case "Armor" -> {
+                return EnchantmentTarget.ARMOR;
+            }
+            case "Boots" -> {
+                return EnchantmentTarget.ARMOR_FEET;
+            }
+            case "Helmet" -> {
+                return EnchantmentTarget.ARMOR_HEAD;
+            }
+            case "Sword", "Axe" -> {
+                return EnchantmentTarget.WEAPON;
+            }
+            case "Bow" -> {
+                return EnchantmentTarget.BOW;
+            }
+            case "Tool", "Hoe", "Pickaxe" -> {
+                return EnchantmentTarget.TOOL;
+            }
+            case "Damaged-Items" -> {
+                return EnchantmentTarget.BREAKABLE;
+            }
+        }
+        return EnchantmentTarget.BREAKABLE;
     }
 }

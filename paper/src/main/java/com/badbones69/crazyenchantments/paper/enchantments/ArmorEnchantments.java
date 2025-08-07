@@ -20,6 +20,7 @@ import com.badbones69.crazyenchantments.paper.controllers.settings.ProtectionCry
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.tasks.processors.ArmorProcessor;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -334,7 +335,7 @@ public class ArmorEnchantments implements Listener {
                 int level = this.enchantmentBookSettings.getLevel(armor, wardEnchant);
 
                 if (!CEnchantments.WARD.isOffCooldown(player.getUniqueId(), level, true)) return;
-                if (player.isDead()) return;
+                if (player.isDead()) continue;
 
                 double amount = player.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, wardEnchant) / 4);
                 double playerHealth = player.getHealth() + amount;
@@ -447,6 +448,13 @@ public class ArmorEnchantments implements Listener {
                     for (BukkitTask task : spiritTasks) task.cancel();
                 }, 500L);
             }
+            if (EnchantUtils.isEventActive(CEnchantments.ALIENIMPLANTS, player, armor, enchants)) {
+                CEnchantment alienImplant = CEnchantments.ALIENIMPLANTS.getEnchantment();
+                double level = this.enchantmentBookSettings.getLevel(armor, alienImplant);
+                double value = player.getHealth() + (double) player.getSaturation() + level;
+                if (value >= maxhealthdouble) value = maxhealthdouble;
+                player.setHealth(value);
+            }
         }
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -506,11 +514,11 @@ public class ArmorEnchantments implements Listener {
             //depricated INSOMNIA function 
             //if (EnchantUtils.isEventActive(CEnchantments.INSOMNIA, player, armor, enchants)) damager.damage(event.getDamage() + enchants.get(CEnchantments.INSOMNIA.getEnchantment()));
 
-            int WardLevel = enchantmentBookSettings.getLevel(item, CEnchantments.MOLTEN.getEnchantment());
-                if (CEnchantments.MOLTEN.isOffCooldown(damager.getUniqueId(), WardLevel, true)) {
-                    if (EnchantUtils.isEventActive(CEnchantments.MOLTEN, player, armor, enchants))
-                        damager.setFireTicks((enchants.get(CEnchantments.MOLTEN.getEnchantment()) * 2) * 20);
-                }
+            if (EnchantUtils.isEventActive(CEnchantments.MOLTEN, player, armor, enchants)) {
+                int MoltenLevel = enchantmentBookSettings.getLevel(item, CEnchantments.MOLTEN.getEnchantment());
+                if (!CEnchantments.MOLTEN.isOffCooldown(player.getUniqueId(), MoltenLevel, true)) continue;
+                damager.setFireTicks((enchants.get(CEnchantments.MOLTEN.getEnchantment()) * 2) * 20);
+            }
 
             if (EnchantUtils.isEventActive(CEnchantments.SAVIOR, player, armor, enchants)) event.setDamage(event.getDamage() / 2);
 
@@ -557,11 +565,11 @@ public class ArmorEnchantments implements Listener {
                 CEnchantment hardenedEnchant = CEnchantments.HARDENED.getEnchantment();
                 @Nullable ItemStack @NotNull [] playerArmor = player.getInventory().getArmorContents();
                 for (ItemStack equipment : playerArmor) {
-                    if (equipment == null) return;
+                    if (equipment == null) continue;
                     ItemMeta meta = equipment.getItemMeta();
                     Damageable damage = (Damageable) meta;
                     damage.setDamage(damage.getDamage() - this.enchantmentBookSettings.getLevel(armor, hardenedEnchant));
-                    if (damage.getDamage() <= 0) return;
+                    if (damage.getDamage() <= 0) continue;
                     equipment.setItemMeta(meta);
                 }
             }
@@ -677,7 +685,7 @@ public class ArmorEnchantments implements Listener {
 
 
                 for (Entity entity : aggressors) {
-                    if (!(entity instanceof LivingEntity livingEntity)) return;
+                    if (!(entity instanceof LivingEntity livingEntity)) continue;
                     if (isInRadius(box.getCenter().toLocation(world), livingEntity, world, radius)) {
                         event.setDamage(event.getDamage() / (1.5 * level));
                         player.sendMessage("** REINFORCED **");

@@ -5,7 +5,7 @@ plugins {
 
 val buildNumber: String? = System.getenv("BUILD_NUMBER")
 
-rootProject.version = if (buildNumber != null) "${libs.versions.minecraft.get()}-$buildNumber" else "2.5.2.12-alpha17"
+rootProject.version = if (buildNumber != null) "${libs.versions.minecraft.get()}-$buildNumber" else "2.5.2.13-alpha10"
 
 subprojects.filter { it.name != "api" }.forEach {
     it.project.version = rootProject.version
@@ -22,9 +22,12 @@ subprojects {
         maven("https://repo.codemc.io/repository/maven-public")
 
         maven("https://repo.crazycrew.us/libraries")
+
         maven("https://repo.crazycrew.us/releases")
 
         maven("https://jitpack.io")
+
+        maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
 
         maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
 

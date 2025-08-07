@@ -710,6 +710,9 @@ public class CrazyManager {
         enchants.put(CEnchantments.OVERLOAD, new HashMap<>());
         enchants.get(CEnchantments.OVERLOAD).put(PotionEffectType.HEALTH_BOOST, -1);
 
+        enchants.put(CEnchantments.GODLYOVERLOAD, new HashMap<>());
+        enchants.get(CEnchantments.GODLYOVERLOAD).put(PotionEffectType.HEALTH_BOOST, -1);
+
         enchants.put(CEnchantments.NINJA, new HashMap<>());
         enchants.get(CEnchantments.NINJA).put(PotionEffectType.HEALTH_BOOST, -1);
         enchants.get(CEnchantments.NINJA).put(PotionEffectType.SPEED, -1);
@@ -733,6 +736,9 @@ public class CrazyManager {
         enchants.get(CEnchantments.CYBORG).put(PotionEffectType.SPEED, -1);
         enchants.get(CEnchantments.CYBORG).put(PotionEffectType.STRENGTH, 0);
         enchants.get(CEnchantments.CYBORG).put(PotionEffectType.JUMP_BOOST, -1);
+
+        enchants.put(CEnchantments.ALIENIMPLANTS, new HashMap<>());
+        enchants.get(CEnchantments.ALIENIMPLANTS).put(PotionEffectType.SATURATION, -1);
 
         return enchants;
     }

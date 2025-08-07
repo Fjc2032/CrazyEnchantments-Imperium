@@ -1,30 +1,48 @@
 package com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems;
 
 import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
+import com.badbones69.crazyenchantments.paper.Starter;
+import com.badbones69.crazyenchantments.paper.api.CrazyManager;
+import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
-import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.EnchantPluginBuilder;
+import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.CEPlugin;
 import net.Indyuce.mmoitems.api.item.build.ItemStackBuilder;
-import net.Indyuce.mmoitems.comp.enchants.EnchantPlugin;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.kingdoms.utils.Validate;
 
-public class MMOItemsSupport implements EnchantPluginBuilder<CEnchantment> {
+public class MMOItemsSupport implements CEPlugin<CEnchantment> {
 
+    @NotNull
+    private final CrazyEnchantments plugin = JavaPlugin.getPlugin(CrazyEnchantments.class);
+
+    @NotNull
+    private final ItemBuilder itemBuilder = new ItemBuilder();
+
+    @NotNull
+    private final Starter starter = this.plugin.getStarter();
+
+    @NotNull
+    private final CrazyManager crazyManager = this.starter.getCrazyManager();
 
     @Override
-    public boolean isCrazyEnchantment(CEnchantment enchantment) {
+    public boolean isCustomEnchant(CEnchantment enchantment) {
         return enchantment != null;
     }
 
     @Override
-    public void handleEnchant(ItemStackBuilder builder, CEnchantment var, int level) {
-        Validate.isTrue(level > 0, "Level must not be negative.");
+    public void handleEnchant(ItemStackBuilder builder, CEnchantment enchantment, int level) {
+        Validate.isTrue(level > 0, "Level cannot be negative.");
+
+        if (!builder.getMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+            builder.getLore().insert(0, itemBuilder.getUpdatedLore().toString());
+        }
     }
 
     @Override
-    public NamespacedKey getNameSpacedKey(String key) {
-        return new NamespacedKey(JavaPlugin.getPlugin(CrazyEnchantments.class), key);
+    public NamespacedKey getNamespacedKey(String key) {
+        return new NamespacedKey(plugin, key);
     }
 }

@@ -15,6 +15,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.EntityUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -40,6 +41,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 public class AxeEnchantments implements Listener {
 
@@ -275,34 +277,34 @@ public class AxeEnchantments implements Listener {
                 damager.sendMessage("** BLACKSMITH **");
             }
         }
+        if (EnchantUtils.isEventActive(CEnchantments.HEX, damager, item, enchantments)) {
+            CEnchantment hexEnchant = CEnchantments.HEX.getEnchantment();
 
-        //todo() I'll set this up later
-        /*
-        if (EnchantUtils.isEventActive(CEnchantments.DEEPBLEED, damager, item, enchantments)) {
-            //Literally the same thing as bleed but more damage
-            CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
-            double stack = (event.getDamage() / (deepbleedEnchant.getMaxLevel() - this.enchantmentBookSettings.getLevel(item, deepbleedEnchant)));
-            double cap = deepbleedEnchant.getChance();
-            this.bleedStack = handleBleedCap(CEnchantments.DEEPBLEED, stack, cap);
+            int level = this.enchantmentBookSettings.getLevel(item, hexEnchant);
+            final int[] interval = {0};
+            final int cap = (level) * 20;
 
-            if (!(event.getEntity() instanceof LivingEntity player)) return;
-            if (player.isDead()) return;
-            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 5.0F);
-            List<BukkitTask> bleedTasks = new ArrayList<>();
+            DoubleStream random = new Random().doubles(3, 7);
+            double num = random.findAny().getAsDouble();
+            if (Double.isNaN(num)) num = 3;
+            final double value = num;
 
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.getWorld().spawnParticle(Particle.DUST, player.getLocation(), 12, dustOptions), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.damage(this.bleedStack), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> player.sendMessage("You are bleeding!"), 40L, 20L));
-            bleedTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** BLEED **"), 40L, 20L));
+            final ScheduledTask[] task = new ScheduledTask[1];
+            task[0] = entity.getScheduler().runAtFixedRate(plugin, object -> {
+                damager.sendMessage("** HEX **");
+                entity.sendMessage("Enemy Hex active");
+                interval[0]++;
+                entity.setLastDamage(entity.getLastDamage() - value);
+                entity.damage(value);
 
-            this.scheduler.runTaskLater(plugin, () -> {
-                for (BukkitTask task : bleedTasks) {
-                    task.cancel();
+                if (interval[0] >= cap) {
+                    entity.sendMessage("Enemy's Hex has worn off.");
+                    task[0].cancel();
+                    interval[0] = 0;
                 }
-            }, 80L);
+            }, () -> damager.sendMessage("Target is dead. Retiring task..."), 0L, level);
+
         }
-        //Imperium
-        */
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -383,6 +385,34 @@ public class AxeEnchantments implements Listener {
                     task.cancel();
                 }
             }, 80L);
+        }
+        if (EnchantUtils.isEventActive(CEnchantments.DEEPBLEED, damager, item, enchantments)) {
+            CEnchantment deepbleedEnchant = CEnchantments.DEEPBLEED.getEnchantment();
+            double level = this.enchantmentBookSettings.getLevel(item, deepbleedEnchant);
+
+            double stack = (event.getDamage() / (level));
+            int cap = deepbleedEnchant.getChance() / deepbleedEnchant.getMaxLevel();
+            this.bleedStack = handleBleedCap(CEnchantments.DEEPBLEED, item, stack, cap);
+
+            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.BLACK, 2.0F);
+            World world = target.getWorld();
+            final Location location = target.getLocation();
+            final Location offset0 = location.offset(0, 2, 0).toLocation(world);
+            final Location offset1 = location.offset(0, 1, 0).toLocation(world);
+
+            ScheduledTask[] tasks = new ScheduledTask[6];
+            tasks[0] = target.getScheduler().runAtFixedRate(plugin, obj -> world.spawnParticle(Particle.DUST, offset0, 15, dustOptions), null, 40L, 20L);
+            tasks[1] = target.getScheduler().runAtFixedRate(plugin, obj -> world.spawnParticle(Particle.DUST, offset1, 15, dustOptions), null, 40L, 20L);
+            tasks[2] = target.getScheduler().runAtFixedRate(plugin, obj -> world.spawnParticle(Particle.DUST, location, 15, dustOptions), null, 40L, 20L);
+            tasks[3] = target.getScheduler().runAtFixedRate(plugin, obj -> target.damage(this.bleedStack + 1), null, 40L, 20L);
+            tasks[4] = target.getScheduler().runAtFixedRate(plugin, obj -> {
+                target.sendMessage("You are bleeding!");
+                damager.sendMessage("*** DEEP BLEED ***");
+            }, null, 40L, 20L);
+
+            tasks[5] = target.getScheduler().runDelayed(plugin, cancelable -> {
+                for (ScheduledTask task : tasks) task.cancel();
+            }, null, 100L);
         }
         if (EnchantUtils.isEventActive(CEnchantments.CORRUPT, damager, item, enchantments)) {
             CEnchantment corruptEnchant = CEnchantments.CORRUPT.getEnchantment();

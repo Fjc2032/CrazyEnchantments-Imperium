@@ -26,6 +26,7 @@ softdepend:
   - Vault
   - Oraxen
   - MCMMO
+  - MMOItems
 
 commands:
   crazyenchantments:

@@ -222,11 +222,14 @@ public enum CEnchantments {
     SPIRITS("Spirits", "Armor", 10, 10, 600L),
     //SUGGESTED - Imperium
     SWARM("Swarm", "Sword"),
+    HEX("Hex", "Axe", 10, 5),
 
     //HEROIC
     MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
     DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
     BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
+    ALIENIMPLANTS("AlienImplants", "Helmet", 15, 10, true, CEnchantments.IMPLANTS),
+    GODLYOVERLOAD("GodlyOverload", "Armor"),
 
     // Trident //
     IMPACT("Impact", "Trident", 15, 10),

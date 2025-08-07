@@ -49,8 +49,8 @@ jobs:
       run: ./gradlew assemble
 
     - name: Get project version
-      id: get_ver
-      run: echo "::set-output name=VERSION::$(./gradlew -q printVersion)"
+      id: get_version
+      run: echo "VERSION=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
 
     - name: Grab artifact
       uses: actions/upload-artifact@v4
@@ -82,7 +82,7 @@ jobs:
       id: new_release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: alpha
+        tag_name: alpha - build ${{ github.run_number }}
         name: Build ${{ github.run_number }}
         body: Automatic build upload. This is build ${{ github.run_number }}
         draft: false

@@ -24,6 +24,10 @@ repositories {
     maven("https://maven.enginehub.org/repo")
 
     maven("https://repo.oraxen.com/releases")
+
+    maven("https://mvn.lumine.io/repository/maven-public/")
+
+    maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
 }
 
 dependencies {
@@ -62,9 +66,9 @@ dependencies {
 
     compileOnly(libs.mcmmo)
 
-    compileOnly ("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
+    compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
 
-    compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
+    compileOnly("net.Indyuce:MMOItems-API:6.10.1-SNAPSHOT")
 }
 
 val component: SoftwareComponent = components["java"]
