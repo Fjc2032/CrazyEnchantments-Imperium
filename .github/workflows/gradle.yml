@@ -50,7 +50,7 @@ jobs:
 
     - name: Get project version
       id: get_version
-      run: echo "VERSION=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
+      run: echo "::set-output name=VERSION::$(./gradlew -q printVersion)"
 
     - name: Grab artifact
       uses: actions/upload-artifact@v4

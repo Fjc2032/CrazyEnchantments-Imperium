@@ -24,11 +24,9 @@ import com.badbones69.crazyenchantments.paper.support.PluginSupport.SupportedPlu
 import com.badbones69.crazyenchantments.paper.support.SkullCreator;
 import com.badbones69.crazyenchantments.paper.support.claims.GriefPreventionSupport;
 import com.badbones69.crazyenchantments.paper.support.claims.SuperiorSkyBlockSupport;
-import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.MMOItemsSupport;
 import com.badbones69.crazyenchantments.paper.support.interfaces.mmoitems.data.CrazyEnchantsStat;
 import com.badbones69.crazyenchantments.paper.support.misc.OraxenSupport;
 import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.stat.type.ItemStat;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -93,12 +91,9 @@ public class Starter {
         if (SupportedPlugins.MMOITEMS.isPluginLoaded()) {
             Boolean success = null;
             try {
-                /*
-                Class.forName("net/Indyuce/mmoitems/comp/enchants/EnchantPlugin");
-                this.logger.info("[DEBUG] Success! Found class EnchantPlugin<? extends Enchantment>");
-                 */
                 this.crazyEnchantsStat = new CrazyEnchantsStat();
                 MMOItems.plugin.getStats().register(this.crazyEnchantsStat);
+                this.plugin.pluginManager.registerEvents(this.crazyEnchantsStat, this.plugin);
                 success = true;
             } catch (Exception e) {
                 this.logger.warning("[DEBUG] Something has went wrong while attempting to load this artifact.");

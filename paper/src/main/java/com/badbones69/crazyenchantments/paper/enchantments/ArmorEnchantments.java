@@ -86,8 +86,6 @@ public class ArmorEnchantments implements Listener {
     private final ArmorProcessor armorProcessor = new ArmorProcessor();
 
     private final List<UUID> fallenPlayers = new ArrayList<>();
-
-    private @NotNull ItemStack item;
     
     public ArmorEnchantments() {
         armorProcessor.start();
@@ -114,11 +112,11 @@ public class ArmorEnchantments implements Listener {
         boolean oldHasMeta = oldItem.hasItemMeta();
         boolean newHasMeta = newItem.hasItemMeta();
 
-        // Return if no enchants would effect the player with the change.
+        // Return if no enchants would affect the player with the change.
         if ((!newHasMeta || !newItem.getItemMeta().getPersistentDataContainer().has(key))
              && (!oldHasMeta || !oldItem.getItemMeta().getPersistentDataContainer().has(key))) return;
 
-        // Added to prevent armor change event being called on damage. test
+        // Added to prevent armor change event being called on damage.
         if (newHasMeta && oldHasMeta
             && Objects.equals(newItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING),
                               oldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING))) return;
@@ -174,6 +172,7 @@ public class ArmorEnchantments implements Listener {
                 .stream().filter(enchantedPotion -> enchantedPotion.getKey().getEnchantment().equals(key))
                 .forEach(enchantedPotion -> enchantedPotion.getValue().entrySet().stream()
                         .filter(pot -> !topPotions.containsKey(pot.getKey()) || (topPotions.get(pot.getKey()) != -1 && topPotions.get(pot.getKey()) <= pot.getValue()))
+                        .filter(pot -> pot != null)
                         .forEach(pot -> topPotions.put(pot.getKey(), value))));
 
         return topPotions;
@@ -261,7 +260,7 @@ public class ArmorEnchantments implements Listener {
                 if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
             }
             if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
-                int curseLevel = enchantmentBookSettings.getLevel(item, CEnchantments.CURSE.getEnchantment());
+                int curseLevel = enchantmentBookSettings.getLevel(armor, CEnchantments.CURSE.getEnchantment());
                 int amplifier =
                         (curseLevel >= 5) ? 2 :
                         (curseLevel >= 3 ? 1 : 0);
@@ -455,6 +454,12 @@ public class ArmorEnchantments implements Listener {
                 if (value >= maxhealthdouble) value = maxhealthdouble;
                 player.setHealth(value);
             }
+            if (this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), CEnchantments.OVERLOAD.getEnchantment())) {
+                CEnchantment overloadEnchant = CEnchantments.OVERLOAD.getEnchantment();
+                double level = this.enchantmentBookSettings.getLevel(armor, overloadEnchant);
+                AttributeModifier overloadModifier = new AttributeModifier(new NamespacedKey(this.plugin, "overload"), 2 * level, AttributeModifier.Operation.ADD_NUMBER);
+                maxhealth.addModifier(overloadModifier);
+            }
         }
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -515,7 +520,7 @@ public class ArmorEnchantments implements Listener {
             //if (EnchantUtils.isEventActive(CEnchantments.INSOMNIA, player, armor, enchants)) damager.damage(event.getDamage() + enchants.get(CEnchantments.INSOMNIA.getEnchantment()));
 
             if (EnchantUtils.isEventActive(CEnchantments.MOLTEN, player, armor, enchants)) {
-                int MoltenLevel = enchantmentBookSettings.getLevel(item, CEnchantments.MOLTEN.getEnchantment());
+                int MoltenLevel = enchantmentBookSettings.getLevel(armor, CEnchantments.MOLTEN.getEnchantment());
                 if (!CEnchantments.MOLTEN.isOffCooldown(player.getUniqueId(), MoltenLevel, true)) continue;
                 damager.setFireTicks((enchants.get(CEnchantments.MOLTEN.getEnchantment()) * 2) * 20);
             }

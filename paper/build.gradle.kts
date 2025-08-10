@@ -68,7 +68,7 @@ dependencies {
 
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
 
-    compileOnly("net.Indyuce:MMOItems-API:6.10.1-SNAPSHOT")
+    compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
 }
 
 val component: SoftwareComponent = components["java"]

@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.kingdoms.utils.Validate;
 
+@Deprecated
 public class MMOItemsSupport implements CEPlugin<CEnchantment> {
 
     @NotNull

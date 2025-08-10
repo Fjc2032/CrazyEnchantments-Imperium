@@ -1554,14 +1554,14 @@ Enchantments:
   Arrowbreak:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eArrow break'
+    Name: '§eArrow Break'
     MaxPower: 6
     Enchantment-Type: 'Axe'
     Chance-System:
       Base: 10
       Increase: 10
     Info:
-      Name: '§e§lArrow break §r§7(I-VI)'
+      Name: '§e§lArrow Break §r§7(I-VI)'
       Description:
         - '§eA chance for arrows to bounce'
         - '§eoff while wielding an axe.'
@@ -1572,14 +1572,14 @@ Enchantments:
   Arrowdeflect:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eArrow deflect'
+    Name: '§eArrow Deflect'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
       Base: 10
       Increase: 10
     Info:
-      Name: '§e§lArrow deflect §r§7(I-IV)'
+      Name: '§e§lArrow Deflect §r§7(I-IV)'
       Description:
         - '§eA chance to prevent and enemy'
         - '§earrow from dealing damage.'
