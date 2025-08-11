@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum CEnchantments {
 
     //	----------------Boots----------------  \\
-    GEARS("Gears", "Boots"),
     WINGS("Wings", "Boots"),
     ROCKET("Rocket", "Boots", 15, 5),
     SPRINGS("Springs", "Boots"),
@@ -32,12 +31,10 @@ public enum CEnchantments {
     ICEFREEZE("IceFreeze", "Bow", 25, 10),
     MULTIARROW("MultiArrow", "Bow", 25, 10),
     STICKY_SHOT("Sticky-Shot", "Bow", 10, 10),
-    SNIPER("Sniper", "Bow", 25, 5),
     //	----------------Helmets----------------  \\
     IMPLANTS("Implants", "Helmet", 5, 5),
     //	----------------Swords----------------  \\
     TRAP("Trap", "Sword", 10, 5),
-    RAGE("Rage", "Sword"),
     VIPER("Viper", "Sword", 10, 5),
     SNARE("Snare", "Sword", 10, 3),
     SLOWMO("SlowMo", "Sword", 5, 5),
@@ -45,17 +42,12 @@ public enum CEnchantments {
     VAMPIRE("Vampire", "Sword", 5, 5),
     EXECUTE("Execute", "Sword"),
     FASTTURN("FastTurn", "Sword", 5, 5),
-    DISARMER("Disarmer", "Sword", 5, 1),
     PARALYZE("Paralyze", "Sword", 15, 5),
     BLINDNESS("Blindness", "Sword", 5, 1),
-    LIFESTEAL("LifeSteal", "Sword", 15, 5),
-    INQUISITIVE("Inquisitive", "Sword", 50, 25),
-    DOUBLEDAMAGE("DoubleDamage", "Sword", 5, 1),
     DISORDER("Disorder", "Sword", 1, 0),
     CHARGE("Charge", "Sword"),
     //	----------------Armor----------------  \\
     VALOR("Valor", "Armor"),
-    DRUNK("Drunk", "Helmet"),
     ANGEL("Angel", "Armor"),
     TAMER("Tamer", "Armor"),
     GUARDS("Guards", "Armor"),
@@ -66,7 +58,6 @@ public enum CEnchantments {
     RECOVER("Recover", "Armor"),
     NURSERY("Nursery", "Armor", 5, 5),
     FORTIFY("Fortify", "Armor", 10, 5),
-    OVERLOAD("OverLoad", "Armor"),
     BLIZZARD("Blizzard", "Armor"),
     ACIDRAIN("AcidRain", "Armor", 5, 5),
     SANDSTORM("SandStorm", "Armor", 5, 5),
@@ -78,7 +69,6 @@ public enum CEnchantments {
     INFESTATION("Infestation", "Armor"),
     NECROMANCER("Necromancer", "Armor"),
     STORMCALLER("StormCaller", "Armor", 10, 5),
-    ENLIGHTENED("Enlightened", "Armor", 10, 5),
     CYBORG("Cyborg", "Armor"),
     BEEKEEPER("BeeKeeper", "Armor"),
     MANEUVER("Maneuver", "Armor", 10, 5),
@@ -158,7 +148,25 @@ public enum CEnchantments {
     //TOOLS
     TELEPATHY("Telepathy", "Tool", 40, 20),
     OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15, 160L, 20L),
-    
+
+    //IMPERIUM: Elite Enchantments
+    //IMPERIUM: Ultimate Enchantments
+    //IMPERIUM: Legendary Enchantments
+    //	----------------Boots----------------  \\\
+    GEARS("Gears", "Boots"),
+    SNIPER("Sniper", "Bow", 25, 5),
+    //	----------------Swords----------------  \\\
+    RAGE("Rage", "Sword"),
+    DISARMER("Disarmer", "Sword", 5, 1),
+    LIFESTEAL("LifeSteal", "Sword", 15, 5),
+    INQUISITIVE("Inquisitive", "Sword", 50, 25),
+    DOUBLEDAMAGE("DoubleDamage", "Sword", 5, 1),
+
+    OVERLOAD("OverLoad", "Armor"),
+    ENLIGHTENED("Enlightened", "Armor", 10, 5),
+
+
+    DRUNK("Drunk", "Helmet"),
 
     //NEW - Imperium
     POISONED("Poisoned", "Armor", 10, 5),
@@ -220,22 +228,26 @@ public enum CEnchantments {
     REINFORCED("Reinforced", "Armor", 20, 10),
     TIMBER("Timber", "Axe", 10, 5),
     SPIRITS("Spirits", "Armor", 10, 10, 600L),
+
     //SUGGESTED - Imperium
     SWARM("Swarm", "Sword"),
     HEX("Hex", "Axe", 10, 5),
 
     //HEROIC
-    MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
-    DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
-    BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
-    ALIENIMPLANTS("AlienImplants", "Helmet", 15, 10, true, CEnchantments.IMPLANTS),
-    GODLYOVERLOAD("GodlyOverload", "Armor"),
 
+    //TEST - enchantments
+    AURA("Aura", "Trident"),
     // Trident //
     IMPACT("Impact", "Trident", 15, 10),
     TWINGE("Twinge", "Trident", 40, 8),
     AURA("Aura", "Trident")
 
+    //IMPERIUM: Heroic Enchantments
+    MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
+    DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
+    BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
+    ALIENIMPLANTS("AlienImplants", "Helmet", 15, 10, true, CEnchantments.IMPLANTS),
+    GODLYOVERLOAD("GodlyOverload", "Armor"),
     ;
 
 

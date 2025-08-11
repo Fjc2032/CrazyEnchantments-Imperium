@@ -610,6 +610,22 @@ Enchantments:
     Categories:
       - 'Elite'
   #Do not change this line.
+  Impact:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§bImpact'
+    MaxPower: 4
+    Enchantment-Type: 'Tridents'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§b§lImpact §r§7(I-IV)'
+      Description:
+        - '§eChance to deal double damage dealt'
+        - '§7Elite Tridents Enchantment'
+    Categories:
+      - 'Elite'
   Vampire:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
@@ -1622,6 +1638,23 @@ Enchantments:
     Categories:
       - 'Ultimate'
   #Do not change this line.
+  Twinge:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§6Twinge'
+    MaxPower: 4
+    Enchantment-Type: 'Tridents'
+    Chance-System:
+      Base: 40
+      Increase: 8
+    Info:
+      Name: '§6§lTwinge §r§7(I-IV)'
+      Description:
+        - '§eMake your enemy bleed'
+        - '§eon melee attacks.'
+        - '§7Legendary Tridents Enchantment'
+    Categories:
+      - 'Legendary'
   Sniper:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
