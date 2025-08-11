@@ -240,7 +240,6 @@ public enum CEnchantments {
     // Trident //
     IMPACT("Impact", "Trident", 15, 10),
     TWINGE("Twinge", "Trident", 40, 8),
-    AURA("Aura", "Trident")
 
     //IMPERIUM: Heroic Enchantments
     MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
