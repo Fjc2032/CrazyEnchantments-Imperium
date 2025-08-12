@@ -595,6 +595,7 @@ public class CrazyManager {
      *
      * @param item The {@link ItemStack} to check.
      * @return The limit set on the item by slot crystals.
+     *
      */
     public int getEnchantmentLimiter(@NotNull ItemStack item) {
         if (!useEnchantmentLimiter) return 0;
@@ -604,7 +605,9 @@ public class CrazyManager {
     /**
      * Force an update of a players armor potion effects.
      * @param player The player you are updating the effects of.
+     * @deprecated Use attributes instead of persistent effects.
      */
+    @Deprecated
     public void updatePlayerEffects(Player player) { // TODO Remove this method.
         if (player == null) return;
         Set<CEnchantments> allEnchantPotionEffects = getEnchantmentPotions().keySet();
@@ -619,6 +622,7 @@ public class CrazyManager {
         }
     }
 
+    @Deprecated
     public void checkPotions(Map<PotionEffectType, Integer> effects, Player player) { //TODO Remove this Method
         for (Map.Entry<PotionEffectType, Integer> type : effects.entrySet()) {
             int value = type.getValue();
@@ -637,7 +641,9 @@ public class CrazyManager {
      * @param excludedItem Exclude an item.
      * @param enchantment The enchantment you want the max level effects from.
      * @return The list of all the max potion effects based on all the armor on the player.
+     * @deprecated Use attributes instead of persistent effects.
      */
+    @Deprecated
     public Map<PotionEffectType, Integer> getUpdatedEffects(Player player, ItemStack includedItem, ItemStack excludedItem, CEnchantments enchantment) { //TODO Remove this method.
         Map<PotionEffectType, Integer> effects = new HashMap<>();
         List<ItemStack> items = new ArrayList<>(Arrays.asList(player.getEquipment().getArmorContents()));
@@ -681,8 +687,11 @@ public class CrazyManager {
     /**
      *
      * @return All the effects for each enchantment that needs it.
+     * @deprecated Use attributes instead of persistent effects.
      */
+    @Deprecated
     public Map<CEnchantments, HashMap<PotionEffectType, Integer>> getEnchantmentPotions() {
+        //todo change all of these into attributes, glowing can be skipped
         Map<CEnchantments, HashMap<PotionEffectType, Integer>> enchants = new HashMap<>();
 
         enchants.put(CEnchantments.GLOWING, new HashMap<>());

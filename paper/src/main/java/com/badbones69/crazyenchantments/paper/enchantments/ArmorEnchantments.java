@@ -15,12 +15,13 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.objects.PotionEffects;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
+import com.badbones69.crazyenchantments.paper.controllers.AttributeController;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.controllers.settings.ProtectionCrystalSettings;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.tasks.processors.ArmorProcessor;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
-import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -34,6 +35,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -83,6 +85,9 @@ public class ArmorEnchantments implements Listener {
     @NotNull
     private final ArmorEnchantmentManager armorEnchantmentManager = this.starter.getArmorEnchantmentManager();
 
+    @NotNull
+    private final AttributeController attributeController = new AttributeController();
+
     private final ArmorProcessor armorProcessor = new ArmorProcessor();
 
     private final List<UUID> fallenPlayers = new ArrayList<>();
@@ -100,10 +105,10 @@ public class ArmorEnchantments implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         ItemStack air = new ItemStack(Material.AIR);
 
-        player.getScheduler().runDelayed(this.plugin, playerTask -> newUpdateEffects(player, air, air), null, 10);
+        player.getScheduler().runDelayed(this.plugin, playerTask -> this.attributeController.clearAllAttributes(player), null, 10);
     }
 
-    @EventHandler
+    @Deprecated
     public void onEquip(PlayerArmorChangeEvent event) {
         NamespacedKey key = DataKeys.enchantments.getNamespacedKey();
         Player player = event.getPlayer();
@@ -121,99 +126,6 @@ public class ArmorEnchantments implements Listener {
             && Objects.equals(newItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING),
                               oldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING))) return;
 
-        newUpdateEffects(player, newItem, oldItem);
-    }
-
-    /**
-     * Checks the players current armor and updates any needed effects that are created by CrazyEnchantments.
-     * Removes all effects that should no longer be on the player and adds the highest level for the others
-     * based on their armor.
-     * @param player The player for whom to update effects.
-     * @param newItem The new item equipped.
-     * @param oldItem The item that had previously been equipped.
-     */
-    private void newUpdateEffects(@NotNull Player player, @NotNull ItemStack newItem, @NotNull ItemStack oldItem) {
-        Map<CEnchantment, Integer> topEnchants = currentEnchantsOnPlayerAdded(player, newItem);
-
-        // Remove all effects that they no longer should have from the armor.
-        if (!oldItem.isEmpty()) {
-            getTopPotionEffects(this.enchantmentBookSettings.getEnchantments(oldItem)
-                    .entrySet().stream()
-                    .filter(enchant -> !topEnchants.containsKey(enchant.getKey()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b)))
-                    .keySet()
-                    .forEach(player::removePotionEffect);
-        }
-
-        // Add all new effects that said player should now have.
-        for (Map.Entry<PotionEffectType, Integer> effect : getTopPotionEffects(topEnchants).entrySet()) {
-            for (PotionEffect currentEffect : player.getActivePotionEffects()) {
-                if (!currentEffect.getType().equals(effect.getKey())) continue;
-                if (currentEffect.getAmplifier() >= effect.getValue() - 1) break;
-
-                player.removePotionEffect(effect.getKey());
-                break;
-            }
-            player.addPotionEffect(new PotionEffect(effect.getKey(), -1, effect.getValue() - 1));
-        }
-    }
-
-    /**
-     * Pulls the data off of all of the enchantments provided and filters out the worst ones.
-     * @param topEnchants A list of {@link CEnchantment}'s to filter.
-     * @return Returns a list of top potion effects from the provided list of enchantments.
-     */
-    @NotNull
-    private Map<PotionEffectType, Integer> getTopPotionEffects(@NotNull Map<CEnchantment, Integer> topEnchants) {
-        Map<CEnchantments, HashMap<PotionEffectType, Integer>> enchantmentPotions = this.crazyManager.getEnchantmentPotions();
-        HashMap<PotionEffectType, Integer> topPotions = new HashMap<>();
-
-        topEnchants.forEach((key, value) -> enchantmentPotions.entrySet()
-                .stream().filter(enchantedPotion -> enchantedPotion.getKey().getEnchantment().equals(key))
-                .forEach(enchantedPotion -> enchantedPotion.getValue().entrySet().stream()
-                        .filter(pot -> !topPotions.containsKey(pot.getKey()) || (topPotions.get(pot.getKey()) != -1 && topPotions.get(pot.getKey()) <= pot.getValue()))
-                        .filter(pot -> pot != null)
-                        .forEach(pot -> topPotions.put(pot.getKey(), value))));
-
-        return topPotions;
-    }
-
-    /**
-     *
-     * @param player The player to check.
-     * @param newItem The equipped item.
-     * @return Returns a map of all current active enchants on the specified player.
-     */
-    @NotNull
-    private HashMap<CEnchantment, Integer> currentEnchantsOnPlayerAdded(@NotNull Player player, @NotNull ItemStack newItem) {
-        HashMap<CEnchantment, Integer> toAdd = getTopEnchantsOnPlayer(player);
-
-        if (!newItem.isEmpty()) {
-            this.enchantmentBookSettings.getEnchantments(newItem).entrySet().stream()
-                    .filter(ench -> !toAdd.containsKey(ench.getKey()) || toAdd.get(ench.getKey()) <= ench.getValue())
-                    .filter(ench -> EnchantUtils.isArmorEventActive(player, CEnchantments.valueOf(ench.getKey().getName().toUpperCase()), newItem))
-                    .forEach(ench -> toAdd.put(ench.getKey(), ench.getValue()));
-        }
-
-        return toAdd;
-    }
-
-    /**
-     *
-     * @param player The player to check for {@link CEnchantments}.
-     * @return A list of {@link CEnchantments}'s on the player.
-     */
-    @NotNull
-    private HashMap<CEnchantment, Integer> getTopEnchantsOnPlayer(@NotNull Player player) {
-        HashMap<CEnchantment, Integer> topEnchants = new HashMap<>();
-
-        Arrays.stream(player.getEquipment().getArmorContents())
-                .map(this.enchantmentBookSettings::getEnchantments)
-                .forEach(enchantments -> enchantments.entrySet().stream()
-                        .filter(ench -> !topEnchants.containsKey(ench.getKey()) || topEnchants.get(ench.getKey()) <= ench.getValue())
-                        .forEach(ench -> topEnchants.put(ench.getKey(), ench.getValue())));
-
-        return topEnchants;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -260,7 +172,8 @@ public class ArmorEnchantments implements Listener {
                 if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
             }
             if (EnchantUtils.isEventActive(CEnchantments.CURSE, player, armor, enchants)) {
-                int curseLevel = enchantmentBookSettings.getLevel(armor, CEnchantments.CURSE.getEnchantment());
+                CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
+                int curseLevel = enchantmentBookSettings.getLevel(armor, curseEnchant);
                 int amplifier =
                         (curseLevel >= 5) ? 2 :
                         (curseLevel >= 3 ? 1 : 0);
@@ -270,7 +183,6 @@ public class ArmorEnchantments implements Listener {
                         (curseLevel == 3) ? 80 :
                         (curseLevel == 2 ? 140 : 100);
                 if (CEnchantments.CURSE.isOffCooldown(damager.getUniqueId(), curseLevel, true)) {
-                    CEnchantment curseEnchant = CEnchantments.CURSE.getEnchantment();
                     if (player.getHealth() < 6) {
                         if (!player.hasPotionEffect(PotionEffectType.STRENGTH))
                             player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, duration, amplifier));
@@ -291,20 +203,20 @@ public class ArmorEnchantments implements Listener {
         if (EventUtils.isIgnoredEvent(event) || EventUtils.isIgnoredUUID(event.getDamager().getUniqueId())) return;
         if (this.pluginSupport.isFriendly(event.getDamager(), event.getEntity())) return;
 
-        if (!(event.getDamager() instanceof LivingEntity damager) || !(event.getEntity() instanceof Player player)) return;
+        if (!(event.getDamager() instanceof LivingEntity damager) || !(event.getEntity() instanceof Player target)) return;
 
-        final @Nullable AttributeInstance maxhealth = player.getAttribute(Attribute.MAX_HEALTH);
+        final @Nullable AttributeInstance maxhealth = target.getAttribute(Attribute.MAX_HEALTH);
         double maxhealthdouble = maxhealth.getValue();
 
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : target.getEquipment().getArmorContents()) {
             Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
             if (enchants.isEmpty()) continue;
-            if (player.isDead()) continue;
+            if (target.isDead()) continue;
 
             for (ArmorEnchantment armorEnchantment : this.armorEnchantmentManager.getArmorEnchantments()) {
                 CEnchantments enchantment = armorEnchantment.getEnchantment();
 
-                if (EnchantUtils.isEventActive(enchantment, player, armor, enchants)) {
+                if (EnchantUtils.isEventActive(enchantment, target, armor, enchants)) {
 
                     if (armorEnchantment.isPotionEnchantment()) {
                         for (PotionEffects effect : armorEnchantment.getPotionEffects()) {
@@ -315,93 +227,93 @@ public class ArmorEnchantments implements Listener {
                     }
                 }
             }
-            if (player.getHealth() <= event.getFinalDamage() && EnchantUtils.isEventActive(CEnchantments.SYSTEMREBOOT, player, armor, enchants)) {
-                player.setHealth(maxhealth.getValue());
+            if (target.getHealth() <= event.getFinalDamage() && EnchantUtils.isEventActive(CEnchantments.SYSTEMREBOOT, target, armor, enchants)) {
+                target.setHealth(maxhealth.getValue());
                 event.setCancelled(true);
 
                 return;
             }
-            if (player.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.ENLIGHTENED, player, armor, enchants)) {
+            if (target.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.ENLIGHTENED, target, armor, enchants)) {
                 double heal = enchants.get(CEnchantments.ENLIGHTENED.getEnchantment());
-                // Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
+                // Uses getValue as if the target has health boost it is modifying the base so the value after the modifier is needed.
 
-                if (player.getHealth() + heal < maxhealth.getValue()) player.setHealth(player.getHealth() + heal);
+                if (target.getHealth() + heal < maxhealth.getValue()) target.setHealth(target.getHealth() + heal);
 
-                if (player.getHealth() + heal >= maxhealth.getValue()) player.setHealth(maxhealth.getValue());
+                if (target.getHealth() + heal >= maxhealth.getValue()) target.setHealth(maxhealth.getValue());
             }
-            if (EnchantUtils.isEventActive(CEnchantments.WARD, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.WARD, target, armor, enchants)) {
                 CEnchantment wardEnchant = CEnchantments.WARD.getEnchantment();
                 int level = this.enchantmentBookSettings.getLevel(armor, wardEnchant);
 
-                if (!CEnchantments.WARD.isOffCooldown(player.getUniqueId(), level, true)) return;
-                if (player.isDead()) continue;
+                if (!CEnchantments.WARD.isOffCooldown(target.getUniqueId(), level, true)) return;
+                if (target.isDead()) continue;
 
-                double amount = player.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, wardEnchant) / 4);
-                double playerHealth = player.getHealth() + amount;
+                double amount = target.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, wardEnchant) / 4);
+                double playerHealth = target.getHealth() + amount;
                 event.setCancelled(true);
 
                 //Will this stop the propelling issue? Who knows
-                this.scheduler.runTaskLater(plugin, () -> player.setVelocity(new Vector(0, 0, 0)), 2L);
+                this.scheduler.runTaskLater(plugin, () -> target.setVelocity(new Vector(0, 0, 0)), 2L);
                 if (playerHealth >= maxhealthdouble) playerHealth = maxhealthdouble;
-                player.setHealth(playerHealth);
-                player.sendMessage("* WARD * (Healed you for: " + playerHealth + ")");
+                target.setHealth(playerHealth);
+                target.sendMessage("* WARD * (Healed you for: " + playerHealth + ")");
             }
-            if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.ANGELIC, target, armor, enchants)) {
                 CEnchantment angelicEnchant = CEnchantments.ANGELIC.getEnchantment();
                 if (!CEnchantments.ANGELIC.isOffCooldown(
-                        player.getUniqueId(),
+                        target.getUniqueId(),
                         this.enchantmentBookSettings.getLevel(armor, angelicEnchant),
                         true
                 )) return;
-                double modifier = player.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, angelicEnchant) / 4);
-                if (player.isDead()) return;
+                double modifier = target.getHealth() + ((double) this.enchantmentBookSettings.getLevel(armor, angelicEnchant) / 4);
+                if (target.isDead()) return;
                 if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
-                player.setHealth(modifier);
-                player.sendMessage("** ANGELIC ** (Healed you for: " + modifier + ")");
+                target.setHealth(modifier);
+                target.sendMessage("** ANGELIC ** (Healed you for: " + modifier + ")");
             }
-            if (EnchantUtils.isEventActive(CEnchantments.CREEPERARMOR, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.CREEPERARMOR, target, armor, enchants)) {
                 CEnchantment targetEnchant = CEnchantments.CREEPERARMOR.getEnchantment();
-                if (player.getLastDamageCause().getCause().equals(DamageCause.BLOCK_EXPLOSION) || player.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+                if (target.getLastDamageCause().getCause().equals(DamageCause.BLOCK_EXPLOSION) || target.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
                     event.setCancelled(true);
-                    this.scheduler.runTaskLater(plugin, () -> player.setVelocity(new Vector(0, 0, 0)), 2L);
+                    this.scheduler.runTaskLater(plugin, () -> target.setVelocity(new Vector(0, 0, 0)), 2L);
                 }
                 if (CEnchantments.CREEPERARMOR.getChance() >= 15) {
-                    double value = player.getHealth() + this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+                    double value = target.getHealth() + this.enchantmentBookSettings.getLevel(armor, targetEnchant);
                     if (value >= maxhealthdouble) value = maxhealthdouble;
-                    player.setHealth(value);
-                    double rep = player.getHealth() - this.enchantmentBookSettings.getLevel(armor, targetEnchant);
-                    player.sendMessage("** CREEPER ARMOR **\nHealed for " + rep);
+                    target.setHealth(value);
+                    double rep = target.getHealth() - this.enchantmentBookSettings.getLevel(armor, targetEnchant);
+                    target.sendMessage("** CREEPER ARMOR **\nHealed for " + rep);
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, target, armor, enchants)) {
                 CEnchantment deathgodEnchant = CEnchantments.DEATHGOD.getEnchantment();
-                double modifier = player.getHealth() / 2;
+                double modifier = target.getHealth() / 2;
                 if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
-                if (player.getHealth() < modifier) {
-                    player.setHealth(player.getHealth() + 5 + (double) (this.enchantmentBookSettings.getLevel(armor, deathgodEnchant)) / 4);
-                    player.sendMessage("** DEATH GOD ** (Healed you for: " + modifier + ")");
+                if (target.getHealth() < modifier) {
+                    target.setHealth(target.getHealth() + 5 + (double) (this.enchantmentBookSettings.getLevel(armor, deathgodEnchant)) / 4);
+                    target.sendMessage("** DEATH GOD ** (Healed you for: " + modifier + ")");
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, target, armor, enchants)) {
                 CEnchantment endwalkerEnchant = CEnchantments.ENDERWALKER.getEnchantment();
                 if (!(event.getEntity() instanceof Player victim)) return;
                 if (victim.hasPotionEffect(PotionEffectType.POISON)) victim.removePotionEffect(PotionEffectType.POISON);
                 if (victim.hasPotionEffect(PotionEffectType.WITHER)) victim.removePotionEffect(PotionEffectType.WITHER);
-                double modifier = player.getHealth() + this.enchantmentBookSettings.getLevel(armor, endwalkerEnchant);
+                double modifier = target.getHealth() + this.enchantmentBookSettings.getLevel(armor, endwalkerEnchant);
                 if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
                 victim.setHealth(modifier);
-                player.sendMessage("* ENDER WALKER * (Healed you for: " + modifier + ")");
+                target.sendMessage("* ENDER WALKER * (Healed you for: " + modifier + ")");
             }
-            if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.SPIRITS, target, armor, enchants)) {
                 //Declare a new empty collection of blazes as an ArrayList
                 Collection<Blaze> blazes = new ArrayList<>();
                 List<BukkitTask> spiritTasks = new ArrayList<>();
 
-                //Get the world, position, and region the player is in.
+                //Get the world, position, and region the target is in.
                 CEnchantment targetEnchant = CEnchantments.SPIRITS.getEnchantment();
-                World world = player.getWorld();
-                Location playerPos = player.getLocation();
-                BoundingBox box = player.getBoundingBox();
+                World world = target.getWorld();
+                Location playerPos = target.getLocation();
+                BoundingBox box = target.getBoundingBox();
 
                 //Get the level of the enchantment as a variable
                 int level = this.enchantmentBookSettings.getLevel(armor, targetEnchant);
@@ -410,7 +322,7 @@ public class ArmorEnchantments implements Listener {
                 for (int i = 0; i < level; i++) {
                     world.spawn(playerPos, Blaze.class);
                 }
-                //Builds a new runnable that checks the amount of blazes in player region, then adds them to the
+                //Builds a new runnable that checks the amount of blazes in target region, then adds them to the
                 //new Collection.
                 spiritTasks.add(this.scheduler.runTaskLater(plugin, () -> {
                     Collection<Entity> nearbyEntities = world.getNearbyEntities(box.expand(8, 8, 8));
@@ -421,12 +333,12 @@ public class ArmorEnchantments implements Listener {
                     }
 
                 }, 40L));
-                //Heal the player based on the amount of blazes in the Collection, as well as the enchantment level.
+                //Heal the target based on the amount of blazes in the Collection, as well as the enchantment level.
                 spiritTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
                     if (!blazes.isEmpty()) {
-                        double modifier = player.getHealth() + (blazes.size() + level);
+                        double modifier = target.getHealth() + (blazes.size() + level);
                         double newPlayerHealth = Math.min(modifier, maxhealthdouble);
-                        player.setHealth(newPlayerHealth);
+                        target.setHealth(newPlayerHealth);
                     }
                 }, 0L, 20L));
 
@@ -447,18 +359,22 @@ public class ArmorEnchantments implements Listener {
                     for (BukkitTask task : spiritTasks) task.cancel();
                 }, 500L);
             }
-            if (EnchantUtils.isEventActive(CEnchantments.ALIENIMPLANTS, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.ALIENIMPLANTS, target, armor, enchants)) {
                 CEnchantment alienImplant = CEnchantments.ALIENIMPLANTS.getEnchantment();
                 double level = this.enchantmentBookSettings.getLevel(armor, alienImplant);
-                double value = player.getHealth() + (double) player.getSaturation() + level;
+                double value = target.getHealth() + (double) target.getSaturation() + level;
                 if (value >= maxhealthdouble) value = maxhealthdouble;
-                player.setHealth(value);
+                target.setHealth(value);
             }
             if (this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), CEnchantments.OVERLOAD.getEnchantment())) {
                 CEnchantment overloadEnchant = CEnchantments.OVERLOAD.getEnchantment();
+                NamespacedKey key = new NamespacedKey(this.plugin, "overload");
                 double level = this.enchantmentBookSettings.getLevel(armor, overloadEnchant);
-                AttributeModifier overloadModifier = new AttributeModifier(new NamespacedKey(this.plugin, "overload"), 2 * level, AttributeModifier.Operation.ADD_NUMBER);
+                AttributeModifier overloadModifier = new AttributeModifier(key, 2 * level, AttributeModifier.Operation.ADD_NUMBER);
                 maxhealth.addModifier(overloadModifier);
+
+                this.attributeController.updateAttributes(target, Attribute.MAX_HEALTH, overloadModifier, overloadEnchant);
+                this.attributeController.add(overloadModifier);
             }
         }
     }
@@ -697,6 +613,11 @@ public class ArmorEnchantments implements Listener {
                     }
                 }
             }
+            CEnchantment hulk = CEnchantments.HULK.getEnchantment();
+            if (this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), hulk)) {
+                double scale = this.enchantmentBookSettings.getLevel(armor, hulk) * 10;
+                AttributeModifier hulkModifer = new AttributeModifier(new NamespacedKey(this.plugin, "hulk"), scale, AttributeModifier.Operation.ADD_NUMBER);
+            }
         }
 
         if (!(damager instanceof Player)) return;
@@ -727,11 +648,13 @@ public class ArmorEnchantments implements Listener {
                 int level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
                 event.setDamage(Math.max(event.getDamage() - level, 0));
                 if (level >= 3) {
-                    AttributeModifier modifier = new AttributeModifier(new NamespacedKey(plugin, "fat"), level * 8, AttributeModifier.Operation.ADD_NUMBER);
-                    victim.getAttribute(Attribute.MAX_ABSORPTION).addModifier(modifier);
-                    victim.setAbsorptionAmount(level * 2);
+                    AttributeModifier fatModifier = new AttributeModifier(new NamespacedKey(this.plugin, "fat"), level * 8, AttributeModifier.Operation.ADD_NUMBER);
+                    victim.getAttribute(Attribute.MAX_ABSORPTION).addModifier(fatModifier);
 
-                    this.scheduler.runTaskLater(plugin, () -> victim.getAttribute(Attribute.MAX_ABSORPTION).removeModifier(modifier), 120L);
+                    victim.getScheduler().runDelayed(this.plugin, apply -> victim.setAbsorptionAmount(level * 8), null, 10L);
+
+                    this.attributeController.updateAttributes(victim, Attribute.MAX_ABSORPTION, fatModifier, fatEnchant);
+                    this.attributeController.add(fatModifier);
                 }
             }
         }
@@ -879,5 +802,105 @@ public class ArmorEnchantments implements Listener {
 
     private boolean isInRadius(@NotNull Location location, @NotNull LivingEntity entity, World world, double radius) {
         return world.getNearbyLivingEntities(location, radius).contains(entity);
+    }
+
+    /**
+     * Checks the players current armor and updates any needed effects that are created by CrazyEnchantments.
+     * Removes all effects that should no longer be on the player and adds the highest level for the others
+     * based on their armor.
+     * @param player The player for whom to update effects.
+     * @param newItem The new item equipped.
+     * @param oldItem The item that had previously been equipped.
+     * @deprecated Persistent effect-based enchantments now use attributes.
+     */
+    @Deprecated
+    private void newUpdateEffects(@NotNull Player player, @NotNull ItemStack newItem, @NotNull ItemStack oldItem) {
+        Map<CEnchantment, Integer> topEnchants = currentEnchantsOnPlayerAdded(player, newItem);
+
+        // Remove all effects that they no longer should have from the armor.
+        if (!oldItem.isEmpty()) {
+            getTopPotionEffects(this.enchantmentBookSettings.getEnchantments(oldItem)
+                    .entrySet().stream()
+                    .filter(enchant -> !topEnchants.containsKey(enchant.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b)))
+                    .keySet()
+                    .forEach(player::removePotionEffect);
+        }
+
+        // Add all new effects that said player should now have.
+        for (Map.Entry<PotionEffectType, Integer> effect : getTopPotionEffects(topEnchants).entrySet()) {
+            for (PotionEffect currentEffect : player.getActivePotionEffects()) {
+                if (!currentEffect.getType().equals(effect.getKey())) continue;
+                if (currentEffect.getAmplifier() >= effect.getValue() - 1) break;
+
+                player.removePotionEffect(effect.getKey());
+                break;
+            }
+            player.addPotionEffect(new PotionEffect(effect.getKey(), -1, effect.getValue() - 1));
+        }
+    }
+
+    /**
+     * Pulls the data off of all of the enchantments provided and filters out the worst ones.
+     * @param topEnchants A list of {@link CEnchantment}'s to filter.
+     * @return Returns a list of top potion effects from the provided list of enchantments.
+     * @deprecated Persistent effect-based enchantments now use attributes.
+     */
+    @Deprecated
+    @NotNull
+    private Map<PotionEffectType, Integer> getTopPotionEffects(@NotNull Map<CEnchantment, Integer> topEnchants) {
+        Map<CEnchantments, HashMap<PotionEffectType, Integer>> enchantmentPotions = this.crazyManager.getEnchantmentPotions();
+        HashMap<PotionEffectType, Integer> topPotions = new HashMap<>();
+
+        topEnchants.forEach((key, value) -> enchantmentPotions.entrySet()
+                .stream().filter(enchantedPotion -> enchantedPotion.getKey().getEnchantment().equals(key))
+                .forEach(enchantedPotion -> enchantedPotion.getValue().entrySet().stream()
+                        .filter(pot -> !topPotions.containsKey(pot.getKey()) || (topPotions.get(pot.getKey()) != -1 && topPotions.get(pot.getKey()) <= pot.getValue()))
+                        .filter(pot -> pot != null)
+                        .forEach(pot -> topPotions.put(pot.getKey(), value))));
+
+        return topPotions;
+    }
+
+    /**
+     *
+     * @param player The player to check.
+     * @param newItem The equipped item.
+     * @return Returns a map of all current active enchants on the specified player.
+     * @deprecated Persistent effect-based enchantments now use attributes.
+     */
+    @Deprecated
+    @NotNull
+    private HashMap<CEnchantment, Integer> currentEnchantsOnPlayerAdded(@NotNull Player player, @NotNull ItemStack newItem) {
+        HashMap<CEnchantment, Integer> toAdd = getTopEnchantsOnPlayer(player);
+
+        if (!newItem.isEmpty()) {
+            this.enchantmentBookSettings.getEnchantments(newItem).entrySet().stream()
+                    .filter(ench -> !toAdd.containsKey(ench.getKey()) || toAdd.get(ench.getKey()) <= ench.getValue())
+                    .filter(ench -> EnchantUtils.isArmorEventActive(player, CEnchantments.valueOf(ench.getKey().getName().toUpperCase()), newItem))
+                    .forEach(ench -> toAdd.put(ench.getKey(), ench.getValue()));
+        }
+
+        return toAdd;
+    }
+
+    /**
+     *
+     * @param player The player to check for {@link CEnchantments}.
+     * @return A list of {@link CEnchantments}'s on the player.
+     * @deprecated Persistent effect-based enchantments now use attributes.
+     */
+    @Deprecated
+    @NotNull
+    private HashMap<CEnchantment, Integer> getTopEnchantsOnPlayer(@NotNull Player player) {
+        HashMap<CEnchantment, Integer> topEnchants = new HashMap<>();
+
+        Arrays.stream(player.getEquipment().getArmorContents())
+                .map(this.enchantmentBookSettings::getEnchantments)
+                .forEach(enchantments -> enchantments.entrySet().stream()
+                        .filter(ench -> !topEnchants.containsKey(ench.getKey()) || topEnchants.get(ench.getKey()) <= ench.getValue())
+                        .forEach(ench -> topEnchants.put(ench.getKey(), ench.getValue())));
+
+        return topEnchants;
     }
 }

@@ -5,7 +5,7 @@ plugins {
 
 val buildNumber: String? = System.getenv("BUILD_NUMBER")
 
-rootProject.version = if (buildNumber != null) "${libs.versions.minecraft.get()}-$buildNumber" else "2.5.2.13-alpha11"
+rootProject.version = if (buildNumber != null) "${libs.versions.minecraft.get()}-$buildNumber" else "2.5.2.14-alpha1"
 
 subprojects.filter { it.name != "api" }.forEach {
     it.project.version = rootProject.version

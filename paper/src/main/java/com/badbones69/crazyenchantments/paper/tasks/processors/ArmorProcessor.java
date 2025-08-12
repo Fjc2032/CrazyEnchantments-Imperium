@@ -30,6 +30,8 @@ public class ArmorProcessor extends PoolProcessor {
 
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
+    public Map<ItemStack, String> attributeMap = new HashMap<>();
+
     public ArmorProcessor() {}
 
     public void add(UUID id){
@@ -72,6 +74,17 @@ public class ArmorProcessor extends PoolProcessor {
         useHellForge(player, inv.getItemInMainHand(), this.enchantmentBookSettings.getEnchantments(inv.getItemInMainHand()));
         useHellForge(player, inv.getItemInOffHand(), this.enchantmentBookSettings.getEnchantments(inv.getItemInOffHand()));
     }
+
+    public void put(ItemStack element, String key) {
+        attributeMap.put(element, key);
+    }
+    public void put(ItemStack element) {
+        Collection<String> array = attributeMap.values();
+        for (int index = 0; index < array.size(); index++) {
+            attributeMap.put(element, Integer.toString(index));
+        }
+    }
+
 
     private void checkCommander(ItemStack armor, Player player, Map<CEnchantment, Integer> enchantments) {
 

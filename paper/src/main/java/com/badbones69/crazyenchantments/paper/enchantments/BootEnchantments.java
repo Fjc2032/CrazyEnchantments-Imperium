@@ -7,8 +7,12 @@ import com.badbones69.crazyenchantments.paper.api.managers.WingsManager;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.WingsUtils;
+import com.badbones69.crazyenchantments.paper.controllers.AttributeController;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +24,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -41,17 +47,40 @@ public class BootEnchantments implements Listener {
     @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
+    //Controllers
+    @NotNull
+    private final AttributeController attributeController = new AttributeController();
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerEquip(PlayerArmorChangeEvent event) {
-        if (!this.wingsManager.isWingsEnabled()) return;
-
         Player player = event.getPlayer();
+        ItemStack boots = player.getInventory().getBoots();
+        if (boots == null) return;
 
-        // Check the new armor piece.
-        WingsUtils.checkArmor(event.getNewItem(), true, null, player);
+        //Enchants
+        CEnchantment gears = CEnchantments.GEARS.getEnchantment();
+        double power = this.enchantmentBookSettings.getLevel(boots, gears) * 0.75;
 
-        // Check the old armor piece.
-        WingsUtils.checkArmor(null, false, event.getOldItem(), player);
+        //Attributes
+        AttributeModifier gearsModifier = new AttributeModifier(new NamespacedKey(this.plugin, "gears"), power, AttributeModifier.Operation.ADD_NUMBER);
+
+        //Metadata
+        ItemMeta meta = boots.getItemMeta();
+
+        if (this.wingsManager.isWingsEnabled()) {
+            // Check the new armor piece.
+            WingsUtils.checkArmor(event.getNewItem(), true, null, player);
+
+            // Check the old armor piece.
+            WingsUtils.checkArmor(null, false, event.getOldItem(), player);
+        }
+        if (this.enchantmentBookSettings.hasEnchantment(boots.getItemMeta(), gears)) {
+            meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, gearsModifier);
+            boots.setItemMeta(meta);
+        }
+
+        this.attributeController.updateAttributes(player, Attribute.MOVEMENT_SPEED, gearsModifier, gears, boots, EquipmentSlot.FEET);
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
