@@ -4,26 +4,24 @@ import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import jdk.jfr.Experimental;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.stream.Collectors;
 
-@Experimental
+@ApiStatus.Experimental
 public class AttributeController {
 
     @NotNull
@@ -33,26 +31,27 @@ public class AttributeController {
     private final EnchantmentBookSettings enchantmentBookSettings = new EnchantmentBookSettings();
 
     @NotNull
-    public static Map<UUID, AttributeController> dataset = new ConcurrentHashMap<>();
+    private static final Map<UUID, AttributeController> dataset = new ConcurrentHashMap<>();
 
     @NotNull
-    public final Map<UUID, AttributeController> data = dataset;
+    private final Collection<Attribute> attributes = new ConcurrentLinkedDeque<>();
 
     @NotNull
-    public Collection<AttributeModifier> modifiers = new ConcurrentLinkedDeque<>();
+    private final Collection<AttributeModifier> modifiers = new ConcurrentLinkedDeque<>();
 
-    public Attribute attribute;
+    private Attribute attribute;
+
+    private AttributeModifier modifier;
 
     public ScheduledTask[] task;
 
     public boolean isAttributeHandlingEnabled = true;
 
-    public static @NotNull Map<UUID, AttributeController> getDataset() {
-        return dataset;
-    }
-
     /**
      * Starts a task calculation that will remove the attribute modifier when the item is no longer valid.
+     * <p>
+     * This function is probably not performance friendly, due to the fact that it executes frequently and can theoretically run forever.
+     * Use with caution.
      * @param player The player this task will target
      * @param attribute The attribute being affected
      * @param modifier The modifier that will affect the attribute
@@ -61,10 +60,13 @@ public class AttributeController {
     public void updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment) {
         if (player == null || attribute == null) return;
 
+        this.attribute = attribute;
+        this.modifier = modifier;
+
         this.task[0] = player.getScheduler().runAtFixedRate(plugin, check -> {
             for (ItemStack armor : player.getInventory().getArmorContents()) {
-                if (armor == null) continue;
-                if (modifier == null) continue;
+                if (armor == null) break;
+                if (modifier == null) break;
                 if (!this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), enchantment)) {
                     player.getAttribute(attribute).removeModifier(modifier);
                     check.cancel();
@@ -76,7 +78,7 @@ public class AttributeController {
     }
 
     /**
-     * Runs a check that will remove the attribute from the item once the requirements are no longer met.
+     * Runs a check that will remove the attribute from the item once conditions are met.
      * Specifically targets held items.
      * @param player The player this task will target
      * @param attribute The attribute being affected
@@ -89,6 +91,9 @@ public class AttributeController {
             this.plugin.getLogger().warning("One or more parts of updateAttributes is null. Exiting...");
             return;
         }
+        this.attribute = attribute;
+        this.modifier = modifier;
+
         if (player.getInventory().getItemInMainHand().isSimilar(tool)) return;
         if (!this.enchantmentBookSettings.hasEnchantment(tool.getItemMeta(), enchantment)) {
             ItemMeta meta = tool.getItemMeta();
@@ -100,21 +105,28 @@ public class AttributeController {
     }
 
     /**
-     * Runs a check that will remove the attribute from the armor piece once conditions are met.
+     * Runs a check that will remove the attribute from the item once conditions are met.
+     * Specifically targets armor. Will probably return null if the item can't be equipped.
      * @param player The player this will target
      * @param attribute The attribute being affected
      * @param modifier The modifier that will affect the attribute
      * @param enchantment The enchantment this is tied to
      * @param armor The ItemStack this will be tied to (should be armor)
-     * @param slot The EquipmentSlot this armor piece should occupy.
+     * @param slot The EquipmentSlot this armor piece should occupy. If null, the plugin will attempt to guess the slot.
      */
-    public void updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment, @NotNull ItemStack armor, @NotNull EquipmentSlot slot) {
+    public void updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment, @NotNull ItemStack armor, @Nullable EquipmentSlot slot) {
         if (player == null || attribute == null || modifier == null || enchantment == null) return;
 
+        this.attribute = attribute;
+        this.modifier = modifier;
+
+        if (slot == null) slot = armor.getItemMeta().getEquippable().getSlot();
         if (player.getEquipment().getItem(slot).equals(armor)) return;
         if (!this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), enchantment)) {
             ItemMeta meta = armor.getItemMeta();
-            for (Attribute selection : meta.getAttributeModifiers().keySet()) {
+            Set<Attribute> keySet = meta.getAttributeModifiers().keySet();
+            if (keySet.contains(null)) keySet = keySet.stream().filter(Objects::nonNull).collect(Collectors.toSet());
+            for (Attribute selection : keySet) {
                 meta.removeAttributeModifier(selection);
             }
             armor.setItemMeta(meta);
@@ -128,11 +140,81 @@ public class AttributeController {
     public void clearAllAttributes(Player player) {
         for (Attribute attribute : Registry.ATTRIBUTE) for (AttributeModifier modifier : this.modifiers) {
             player.getAttribute(attribute).removeModifier(modifier);
-            this.modifiers.clear();
+            this.clear();
         }
+    }
+
+    public void add(Attribute attribute) {
+        this.attributes.add(attribute);
     }
 
     public void add(AttributeModifier element) {
         this.modifiers.add(element);
+    }
+
+    public void add(Attribute attribute, AttributeModifier element) {
+        this.attributes.add(attribute);
+        this.modifiers.add(element);
+    }
+
+    public void remove(Attribute attribute) {
+        this.attributes.remove(attribute);
+    }
+
+    public void remove(AttributeModifier element) {
+        this.modifiers.remove(element);
+    }
+
+    public void remove(Attribute attribute, AttributeModifier element) {
+        this.attributes.remove(attribute);
+        this.modifiers.remove(element);
+    }
+
+    public void clear() {
+        this.attributes.clear();
+        this.modifiers.clear();
+    }
+
+    @Deprecated
+    public static @NotNull Map<UUID, AttributeController> getDataset() {
+        return Map.copyOf(dataset);
+    }
+
+    /**
+     * Gets a list of all current active attributes
+     * @return All active attributes, as a Collection
+     */
+    public @NotNull Collection<Attribute> getAttributes() {
+        return List.copyOf(this.attributes);
+    }
+
+    /**
+     * Gets a list of all current active modifiers
+     * @return All active modifiers, as a Collection
+     */
+    public @NotNull Collection<AttributeModifier> getModifiers() {
+        return List.copyOf(this.modifiers);
+    }
+
+    /**
+     * Gets the last attribute that was in use.
+     * This does NOT return a list of all attributes in use!! Use {@link AttributeController#getAttributes()}
+     * if you want every attribute. The function linked will give you a Collection.
+     * @return The last attribute that was used, or null if no attribute was used.
+     */
+    public @Nullable Attribute getAttribute() {
+        if (this.attribute == null) return null;
+        return this.attribute;
+    }
+
+    /**
+     * Gets the last modifier that was in use.
+     * This does NOT return a list of all modifiers in use!! Use {@link AttributeController#getModifiers()}
+     * if you want every modifier. The function linked will give you a Collection.
+     * @return The last attribute that was used, or null if not applicable.
+     */
+    public @Nullable AttributeModifier getModifier() {
+        if (this.modifier == null) return null;
+        return this.modifier;
     }
 }

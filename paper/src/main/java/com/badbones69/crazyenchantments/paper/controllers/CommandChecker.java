@@ -31,6 +31,9 @@ public class CommandChecker implements Listener {
     @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
+    @NotNull
+    private final AttributeController controller = new AttributeController();
+
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClear(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
@@ -42,11 +45,13 @@ public class CommandChecker implements Listener {
                             .stream().filter(enchantedPotion -> enchant.containsKey(enchantedPotion.getKey().getEnchantment()))
                             .forEach(enchantedPotion -> enchantedPotion.getValue().keySet().forEach(player::removePotionEffect)));
 
+            this.controller.clearAllAttributes(player);
         } else if (event.getMessage().equalsIgnoreCase("/heal")) {
             updateEffects(player);
         }
     }
 
+    @Deprecated(forRemoval = true)
     private void updateEffects(Player player) {
         player.getScheduler().runDelayed(this.plugin, playerTask -> this.crazyManager.updatePlayerEffects(player), null, 5);
     }

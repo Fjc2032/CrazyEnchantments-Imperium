@@ -71,23 +71,28 @@ public class ToolEnchantments implements Listener {
 
         //Metadata
         ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
 
-        if (this.enchantmentBookSettings.hasEnchantment(item.getItemMeta(), oxygenate)) {
-            if (!player.isInWaterOrBubbleColumn()) return;
-            int power = this.enchantmentBookSettings.getLevel(item, oxygenate);
-            AttributeModifier oxygenateModifier = new AttributeModifier(new NamespacedKey(this.plugin, "oxygenate"), power * 7, AttributeModifier.Operation.ADD_NUMBER);
-            meta.addAttributeModifier(Attribute.OXYGEN_BONUS, oxygenateModifier);
-            item.setItemMeta(meta);
+        try {
+            if (this.enchantmentBookSettings.hasEnchantment(meta, oxygenate)) {
+                if (!player.isInWaterOrBubbleColumn()) return;
+                int power = this.enchantmentBookSettings.getLevel(item, oxygenate);
+                AttributeModifier oxygenateModifier = new AttributeModifier(new NamespacedKey(this.plugin, "oxygenate"), power * 7, AttributeModifier.Operation.ADD_NUMBER);
+                player.getAttribute(Attribute.OXYGEN_BONUS).addModifier(oxygenateModifier);
 
-            this.attributeController.updateAttributes(player, Attribute.OXYGEN_BONUS, oxygenateModifier, oxygenate, item);
-        }
-        if (this.enchantmentBookSettings.hasEnchantment(item.getItemMeta(), haste)) {
-            int power = this.enchantmentBookSettings.getLevel(item, haste);
-            AttributeModifier hasteModifier = new AttributeModifier(new NamespacedKey(this.plugin, "haste"), power * 10, AttributeModifier.Operation.ADD_NUMBER);
-            meta.addAttributeModifier(Attribute.MINING_EFFICIENCY, hasteModifier);
-            item.setItemMeta(meta);
+                this.attributeController.updateAttributes(player, Attribute.OXYGEN_BONUS, oxygenateModifier, oxygenate);
+                this.attributeController.add(Attribute.OXYGEN_BONUS, oxygenateModifier);
+            }
+            if (this.enchantmentBookSettings.hasEnchantment(meta, haste)) {
+                int power = this.enchantmentBookSettings.getLevel(item, haste);
+                AttributeModifier hasteModifier = new AttributeModifier(new NamespacedKey(this.plugin, "haste"), power * 10, AttributeModifier.Operation.ADD_NUMBER);
+                meta.addAttributeModifier(Attribute.MINING_EFFICIENCY, hasteModifier);
+                item.setItemMeta(meta);
 
-            this.attributeController.updateAttributes(player, Attribute.MINING_EFFICIENCY, hasteModifier, haste, item);
+                this.attributeController.updateAttributes(player, Attribute.MINING_EFFICIENCY, hasteModifier, haste, item);
+                this.attributeController.add(Attribute.MINING_EFFICIENCY, hasteModifier);
+            }
+        } catch (IllegalArgumentException ignored) {
         }
     }
 

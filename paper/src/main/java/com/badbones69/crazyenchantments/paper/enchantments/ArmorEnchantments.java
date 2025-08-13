@@ -128,6 +128,73 @@ public class ArmorEnchantments implements Listener {
 
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onArmorSwap(PlayerArmorChangeEvent event) {
+        Player player = event.getPlayer();
+
+        try {
+            for (ItemStack armor : player.getInventory().getArmorContents()) {
+                if (armor == null) continue;
+
+                //Enchants
+                CEnchantment overload = CEnchantments.OVERLOAD.getEnchantment();
+                CEnchantment godlyOverload = CEnchantments.GODLYOVERLOAD.getEnchantment();
+                CEnchantment hulk = CEnchantments.HULK.getEnchantment();
+                CEnchantment fat = CEnchantments.FAT.getEnchantment();
+
+                //Metadata
+                ItemMeta meta = armor.getItemMeta();
+                if (meta == null) return;
+
+                if (this.enchantmentBookSettings.hasEnchantment(meta, overload)) {
+                    NamespacedKey key = new NamespacedKey(this.plugin, "overload");
+                    double level = this.enchantmentBookSettings.getLevel(armor, overload);
+                    AttributeModifier overloadModifier = new AttributeModifier(key, 4 * level, AttributeModifier.Operation.ADD_NUMBER);
+                    meta.addAttributeModifier(Attribute.MAX_HEALTH, overloadModifier);
+
+                    armor.setItemMeta(meta);
+                    this.attributeController.updateAttributes(player, Attribute.MAX_HEALTH, overloadModifier, overload, armor, null);
+                    this.attributeController.add(Attribute.MAX_HEALTH, overloadModifier);
+                }
+                if (this.enchantmentBookSettings.hasEnchantment(meta, godlyOverload)) {
+                    NamespacedKey key = new NamespacedKey(this.plugin, "godly_overload");
+                    double level = this.enchantmentBookSettings.getLevel(armor, godlyOverload);
+                    AttributeModifier godlyOverloadModifier = new AttributeModifier(key, 8 * level, AttributeModifier.Operation.ADD_NUMBER);
+                    meta.addAttributeModifier(Attribute.MAX_HEALTH, godlyOverloadModifier);
+
+                    armor.setItemMeta(meta);
+                    this.attributeController.updateAttributes(player, Attribute.MAX_HEALTH, godlyOverloadModifier, godlyOverload, armor, null);
+                    this.attributeController.add(Attribute.MAX_HEALTH, godlyOverloadModifier);
+                }
+                //Hulk will be modified to increase attack power
+                //Think of it as a big guy flexing his hulk muscles
+                if (this.enchantmentBookSettings.hasEnchantment(meta, hulk)) {
+                    NamespacedKey key = new NamespacedKey(this.plugin, "hulk");
+                    double power = this.enchantmentBookSettings.getLevel(armor, hulk) * 10;
+                    AttributeModifier hulkModifier = new AttributeModifier(key, power, AttributeModifier.Operation.ADD_NUMBER);
+                    meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, hulkModifier);
+
+                    armor.setItemMeta(meta);
+                    this.attributeController.updateAttributes(player, Attribute.ATTACK_DAMAGE, hulkModifier, hulk, armor, null);
+                    this.attributeController.add(Attribute.ATTACK_DAMAGE, hulkModifier);
+                }
+                //Apparently absorption is dumb and I have to apply it to the player directly
+                //This game sucks
+                if (this.enchantmentBookSettings.hasEnchantment(meta, fat)) {
+                    NamespacedKey key = new NamespacedKey(this.plugin, "fat");
+                    double power = this.enchantmentBookSettings.getLevel(armor, fat) * 4;
+                    AttributeModifier fatModifier = new AttributeModifier(key, power, AttributeModifier.Operation.ADD_NUMBER);
+                    player.getAttribute(Attribute.MAX_ABSORPTION).addModifier(fatModifier);
+
+                    this.attributeController.updateAttributes(player, Attribute.MAX_ABSORPTION, fatModifier, fat);
+                    this.attributeController.add(Attribute.MAX_ABSORPTION, fatModifier);
+                }
+            }
+        } catch (IllegalArgumentException ignored) {
+            this.plugin.getLogger().warning("[DEBUG] This modifier is already active! If the enchantment is working as expected, you can ignore this message.");
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void potionHandler(EntityDamageByEntityEvent event) {
         if (EventUtils.isIgnoredEvent(event) || EventUtils.isIgnoredUUID(event.getDamager().getUniqueId())) return;
@@ -366,16 +433,6 @@ public class ArmorEnchantments implements Listener {
                 if (value >= maxhealthdouble) value = maxhealthdouble;
                 target.setHealth(value);
             }
-            if (this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), CEnchantments.OVERLOAD.getEnchantment())) {
-                CEnchantment overloadEnchant = CEnchantments.OVERLOAD.getEnchantment();
-                NamespacedKey key = new NamespacedKey(this.plugin, "overload");
-                double level = this.enchantmentBookSettings.getLevel(armor, overloadEnchant);
-                AttributeModifier overloadModifier = new AttributeModifier(key, 2 * level, AttributeModifier.Operation.ADD_NUMBER);
-                maxhealth.addModifier(overloadModifier);
-
-                this.attributeController.updateAttributes(target, Attribute.MAX_HEALTH, overloadModifier, overloadEnchant);
-                this.attributeController.add(overloadModifier);
-            }
         }
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -613,11 +670,6 @@ public class ArmorEnchantments implements Listener {
                     }
                 }
             }
-            CEnchantment hulk = CEnchantments.HULK.getEnchantment();
-            if (this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), hulk)) {
-                double scale = this.enchantmentBookSettings.getLevel(armor, hulk) * 10;
-                AttributeModifier hulkModifer = new AttributeModifier(new NamespacedKey(this.plugin, "hulk"), scale, AttributeModifier.Operation.ADD_NUMBER);
-            }
         }
 
         if (!(damager instanceof Player)) return;
@@ -635,27 +687,20 @@ public class ArmorEnchantments implements Listener {
         }
     }
 
-    @EventHandler()
-    private void absorptionHandler(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player attacker)) return;
+    @EventHandler(ignoreCancelled = true)
+    public void absorptionHandler(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player victim)) return;
 
         for (ItemStack armor : victim.getEquipment().getArmorContents()) {
             @NotNull final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
 
             if (EnchantUtils.isEventActive(CEnchantments.FAT, victim, armor, enchants)) {
-                CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
-                int level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
+                CEnchantment fat = CEnchantments.FAT.getEnchantment();
+                int level = this.enchantmentBookSettings.getLevel(armor, fat);
+
                 event.setDamage(Math.max(event.getDamage() - level, 0));
-                if (level >= 3) {
-                    AttributeModifier fatModifier = new AttributeModifier(new NamespacedKey(this.plugin, "fat"), level * 8, AttributeModifier.Operation.ADD_NUMBER);
-                    victim.getAttribute(Attribute.MAX_ABSORPTION).addModifier(fatModifier);
 
-                    victim.getScheduler().runDelayed(this.plugin, apply -> victim.setAbsorptionAmount(level * 8), null, 10L);
-
-                    this.attributeController.updateAttributes(victim, Attribute.MAX_ABSORPTION, fatModifier, fatEnchant);
-                    this.attributeController.add(fatModifier);
-                }
+                if (level >= 3) victim.getScheduler().runDelayed(this.plugin, apply -> victim.setAbsorptionAmount(level * 8), null, 10L);
             }
         }
     }

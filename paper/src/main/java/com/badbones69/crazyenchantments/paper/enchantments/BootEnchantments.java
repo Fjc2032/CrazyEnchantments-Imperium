@@ -59,13 +59,14 @@ public class BootEnchantments implements Listener {
 
         //Enchants
         CEnchantment gears = CEnchantments.GEARS.getEnchantment();
-        double power = this.enchantmentBookSettings.getLevel(boots, gears) * 0.75;
+        double power = this.enchantmentBookSettings.getLevel(boots, gears) * 0.005;
 
         //Attributes
         AttributeModifier gearsModifier = new AttributeModifier(new NamespacedKey(this.plugin, "gears"), power, AttributeModifier.Operation.ADD_NUMBER);
 
         //Metadata
         ItemMeta meta = boots.getItemMeta();
+        if (meta == null) return;
 
         if (this.wingsManager.isWingsEnabled()) {
             // Check the new armor piece.
@@ -74,12 +75,17 @@ public class BootEnchantments implements Listener {
             // Check the old armor piece.
             WingsUtils.checkArmor(null, false, event.getOldItem(), player);
         }
-        if (this.enchantmentBookSettings.hasEnchantment(boots.getItemMeta(), gears)) {
-            meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, gearsModifier);
-            boots.setItemMeta(meta);
+        try {
+            if (this.enchantmentBookSettings.hasEnchantment(boots.getItemMeta(), gears)) {
+                meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, gearsModifier);
+                boots.setItemMeta(meta);
+            }
+        } catch (IllegalArgumentException ignored) {
+            this.plugin.getLogger().warning("[DEBUG] This modifier is already active! If the enchantment is working as expected, this can be ignored.");
         }
 
         this.attributeController.updateAttributes(player, Attribute.MOVEMENT_SPEED, gearsModifier, gears, boots, EquipmentSlot.FEET);
+        this.attributeController.add(Attribute.MOVEMENT_SPEED, gearsModifier);
 
     }
 
