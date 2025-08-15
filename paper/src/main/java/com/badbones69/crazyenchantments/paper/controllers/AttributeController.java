@@ -1,14 +1,18 @@
 package com.badbones69.crazyenchantments.paper.controllers;
 
 import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
+import com.badbones69.crazyenchantments.paper.Methods;
+import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
+import com.google.common.collect.Multimap;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +32,12 @@ public class AttributeController {
     private final CrazyEnchantments plugin = JavaPlugin.getPlugin(CrazyEnchantments.class);
 
     @NotNull
+    private final Starter starter = this.plugin.getStarter();
+
+    @NotNull
+    private final Methods methods = this.starter.getMethods();
+
+    @NotNull
     private final EnchantmentBookSettings enchantmentBookSettings = new EnchantmentBookSettings();
 
     @NotNull
@@ -43,7 +53,7 @@ public class AttributeController {
 
     private AttributeModifier modifier;
 
-    public ScheduledTask[] task;
+    private ScheduledTask[] task;
 
     public boolean isAttributeHandlingEnabled = true;
 
@@ -85,23 +95,39 @@ public class AttributeController {
      * @param modifier The modifier that will affect the attribute
      * @param enchantment The enchantment this attribute combination is tied to
      * @param tool The ItemStack this is tied to. Can be any item, as long as the player is holding it.
+     * @return True if the attribute was removed, false otherwise
      */
-    public void updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment, @NotNull ItemStack tool) {
+    public boolean updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment, @NotNull ItemStack tool) {
         if (player == null || attribute == null || modifier == null || enchantment == null) {
             this.plugin.getLogger().warning("One or more parts of updateAttributes is null. Exiting...");
-            return;
+            return false;
         }
+
         this.attribute = attribute;
         this.modifier = modifier;
 
-        if (player.getInventory().getItemInMainHand().isSimilar(tool)) return;
-        if (!this.enchantmentBookSettings.hasEnchantment(tool.getItemMeta(), enchantment)) {
-            ItemMeta meta = tool.getItemMeta();
-            for (Attribute selection : meta.getAttributeModifiers().keySet()) {
-                meta.removeAttributeModifier(selection);
+            if (tool == null) {
+                this.plugin.getLogger().warning("[DEBUG] Item handler is null.");
+                return false;
             }
-            tool.setItemMeta(meta);
-        }
+
+            //Metadata
+            ItemMeta meta = tool.getItemMeta();
+            if (meta == null) {
+                this.plugin.getLogger().warning("[DEBUG] Metadata handler is null.");
+                return false;
+            }
+
+            if (this.enchantmentBookSettings.hasEnchantment(meta, enchantment)) {
+                this.plugin.getLogger().warning("[DEBUG] Enchantment is present. Skipping...");
+                return false;
+            }
+
+            tool = this.removeModifiers(player, tool, attribute, modifier);
+
+
+
+        return true;
     }
 
     /**
@@ -203,7 +229,6 @@ public class AttributeController {
      * @return The last attribute that was used, or null if no attribute was used.
      */
     public @Nullable Attribute getAttribute() {
-        if (this.attribute == null) return null;
         return this.attribute;
     }
 
@@ -214,7 +239,69 @@ public class AttributeController {
      * @return The last attribute that was used, or null if not applicable.
      */
     public @Nullable AttributeModifier getModifier() {
-        if (this.modifier == null) return null;
         return this.modifier;
+    }
+
+    public ScheduledTask[] getTask() {
+        return this.task.clone();
+    }
+
+    public @Nullable ItemStack[] getHotbar(Player player) {
+        ItemStack[] iterator = new ItemStack[9];
+        for (int i = 0; i < 9; i++) {
+            iterator[i] = player.getInventory().getItem(i);
+        }
+
+        return iterator.clone();
+    }
+
+    /**
+     * Reconstructs an ItemStack with attribute modifiers.
+     * @param player The player
+     * @param item The item being targeted
+     * @param attribute The attribute that will be modified
+     * @param modifier The modifier targeting the attribute
+     * @return The new ItemStack with attributes
+     */
+    public ItemStack build(Player player, ItemStack item, Attribute attribute, AttributeModifier modifier) {
+        Inventory inventory = player.getInventory();
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return item;
+
+        meta.addAttributeModifier(attribute, modifier);
+        item.setItemMeta(meta);
+
+        ItemStack newItem = item.clone();
+        inventory.remove(item);
+
+        inventory.addItem(newItem);
+
+        this.add(attribute, modifier);
+        return newItem;
+    }
+
+    /**
+     * Removes attributes from a selected ItemStack, then rebuilds it
+     * @param player The player
+     * @param item The item being targeted
+     * @param attribute The attribute that will be targeted
+     * @param modifier The modifier that should be removed
+     * @return The new ItemStack without the attribute modifier
+     */
+    public ItemStack removeModifiers(Player player, ItemStack item, @Nullable Attribute attribute, @Nullable AttributeModifier modifier) {
+        Inventory inventory = player.getInventory();
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null || attribute == null || modifier == null) return item;
+        if (meta.getAttributeModifiers() == null) return item;
+        meta.removeAttributeModifier(attribute, modifier);
+        item.setItemMeta(meta);
+
+        ItemStack newItem = item.clone();
+        inventory.remove(item);
+
+        inventory.addItem(newItem);
+
+        this.remove(attribute, modifier);
+        return newItem;
     }
 }

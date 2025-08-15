@@ -21,7 +21,6 @@ import com.badbones69.crazyenchantments.paper.controllers.settings.ProtectionCry
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.tasks.processors.ArmorProcessor;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -35,7 +34,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -190,7 +188,7 @@ public class ArmorEnchantments implements Listener {
                     this.attributeController.add(Attribute.MAX_ABSORPTION, fatModifier);
                 }
             }
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException | NullPointerException ignored) {
             this.plugin.getLogger().warning("[DEBUG] This modifier is already active! If the enchantment is working as expected, you can ignore this message.");
         }
     }

@@ -8,6 +8,7 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.controllers.AttributeController;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
+import com.google.common.collect.Multimap;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -21,6 +22,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -38,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ToolEnchantments implements Listener {
 
@@ -59,10 +62,11 @@ public class ToolEnchantments implements Listener {
     private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
 
-    @ApiStatus.Experimental
+
     @EventHandler
-    public void onItemHeld(PlayerItemHeldEvent event) {
+    public void onItemInteract(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
+        
         ItemStack item = this.methods.getItemInHand(player);
 
         //Enchants
@@ -73,26 +77,30 @@ public class ToolEnchantments implements Listener {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
+        //Keys
+        NamespacedKey oxygenateKey = new NamespacedKey(this.plugin, "oxygenate");
+        NamespacedKey hasteKey = new NamespacedKey(this.plugin, "haste");
+
+        //Power
+        double oxyPower = this.enchantmentBookSettings.getLevel(item, oxygenate) * 7;
+        double hastePower = this.enchantmentBookSettings.getLevel(item, haste) * 30;
+
+        //Modifiers
+        AttributeModifier oxygenateModifier = new AttributeModifier(oxygenateKey, oxyPower, AttributeModifier.Operation.ADD_NUMBER);
+        AttributeModifier hasteModifier = new AttributeModifier(hasteKey, hastePower, AttributeModifier.Operation.ADD_NUMBER);
+
+
         try {
-            if (this.enchantmentBookSettings.hasEnchantment(meta, oxygenate)) {
-                if (!player.isInWaterOrBubbleColumn()) return;
-                int power = this.enchantmentBookSettings.getLevel(item, oxygenate);
-                AttributeModifier oxygenateModifier = new AttributeModifier(new NamespacedKey(this.plugin, "oxygenate"), power * 7, AttributeModifier.Operation.ADD_NUMBER);
-                player.getAttribute(Attribute.OXYGEN_BONUS).addModifier(oxygenateModifier);
-
-                this.attributeController.updateAttributes(player, Attribute.OXYGEN_BONUS, oxygenateModifier, oxygenate);
-                this.attributeController.add(Attribute.OXYGEN_BONUS, oxygenateModifier);
-            }
             if (this.enchantmentBookSettings.hasEnchantment(meta, haste)) {
-                int power = this.enchantmentBookSettings.getLevel(item, haste);
-                AttributeModifier hasteModifier = new AttributeModifier(new NamespacedKey(this.plugin, "haste"), power * 10, AttributeModifier.Operation.ADD_NUMBER);
-                meta.addAttributeModifier(Attribute.MINING_EFFICIENCY, hasteModifier);
-                item.setItemMeta(meta);
+                item = this.attributeController.build(player, item, Attribute.MINING_EFFICIENCY, hasteModifier);
+            } else item = this.attributeController.removeModifiers(player, item, Attribute.MINING_EFFICIENCY, hasteModifier);
 
-                this.attributeController.updateAttributes(player, Attribute.MINING_EFFICIENCY, hasteModifier, haste, item);
-                this.attributeController.add(Attribute.MINING_EFFICIENCY, hasteModifier);
-            }
-        } catch (IllegalArgumentException ignored) {
+            if (this.enchantmentBookSettings.hasEnchantment(meta, oxygenate)) {
+                item = this.attributeController.build(player, item, Attribute.OXYGEN_BONUS, oxygenateModifier);
+            } else item = this.attributeController.removeModifiers(player, item, Attribute.OXYGEN_BONUS, oxygenateModifier);
+
+
+        } catch (IllegalArgumentException | NullPointerException ignored) {
         }
     }
 
