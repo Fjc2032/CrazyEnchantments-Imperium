@@ -43,6 +43,7 @@ public class Enchant {
      * @return The level or null if the enchantment is not on the item.
      */
     public Integer getLevel(String enchantment) {
+        if (this.enchants.get(enchantment) == null) return 0;
         return this.enchants.get(enchantment);
     }
 

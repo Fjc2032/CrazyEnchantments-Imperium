@@ -8,11 +8,9 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.utils.EnchantUtils;
 import com.badbones69.crazyenchantments.paper.controllers.AttributeController;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
-import com.google.common.collect.Multimap;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -22,25 +20,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.checkerframework.checker.units.qual.N;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ToolEnchantments implements Listener {
 
@@ -82,8 +72,10 @@ public class ToolEnchantments implements Listener {
         NamespacedKey hasteKey = new NamespacedKey(this.plugin, "haste");
 
         //Power
-        double oxyPower = this.enchantmentBookSettings.getLevel(item, oxygenate) * 7;
-        double hastePower = this.enchantmentBookSettings.getLevel(item, haste) * 30;
+        int oxyPower = 7;
+
+        Integer hasteLvl = this.enchantmentBookSettings.getLevel(item, haste);
+        int hastePower = hasteLvl != null ? hasteLvl * 30 : 0;
 
         //Modifiers
         AttributeModifier oxygenateModifier = new AttributeModifier(oxygenateKey, oxyPower, AttributeModifier.Operation.ADD_NUMBER);
@@ -94,10 +86,6 @@ public class ToolEnchantments implements Listener {
             if (this.enchantmentBookSettings.hasEnchantment(meta, haste)) {
                 item = this.attributeController.build(player, item, Attribute.MINING_EFFICIENCY, hasteModifier);
             } else item = this.attributeController.removeModifiers(player, item, Attribute.MINING_EFFICIENCY, hasteModifier);
-
-            if (this.enchantmentBookSettings.hasEnchantment(meta, oxygenate)) {
-                item = this.attributeController.build(player, item, Attribute.OXYGEN_BONUS, oxygenateModifier);
-            } else item = this.attributeController.removeModifiers(player, item, Attribute.OXYGEN_BONUS, oxygenateModifier);
 
 
         } catch (IllegalArgumentException | NullPointerException ignored) {
