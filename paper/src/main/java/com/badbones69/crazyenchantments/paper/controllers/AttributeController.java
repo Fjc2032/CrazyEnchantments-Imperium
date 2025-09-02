@@ -5,7 +5,6 @@ import com.badbones69.crazyenchantments.paper.Methods;
 import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
-import com.google.common.collect.Multimap;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
@@ -303,5 +302,9 @@ public class AttributeController {
 
         this.remove(attribute, modifier);
         return newItem;
+    }
+
+    public boolean isAttributeHandlingEnabled() {
+        return this.isAttributeHandlingEnabled;
     }
 }

@@ -176,17 +176,6 @@ public class ArmorEnchantments implements Listener {
                     this.attributeController.updateAttributes(player, Attribute.ATTACK_DAMAGE, hulkModifier, hulk, armor, null);
                     this.attributeController.add(Attribute.ATTACK_DAMAGE, hulkModifier);
                 }
-                //Apparently absorption is dumb and I have to apply it to the player directly
-                //This game sucks
-                if (this.enchantmentBookSettings.hasEnchantment(meta, fat)) {
-                    NamespacedKey key = new NamespacedKey(this.plugin, "fat");
-                    double power = this.enchantmentBookSettings.getLevel(armor, fat) * 4;
-                    AttributeModifier fatModifier = new AttributeModifier(key, power, AttributeModifier.Operation.ADD_NUMBER);
-                    player.getAttribute(Attribute.MAX_ABSORPTION).addModifier(fatModifier);
-
-                    this.attributeController.updateAttributes(player, Attribute.MAX_ABSORPTION, fatModifier, fat);
-                    this.attributeController.add(Attribute.MAX_ABSORPTION, fatModifier);
-                }
             }
         } catch (IllegalArgumentException | NullPointerException ignored) {
             this.plugin.getLogger().warning("[DEBUG] This modifier is already active! If the enchantment is working as expected, you can ignore this message.");
