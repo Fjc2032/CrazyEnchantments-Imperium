@@ -63,6 +63,12 @@ public class AxeEnchantments implements Listener {
     @NotNull
     private final BukkitScheduler scheduler = Bukkit.getScheduler();
 
+    @NotNull
+    private final FileManager fileManager = this.starter.getFileManager();
+
+    @NotNull
+    private final FileManager.Files config = FileManager.Files.CONFIG;
+
     // Plugin Support.
     @NotNull
     private final PluginSupport pluginSupport = this.starter.getPluginSupport();
@@ -75,6 +81,8 @@ public class AxeEnchantments implements Listener {
     private double bleedStack;
 
     private double bleedCap;
+
+    private boolean allowDebug = this.fileManager.getFile(config).getBoolean("Settings.debug", false);
 
     @NotNull
     private final Set<Material> axes = Set.of(
@@ -213,8 +221,11 @@ public class AxeEnchantments implements Listener {
             if (damageAmount > cap) damageAmount = cap;
             if (damageAmount == 0) return;
             entity.damage(event.getDamage() + damageAmount);
-            if (damageAmount == cap) damager.sendMessage("Reaper capped: " + cap);
-            damager.sendMessage("Reaper damage: " + (damageAmount));
+
+            if (allowDebug) {
+                if (damageAmount == cap) damager.sendMessage("Reaper capped: " + cap);
+                damager.sendMessage("Reaper damage: " + (damageAmount));
+            }
         }
         if (EnchantUtils.isEventActive(CEnchantments.PUMMEL, damager, item, enchantments)) {
             if (!(event.getDamager() instanceof LivingEntity target)) return;
@@ -243,8 +254,10 @@ public class AxeEnchantments implements Listener {
                         double damage = (event.getDamage() - ((double) cleaveEnchant.getMaxLevel() / cleaveLvl));
                         if (damage <= 0) damage = 5;
                         target.damage(damage);
-                        this.plugin.getLogger().info("Cleave activated! Damage output: " + damage);
-                        damager.sendMessage("Cleave damage: " + damage);
+                        if (allowDebug) {
+                            this.plugin.getLogger().info("Cleave activated! Damage output: " + damage);
+                            damager.sendMessage("Cleave damage: " + damage);
+                        }
                     });
         }
         if (EnchantUtils.isEventActive(CEnchantments.INSANITY, damager, item, enchantments)) {
@@ -302,7 +315,7 @@ public class AxeEnchantments implements Listener {
                     task[0].cancel();
                     interval[0] = 0;
                 }
-            }, () -> damager.sendMessage("Target is dead. Retiring task..."), 0L, level);
+            }, () ->  damager.sendMessage("Target is dead. Retiring task..."), 0L, level);
 
         }
     }
@@ -438,7 +451,7 @@ public class AxeEnchantments implements Listener {
                 for (BukkitTask task : runnables) task.cancel();
             }, 100L);
         }
-        damager.sendMessage("Base damage: " + event.getDamage());
+        if (allowDebug) damager.sendMessage("Base damage: " + event.getDamage());
     }
 
     @EventHandler()
