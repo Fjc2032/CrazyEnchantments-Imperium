@@ -22,10 +22,20 @@ public class ArmorTypeListener implements Listener {
     public void onBookApply(PreBookApplyEvent event) {
         Player player = event.getPlayer();
         PlayerInventory inventory = player.getInventory();
-        final ArmorTypeController armorTypeController = new ArmorTypeController(player);
+        final ArmorTypeController armorTypeController = new ArmorTypeController(this.plugin, player);
 
         this.book = new EnchantedBook(event.getEnchantment().getName(), event.getSuccessChance(), event.getDestroyChance(), event.getLevel());
 
         if (armorTypeController.isArmorGold()) this.book.setSuccessChance(event.getSuccessChance() + armorTypeController.getAmountOfGoldArmor());
+
+    }
+
+    private double buildNewSuccess(PreBookApplyEvent event, EnchantedBook book, String type) {
+        this.book = book;
+        Player player = event.getPlayer();
+
+        final ArmorTypeController armorTypeController = new ArmorTypeController(this.plugin, player);
+
+        return event.getSuccessChance() + (armorTypeController.getAmountOfGoldArmor() * 1.75);
     }
 }

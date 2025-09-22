@@ -13,6 +13,8 @@ import java.util.*;
 
 public class ArmorTypeController {
 
+    private CrazyEnchantments plugin;
+
     private final Player player;
 
     private final ItemStack[] armorContents;
@@ -25,13 +27,11 @@ public class ArmorTypeController {
      * Local constructor for ArmorTypeController.
      * @param player The player that will be used in this class
      */
-    public ArmorTypeController(@NotNull Player player) {
+    public ArmorTypeController(@NotNull CrazyEnchantments plugin, @NotNull Player player) {
+        this.plugin = plugin;
         this.player = player;
         this.armorContents = this.player.getInventory().getArmorContents();
     }
-
-    @NotNull
-    private final CrazyEnchantments plugin = JavaPlugin.getPlugin(CrazyEnchantments.class);
 
     @NotNull
     private final Set<Material> goldArmor =  Set.of(
@@ -52,6 +52,11 @@ public class ArmorTypeController {
 
     //Gold
 
+    /**
+     * Checks if the player slots contains any gold armor.
+     * @return True if there is gold armor present, false otherwise
+     * @apiNote Will also return false if the armor controller is disabled.
+     */
     public boolean isArmorGold() {
         boolean check = false;
         for (ItemStack armor : this.armorContents) {
@@ -63,6 +68,10 @@ public class ArmorTypeController {
         return this.isArmorControllerEnabled && check;
     }
 
+    /**
+     * Gets the amount of armor on the player that is gold.
+     * @return The amount, as an integer
+     */
     public int getAmountOfGoldArmor() {
         int amt = 0;
         for (ItemStack ignored : this.armorContents) {

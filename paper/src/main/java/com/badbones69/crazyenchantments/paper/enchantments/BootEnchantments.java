@@ -58,10 +58,17 @@ public class BootEnchantments implements Listener {
 
         //Enchants
         CEnchantment gears = CEnchantments.GEARS.getEnchantment();
+        CEnchantment antiGravity = CEnchantments.ANTIGRAVITY.getEnchantment();
+        CEnchantment springs = CEnchantments.SPRINGS.getEnchantment();
 
         //Metadata
         ItemMeta meta = boots.getItemMeta();
         if (meta == null) return;
+
+        //Keys
+        NamespacedKey gearsKey = new NamespacedKey(this.plugin, "gears");
+        NamespacedKey gravityKey = new NamespacedKey(this.plugin, "antigravity");
+        NamespacedKey springsKey = new NamespacedKey(this.plugin, "springs");
 
         if (this.wingsManager.isWingsEnabled()) {
             // Check the new armor piece.
@@ -72,8 +79,8 @@ public class BootEnchantments implements Listener {
         }
         try {
             if (this.enchantmentBookSettings.hasEnchantment(meta, gears)) {
-                double power = this.enchantmentBookSettings.getLevel(boots, gears) * 0.01;
-                AttributeModifier gearsModifier = new AttributeModifier(new NamespacedKey(this.plugin, "gears"), power, AttributeModifier.Operation.ADD_NUMBER);
+                double power = this.enchantmentBookSettings.getLevel(boots, gears) * 0.04;
+                AttributeModifier gearsModifier = new AttributeModifier(gearsKey, power, AttributeModifier.Operation.ADD_NUMBER);
 
                 meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, gearsModifier);
                 boots.setItemMeta(meta);
@@ -81,10 +88,33 @@ public class BootEnchantments implements Listener {
                 this.attributeController.updateAttributes(player, Attribute.MOVEMENT_SPEED, gearsModifier, gears, boots, EquipmentSlot.FEET);
                 this.attributeController.add(Attribute.MOVEMENT_SPEED, gearsModifier);
             }
-        } catch (IllegalArgumentException | NullPointerException ignored) {
-            this.plugin.getLogger().warning("[DEBUG] This modifier is already active! If the enchantment is working as expected, this can be ignored.");
-        }
+        } catch (IllegalArgumentException | NullPointerException ignored) {}
 
+        try {
+            if (this.enchantmentBookSettings.hasEnchantment(meta, antiGravity)) {
+                double power = this.enchantmentBookSettings.getLevel(boots, antiGravity) * 2;
+                AttributeModifier gravityModifier = new AttributeModifier(gravityKey, power, AttributeModifier.Operation.ADD_NUMBER);
+
+                meta.addAttributeModifier(Attribute.JUMP_STRENGTH, gravityModifier);
+                boots.setItemMeta(meta);
+
+                this.attributeController.updateAttributes(player, Attribute.JUMP_STRENGTH, gravityModifier, antiGravity, boots, EquipmentSlot.FEET);
+                this.attributeController.add(Attribute.JUMP_STRENGTH, gravityModifier);
+            }
+        } catch (IllegalArgumentException | NullPointerException ignored) {}
+
+        try {
+            if (this.enchantmentBookSettings.hasEnchantment(meta, springs)) {
+                double power = this.enchantmentBookSettings.getLevel(boots, springs) * 0.015;
+                AttributeModifier springsModifier = new AttributeModifier(springsKey, power, AttributeModifier.Operation.ADD_NUMBER);
+
+                meta.addAttributeModifier(Attribute.JUMP_STRENGTH, springsModifier);
+                boots.setItemMeta(meta);
+
+                this.attributeController.updateAttributes(player, Attribute.JUMP_STRENGTH, springsModifier, springs, boots, EquipmentSlot.FEET);
+                this.attributeController.add(Attribute.JUMP_STRENGTH, springsModifier);
+            }
+        } catch (IllegalArgumentException | NullPointerException ignored) {}
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
