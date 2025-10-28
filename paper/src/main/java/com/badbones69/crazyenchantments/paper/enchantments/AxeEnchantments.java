@@ -41,6 +41,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
 
 public class AxeEnchantments implements Listener {
@@ -76,6 +77,10 @@ public class AxeEnchantments implements Listener {
     //Local management
     @NotNull
     private HashMap<Player, HashMap<Block, BlockFace>> blocks = new HashMap<>();
+
+    @NotNull
+    private final Set<UUID> blacksmith = new HashSet<>();
+
 
     //todo() Change this to local variable to prevent overwriting
     private double bleedStack;
@@ -261,25 +266,30 @@ public class AxeEnchantments implements Listener {
                     });
         }
         if (EnchantUtils.isEventActive(CEnchantments.INSANITY, damager, item, enchantments)) {
+            if (!CEnchantments.INSANITY.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.INSANITY.getEnchantment())), true)) return;
             CEnchantment insanityEnchant = CEnchantments.INSANITY.getEnchantment();
             if (!(event.getEntity() instanceof Player target)) return;
             ItemStack axe = this.methods.getItemInHand(target);
 
             if (this.axes.contains(axe.getType())) {
-                event.setDamage(event.getDamage() * this.enchantmentBookSettings.getLevel(item, insanityEnchant));
+                event.setDamage(event.getDamage() * (1 + 0.2 * this.enchantmentBookSettings.getLevel(item, insanityEnchant)));
                 damager.sendMessage("* INSANITY *");
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.BARBARIAN, damager, item, enchantments)) {
+            if (!CEnchantments.BARBARIAN.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.BARBARIAN.getEnchantment())), true)) return;
             CEnchantment barbarianEnchant = CEnchantments.BARBARIAN.getEnchantment();
-            event.setDamage(event.getDamage() * (this.enchantmentBookSettings.getLevel(item, barbarianEnchant)));
+            int level = this.enchantmentBookSettings.getLevel(item, barbarianEnchant);
+            int barbarianDamage = 5;
+            event.setDamage(event.getDamage() + ThreadLocalRandom.current().nextInt((level * barbarianDamage) + 1));
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLACKSMITH, damager, item, enchantments)) {
+            if (!CEnchantments.BLACKSMITH.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.BLACKSMITH.getEnchantment())), true)) return;
             CEnchantment blacksmithEnchant = CEnchantments.BLACKSMITH.getEnchantment();
             ItemStack[] equipment = damager.getEquipment().getArmorContents();
             Sound sound = Sound.BLOCK_CALCITE_BREAK;
             for (ItemStack armor : equipment) {
-                if (armor == null) return;
+                if (armor == null) continue;
                 ItemMeta meta = armor.getItemMeta();
                 Damageable damageable = (Damageable) meta;
                 int modifier = damageable.getDamage() - (2 + this.enchantmentBookSettings.getLevel(item, blacksmithEnchant));
@@ -288,6 +298,12 @@ public class AxeEnchantments implements Listener {
                 armor.setItemMeta(meta);
                 damager.playSound(damager.getLocation(), sound, 1.0F, 2.0F);
                 damager.sendMessage("** BLACKSMITH **");
+
+                blacksmith.add(damager.getUniqueId());
+                if (blacksmith.contains(damager.getUniqueId())) {
+                    event.setDamage(event.getDamage() / 2.0);
+                    blacksmith.remove(damager.getUniqueId());
+                }
             }
         }
         if (EnchantUtils.isEventActive(CEnchantments.HEX, damager, item, enchantments)) {
@@ -329,34 +345,15 @@ public class AxeEnchantments implements Listener {
         final Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
         if (EnchantUtils.isEventActive(CEnchantments.DEVOUR, damager, item, enchantments)) {
+            if (!CEnchantments.DEVOUR.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.DEVOUR.getEnchantment())), true)) return;
             CEnchantment devourEnchant = CEnchantments.DEVOUR.getEnchantment();
-            double level = this.enchantmentBookSettings.getLevel(item, devourEnchant);
-            List<BukkitTask> devourTasks = new ArrayList<>();
+            int level = this.enchantmentBookSettings.getLevel(item, devourEnchant);
+            int amplifier = 1;
+            int duration = 40;
 
             if (!EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) return;
-
-            double devourStack = (event.getDamage() / (devourEnchant.getMaxLevel() - level));
-            double cap = devourEnchant.getChanceIncrease() + level;
-            this.bleedStack = handleBleedCap(CEnchantments.DEVOUR, devourStack, cap);
-
-            devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> target.damage(this.bleedStack), 30L, 20L));
-            devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> damager.sendMessage("** DEVOUR **"), 30L, 20L));
-
-            event.setDamage(event.getDamage());
-            damager.sendMessage("Devour damage: " + this.bleedStack);
-
-            devourTasks.add(this.scheduler.runTaskTimer(plugin, () -> {
-                for (BukkitTask task : devourTasks) {
-                    if (target.isDead()) task.cancel();
-                }
-            }, 1L, 20L));
-
-
-            this.scheduler.runTaskLater(plugin, () -> {
-                for (BukkitTask task : devourTasks) {
-                    task.cancel();
-                }
-            }, 71L);
+            damager.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, duration, amplifier));
+            damager.sendMessage("§cDevour activated! You feel a surge of power.");
         }
         if (EnchantUtils.isEventActive(CEnchantments.BLEED, damager, item, enchantments)) {
             CEnchantment bleedEnchant = CEnchantments.BLEED.getEnchantment();

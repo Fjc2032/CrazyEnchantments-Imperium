@@ -178,7 +178,7 @@ public enum CEnchantments {
     UNHOLY("Unholy", "Armor"),//leggings I forgot it???
     SURPRISE("Surprise", "Armor", 10, 5, 100L),   //new w
     OVERLOAD("OverLoad", "Armor"),//persistant effect issue
-    ENLIGHTENED("Enlightened", "Armor", 10, 5, 200L),//might backfire target = player?
+    ENLIGHTENED("Enlightened", "Armor", 10, 5, 200L),//might backfire target = player?5
     JUDGEMENT("Judgement", "Armor", 6, 2, 20L),//w
     ARMORED("Armored", "Armor", 60, 10, 160L),//w
     CLARITY("Clarity", "Armor"),//w
