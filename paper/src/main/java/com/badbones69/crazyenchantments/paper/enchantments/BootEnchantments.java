@@ -10,9 +10,12 @@ import com.badbones69.crazyenchantments.paper.api.utils.WingsUtils;
 import com.badbones69.crazyenchantments.paper.controllers.AttributeController;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,6 +33,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Random;
 
 public class BootEnchantments implements Listener {
 
@@ -167,6 +173,69 @@ public class BootEnchantments implements Listener {
 
             if (isFlying) this.wingsManager.addFlyingPlayer(player);
         }
+        // Only act on full block movement
+        if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
+                event.getFrom().getBlockY() == event.getTo().getBlockY() &&
+                event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
+
+        if (!this.enchantmentBookSettings.getEnchantments(player.getEquipment().getBoots())
+                .containsKey(CEnchantments.LAVAWALKER.getEnchantment())) return;
+
+        if (player.getLocation().subtract(0, 0.1, 0).getBlock().isPassable()) return;
+
+        Location baseLoc = player.getLocation();
+        boolean convertedAnyLava = false;
+        Vector direction = baseLoc.getDirection().setY(0).normalize();
+        Location center = baseLoc.clone().add(direction);
+
+        int radius = 3;
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                if (x * x + z * z > radius * radius) continue;
+
+                Location checkLoc = center.clone().add(x, -1, z);
+                Block block = checkLoc.getBlock();
+
+                if (block.getType() == Material.LAVA) {
+                    if (block.getBlockData() instanceof Levelled lavaData) {
+                        if (lavaData.getLevel() != 0) continue;
+                    }
+                    Block aboveBlock = block.getRelative(0, 1, 0);
+                    if (aboveBlock.getType() != Material.LAVA) {
+                        block.setType(Material.OBSIDIAN);
+                        convertedAnyLava = true;
+
+                        int delay = 20 * (3 + new Random().nextInt(4)); // 3–6 seconds
+                        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                            if (!block.getChunk().isLoaded()) return;
+                            if (block.getType() == Material.OBSIDIAN) {
+                                block.setType(Material.MAGMA_BLOCK);
+
+                                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                                    if (!block.getChunk().isLoaded()) return;
+                                    if (block.getType() == Material.MAGMA_BLOCK) {
+                                        block.setType(Material.LAVA);
+
+                                        if (new Random().nextInt(3) == 0) {
+                                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                                if (p.getWorld().equals(block.getWorld()) &&
+                                                        p.getLocation().distanceSquared(block.getLocation()) < 100) {
+                                                    p.playSound(block.getLocation(), Sound.ITEM_FIRECHARGE_USE, 0.6f, 0.01f);
+                                                    p.playSound(block.getLocation(), Sound.BLOCK_FIRE_AMBIENT, 0.5f, 1f);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }, 20 * 2);
+                            }
+                        }, delay);
+                    }
+                }
+            }
+        }
+        if (convertedAnyLava) {
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 0.7f, 1f);
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -213,15 +282,64 @@ public class BootEnchantments implements Listener {
     @EventHandler()
     public void onAttack1(EntityDamageByEntityEvent event) {
         CEnchantment quiverEnchant = CEnchantments.QUIVER.getEnchantment();
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
-        if (!this.enchantmentBookSettings.getEnchantments(player.getEquipment().getBoots()).containsKey(quiverEnchant)) return;
+        if (!this.enchantmentBookSettings.getEnchantments(victim.getEquipment().getBoots()).containsKey(quiverEnchant)) return;
+        Map<CEnchantment, Integer> enchants = enchantmentBookSettings.getEnchantments(victim.getEquipment().getBoots());
 
-        Vector vector = player.getLocation().getDirection();
-        vector.setY(player.getY() + ((double) CEnchantments.QUIVER.getChance() / 100));
-        vector.multiply(3).normalize();
+        if (!enchants.containsKey(quiverEnchant)) return;
+        int level = enchants.get(CEnchantments.QUIVER.getEnchantment());
+        if (!CEnchantments.QUIVER.isOffCooldown(victim.getUniqueId(), level, true)) return;
 
-        player.setVelocity(vector);
+        if (!attacker.isOnGround()) return;
+        Vector direction = attacker.getLocation().getDirection().normalize();
+        double verticalBoost = 0.3 + (0.1 * level);
+
+        direction.setY(verticalBoost);
+        direction.multiply(1.5);
+        attacker.setVelocity(direction);
+
+    }
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDamagedByEntity(EntityDamageByEntityEvent event) {
+        CEnchantment torrentEnchant = CEnchantments.TORRENT.getEnchantment();
+
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+
+        // Determine attacker
+        LivingEntity attacker = null;
+
+        if (event.getDamager() instanceof LivingEntity direct) {
+            attacker = direct;
+        } else if (event.getDamager() instanceof org.bukkit.entity.Projectile projectile) {
+            if (projectile.getShooter() instanceof LivingEntity shooter) {
+                attacker = shooter;
+            }
+        }
+
+        if (attacker == null) return;
+        if (!this.enchantmentBookSettings.getEnchantments(attacker.getEquipment().getBoots()).containsKey(torrentEnchant)) return;
+
+        // Check if the attacker is wearing boots with the Torrent enchant
+        int level = enchantmentBookSettings.getLevel(attacker.getEquipment().getBoots(), CEnchantments.TORRENT.getEnchantment());
+
+        // Water check
+        Material blockType = attacker.getEyeLocation().getBlock().getType();
+        boolean inWater =
+                blockType == Material.WATER ||
+                        blockType == Material.BUBBLE_COLUMN ||
+                        blockType == Material.KELP;
+
+        // Rain check
+        boolean inRain = attacker.getWorld().hasStorm() &&
+                attacker.getWorld().getBlockAt(attacker.getLocation()).getLightFromSky() == 15;
+
+        if (!(inWater || inRain)) return;
+
+        // Boost the damage
+        double originalDamage = event.getDamage();
+        double boostedDamage = originalDamage * (1.0 + 0.25 * level); // Damage boost
+        event.setDamage(boostedDamage);
     }
 
 

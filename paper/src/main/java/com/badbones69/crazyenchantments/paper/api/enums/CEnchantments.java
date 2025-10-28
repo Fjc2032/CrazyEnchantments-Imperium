@@ -154,19 +154,26 @@ public enum CEnchantments {
     //IMPERIUM: Legendary Enchantments
     //	----------------Boots----------------  \\\
     GEARS("Gears", "Boots"),
-    SNIPER("Sniper", "Bow", 25, 5),
+    QUIVER("Quiver", "Boots", 10, 7, 200L),//mobs?
+    LAVAWALKER("LavaWalker", "Boots"),//w test regular shutdown  new
+    TORRENT("Torrent", "Boots"),//w? new
     //	----------------Swords----------------  \\\
-    RAGE("Rage", "Sword"),
-    DISARMER("Disarmer", "Sword", 5, 1),
-    LIFESTEAL("LifeSteal", "Sword", 15, 5),
-    INQUISITIVE("Inquisitive", "Sword", 50, 25),
-    DOUBLEDAMAGE("DoubleDamage", "Sword", 5, 1),
+    RAGE("Rage", "Sword"),//nmp rn
+    DISARMER("Disarmer", "Sword", 5, 1),//disabled diabolical enchant
+    LIFESTEAL("LifeSteal", "Sword", 15, 5),//w?
+    INQUISITIVE("Inquisitive", "Sword", 50, 25),//
+    DOUBLEDAMAGE("DoubleDamage", "Sword", 5, 1),//broken double strike
+    INVERSION("Inversion", "Sword", 20, 4, 200L),
+    SILENCE("Silence", "Sword", 30, 10, 100L),//w? untesteded copy from exterminator
+
 
     OVERLOAD("OverLoad", "Armor"),
     ENLIGHTENED("Enlightened", "Armor", 10, 5),
 
 
     DRUNK("Drunk", "Helmet"),
+
+    SNIPER("Sniper", "Bow", 25, 5),
 
     //NEW - Imperium
     POISONED("Poisoned", "Armor", 10, 5),
@@ -208,13 +215,10 @@ public enum CEnchantments {
     DIMINISH("Diminish", "Armor", 20, 6, "Chestplate"),
     BARBARIAN("Barbarian", "Axe", 20, 4),
     ABIDING("Abiding", "Tool"),
-    QUIVER("Quiver", "Boots", 10, 7),
-    INVERSION("Inversion", "Sword", 20, 4, 200L),
     BLEED("Bleed", "Axe", 28, 4),
     DEVOUR("Devour", "Axe", 10, 5),
     ARMORED("Armored", "Armor", 60, 10),
     CLARITY("Clarity", "Armor"),
-    SILENCE("Silence", "Sword", 30, 10),
     KILLAURA("Killaura", "Sword", 18, 5),
     STUN("Stun", "Sword", 10, 10),
     JUDGEMENT("Judgement", "Armor", 10, 10),
