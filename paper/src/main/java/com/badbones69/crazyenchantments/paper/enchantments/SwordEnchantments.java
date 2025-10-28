@@ -237,6 +237,7 @@ public class SwordEnchantments implements Listener {
 
         if (damager.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.LIFESTEAL, damager, item, enchantments)) {
             int steal = enchantments.get(CEnchantments.LIFESTEAL.getEnchantment());
+            if (!CEnchantments.LIFESTEAL.isOffCooldown(damager.getUniqueId(), steal, true)) return;
             // Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
 
             if (damager.getHealth() + steal < maxhealth) damager.setHealth(damager.getHealth() + steal);
@@ -298,7 +299,7 @@ public class SwordEnchantments implements Listener {
             }
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.DOUBLEDAMAGE, damager, item, enchantments)) {
+        if (EnchantUtils.isEventActive(CEnchantments.DOUBLESTRIKE, damager, item, enchantments)) {
             event.setDamage((event.getDamage() * 2));
         }
 
@@ -476,6 +477,7 @@ public class SwordEnchantments implements Listener {
         }
         if (EnchantUtils.isEventActive(CEnchantments.STUN, damager, item, enchantments)) {
             CEnchantment stunEnchant = CEnchantments.STUN.getEnchantment();
+            if (!CEnchantments.STUN.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.STUN.getEnchantment())), true)) return;
             if (!en.hasPotionEffect(PotionEffectType.SLOWNESS))
                 en.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, CEnchantments.STUN.getChance(), this.enchantmentBookSettings.getLevel(item, stunEnchant)));
             if (!en.hasPotionEffect(PotionEffectType.WEAKNESS))
@@ -529,7 +531,8 @@ public class SwordEnchantments implements Listener {
             Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
             if (EnchantUtils.isEventActive(CEnchantments.INQUISITIVE, damager, item, enchantments)) {
-                event.setDroppedExp(event.getDroppedExp() * (enchantments.get(CEnchantments.INQUISITIVE.getEnchantment()) + 1));
+                if (!CEnchantments.INQUISITIVE.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.INQUISITIVE.getEnchantment())), true)) return;
+                event.setDroppedExp((int) Math.round(event.getDroppedExp() * (1.0 + 0.25 * enchantments.get(CEnchantments.INQUISITIVE.getEnchantment()))));
             }
 
             Material headMat = EntityUtils.getHeadMaterial(event.getEntity());
@@ -551,6 +554,7 @@ public class SwordEnchantments implements Listener {
                         ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1)));
             }
             if (EnchantUtils.isEventActive(CEnchantments.KILLAURA, damager, item, enchantments)) {
+                if (!CEnchantments.KILLAURA.isOffCooldown(damager.getUniqueId(), (enchantments.get(CEnchantments.KILLAURA.getEnchantment())), true)) return;
                 World world = event.getEntity().getWorld();
                 Collection<LivingEntity> entities = world.getNearbyLivingEntities(event.getEntity().getLocation(), 1);
                 for (LivingEntity entity : entities) {

@@ -112,9 +112,9 @@ public enum CEnchantments {
     OXYGENATE("Oxygenate", "Tool", 60L),
     HASTE("Haste", "Tool"),
     //missing
-    //EPICNESS kinda poinless
-    //THUNDERINGBLOW thunder i think it was just strike lighting more as an effect enchant
-    //ETHERAL haste upon killing mobs kinda pointless
+    //EPICNESS kinda pointless
+    //THUNDERINGBLOW thunder I think it was just strike lighting more as an effect enchant
+    //ETHEREAL haste upon killing mobs kinda pointless
     //Strike strikes lighting on impact with the ground
 
     //IMPERIUM: Unique Enchantments
@@ -153,28 +153,45 @@ public enum CEnchantments {
     //IMPERIUM: Ultimate Enchantments
     //IMPERIUM: Legendary Enchantments
     //	----------------Boots----------------  \\\
-    GEARS("Gears", "Boots"),
+    GEARS("Gears", "Boots"),//untested persistent effect issue
     QUIVER("Quiver", "Boots", 10, 7, 200L),//mobs?
     LAVAWALKER("LavaWalker", "Boots"),//w test regular shutdown  new
     TORRENT("Torrent", "Boots"),//w? new
     //	----------------Swords----------------  \\\
-    RAGE("Rage", "Sword"),//nmp rn
-    DISARMER("Disarmer", "Sword", 5, 1),//disabled diabolical enchant
-    LIFESTEAL("LifeSteal", "Sword", 15, 5),//w?
-    INQUISITIVE("Inquisitive", "Sword", 50, 25),//
-    DOUBLEDAMAGE("DoubleDamage", "Sword", 5, 1),//broken double strike
-    INVERSION("Inversion", "Sword", 20, 4, 200L),
-    SILENCE("Silence", "Sword", 30, 10, 100L),//w? untesteded copy from exterminator
-
-
-    OVERLOAD("OverLoad", "Armor"),
-    ENLIGHTENED("Enlightened", "Armor", 10, 5),
-
-
-    DRUNK("Drunk", "Helmet"),
-
-    SNIPER("Sniper", "Bow", 25, 5),
-
+    RAGE("Rage", "Sword"),//untested fjs code i did not rebuild it
+    DISARMER("Disarmer", "Sword", 5, 1),//disabled
+    LIFESTEAL("LifeSteal", "Sword", 9, 4, 200L),//w?
+    INQUISITIVE("Inquisitive", "Sword", 50, 5, 80L),//w
+    DOUBLESTRIKE("DoubleStrike", "Sword", 5, 1, 300L),//broken {?second strike after X ticks}
+    INVERSION("Inversion", "Sword", 12, 4, 160L, -80L),//w?
+    SILENCE("Silence", "Sword", 30, 10, 100L),//w? steal from and copy for exterminator?
+    KILLAURA("Killaura", "Sword", 4, 4, 120L, 20L),
+    STUN("Stun", "Sword", 10, 10, 120L),//w? {!potion} {?period of slowness and attack damage is greatly reduced misses}
+    //	----------------AXES----------------  \\\
+    INSANITY("Insanity", "Axe", 7, 7, 30L),
+    BARBARIAN("Barbarian", "Axe", 20, 4, 20L),
+    BLEED("Bleed", "Axe", 8, 4),//not messing with
+    DEVOUR("Devour", "Axe", 10, 5, 60L),//w
+    BLACKSMITH("Blacksmith", "Axe", 8, 8, 60L),
+    //	----------------ARMOUR----------------  \\\
+    EXTERMINATOR("Exterminator", "Armor"),//leggings //new
+    UNHOLY("Unholy", "Armor"),//leggings   //new
+    SURPRISE("Surprise", "Armor", 10, 5, 100L),   //new w
+    OVERLOAD("OverLoad", "Armor"),//persistant effect issue
+    ENLIGHTENED("Enlightened", "Armor", 10, 5, 200L),
+    JUDGEMENT("Judgement", "Armor", 6, 2, 20L),//w
+    ARMORED("Armored", "Armor", 60, 10, 160L),//w
+    CLARITY("Clarity", "Armor"),//w
+    DIMINISH("Diminish", "Armor", 20, 6, 160L),//w last damage might make bleed or not having fire proc op and this enchant will halve half a heart of damage
+    FAT("Fat", "Armor", 12, 2),//untested
+    DEATHBRINGER("Deathbringer", "Armor", 14, 7, 900L),
+    DRUNK("Drunk", "Helmet"),//persistant effect issue
+    DESTRUCTION("Destruction", "Helmet", 10, 5, 200L),
+    DEATHGOD("DeathGod", "Helmet", 8, 3, 220L, 20L),
+    //	----------------SORTED----------------  \\\
+    SNIPER("Sniper", "Bow", 25, 5, 100L),//ww
+    TWINGE("Twinge", "Trident", 40, 8),
+    ABIDING("Abiding", "Tool"),
     //NEW - Imperium
     POISONED("Poisoned", "Armor", 10, 5),
     HARDENED("Hardened", "Armor", 30, 10),
@@ -206,23 +223,6 @@ public enum CEnchantments {
     DEMONIC("Demonic", "Sword", 10, 3),
     METAPHYSICAL("Metaphysical", "Boots", 50, 10),
     DISTANCE("Distance", "Sword", 14, 3),
-    //SNIPER(Exists, but was redone. Putting comment here for tracking purposes.)
-    FAT("Fat", "Armor", 12, 2, "Chestplate"),
-    DEATHBRINGER("Deathbringer", "Armor", 14, 7),
-    DESTRUCTION("Destruction", "Helmet", 10, 5),
-    DEATHGOD("DeathGod", "Helmet", 8, 3),
-    INSANITY("Insanity", "Axe", 50, 8),
-    DIMINISH("Diminish", "Armor", 20, 6, "Chestplate"),
-    BARBARIAN("Barbarian", "Axe", 20, 4),
-    ABIDING("Abiding", "Tool"),
-    BLEED("Bleed", "Axe", 28, 4),
-    DEVOUR("Devour", "Axe", 10, 5),
-    ARMORED("Armored", "Armor", 60, 10),
-    CLARITY("Clarity", "Armor"),
-    KILLAURA("Killaura", "Sword", 18, 5),
-    STUN("Stun", "Sword", 10, 10),
-    JUDGEMENT("Judgement", "Armor", 10, 10),
-    BLACKSMITH("Blacksmith", "Axe", 30, 10),
     RAGDOLL("Ragdoll", "Armor", 30, 5),
     ARROWBREAK("Arrowbreak", "Axe", 10, 10),
     ARROWDEFLECT("Arrowdeflect", "Armor", 10, 10),
@@ -243,7 +243,6 @@ public enum CEnchantments {
     AURA("Aura", "Trident"),
     // Trident //
     IMPACT("Impact", "Trident", 15, 10),
-    TWINGE("Twinge", "Trident", 40, 8),
     //IMPERIUM: Heroic Enchantments
     MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
     DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
