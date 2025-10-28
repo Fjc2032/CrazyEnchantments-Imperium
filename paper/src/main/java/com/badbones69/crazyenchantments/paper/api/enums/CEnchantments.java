@@ -175,10 +175,10 @@ public enum CEnchantments {
     BLACKSMITH("Blacksmith", "Axe", 8, 8, 60L),
     //	----------------ARMOUR----------------  \\\
     EXTERMINATOR("Exterminator", "Armor"),//leggings //new
-    UNHOLY("Unholy", "Armor"),//leggings   //new
+    UNHOLY("Unholy", "Armor"),//leggings I forgot it???
     SURPRISE("Surprise", "Armor", 10, 5, 100L),   //new w
     OVERLOAD("OverLoad", "Armor"),//persistant effect issue
-    ENLIGHTENED("Enlightened", "Armor", 10, 5, 200L),
+    ENLIGHTENED("Enlightened", "Armor", 10, 5, 200L),//might backfire target = player?
     JUDGEMENT("Judgement", "Armor", 6, 2, 20L),//w
     ARMORED("Armored", "Armor", 60, 10, 160L),//w
     CLARITY("Clarity", "Armor"),//w
@@ -187,7 +187,7 @@ public enum CEnchantments {
     DEATHBRINGER("Deathbringer", "Armor", 14, 7, 900L),
     DRUNK("Drunk", "Helmet"),//persistant effect issue
     DESTRUCTION("Destruction", "Helmet", 10, 5, 200L),
-    DEATHGOD("DeathGod", "Helmet", 8, 3, 220L, 20L),
+    DEATHGOD("DeathGod", "Helmet", 8, 3, 220L, 20L),//might backfire idk
     //	----------------SORTED----------------  \\\
     SNIPER("Sniper", "Bow", 25, 5, 100L),//ww
     TWINGE("Twinge", "Trident", 40, 8),

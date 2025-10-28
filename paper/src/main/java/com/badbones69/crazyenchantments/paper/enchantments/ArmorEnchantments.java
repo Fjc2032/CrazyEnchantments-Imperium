@@ -25,6 +25,8 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
@@ -138,7 +140,6 @@ public class ArmorEnchantments implements Listener {
                 CEnchantment overload = CEnchantments.OVERLOAD.getEnchantment();
                 CEnchantment godlyOverload = CEnchantments.GODLYOVERLOAD.getEnchantment();
                 CEnchantment hulk = CEnchantments.HULK.getEnchantment();
-                CEnchantment fat = CEnchantments.FAT.getEnchantment();
 
                 //Metadata
                 ItemMeta meta = armor.getItemMeta();
@@ -222,6 +223,7 @@ public class ArmorEnchantments implements Listener {
             }
             if (EnchantUtils.isEventActive(CEnchantments.JUDGEMENT, player, armor, enchants)) {
                 CEnchantment judgementEnchant = CEnchantments.JUDGEMENT.getEnchantment();
+                if (!CEnchantments.JUDGEMENT.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.JUDGEMENT.getEnchantment())), true)) return;
                 if (!damager.hasPotionEffect(PotionEffectType.POISON)) damager.addPotionEffect(new PotionEffect(PotionEffectType.POISON, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
                 if (!player.hasPotionEffect(PotionEffectType.REGENERATION)) player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, CEnchantments.JUDGEMENT.getChance(), this.enchantmentBookSettings.getLevel(armor, judgementEnchant)));
             }
@@ -248,6 +250,7 @@ public class ArmorEnchantments implements Listener {
             }
             if (EnchantUtils.isEventActive(CEnchantments.CLARITY, player, armor, enchants)) {
                 if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) player.removePotionEffect(PotionEffectType.BLINDNESS);
+                player.sendMessage("* CLARITY *");
             }
         }
 
@@ -287,13 +290,18 @@ public class ArmorEnchantments implements Listener {
 
                 return;
             }
-            if (target.getHealth() > 0 && EnchantUtils.isEventActive(CEnchantments.ENLIGHTENED, target, armor, enchants)) {
-                double heal = enchants.get(CEnchantments.ENLIGHTENED.getEnchantment());
-                // Uses getValue as if the target has health boost it is modifying the base so the value after the modifier is needed.
+            if (EnchantUtils.isEventActive(CEnchantments.ENLIGHTENED, target, armor, enchants)) {
+                if (!CEnchantments.ENLIGHTENED.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.ENLIGHTENED.getEnchantment())), true)) return;
+                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                    if (!target.isDead()) {
+                        double currentHealth = target.getHealth();
+                        double maxHealth = target.getMaxHealth();
 
-                if (target.getHealth() + heal < maxhealth.getValue()) target.setHealth(target.getHealth() + heal);
+                        int healAmount = ((int)(Math.random() * 3) + 1) * 2;
 
-                if (target.getHealth() + heal >= maxhealth.getValue()) target.setHealth(maxhealth.getValue());
+                        target.setHealth(Math.min(currentHealth + healAmount, maxHealth));
+                    }
+                }, 1L);
             }
             if (EnchantUtils.isEventActive(CEnchantments.WARD, target, armor, enchants)) {
                 CEnchantment wardEnchant = CEnchantments.WARD.getEnchantment();
@@ -340,12 +348,27 @@ public class ArmorEnchantments implements Listener {
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, target, armor, enchants)) {
+                if (!CEnchantments.DESTRUCTION.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.DESTRUCTION.getEnchantment())), true)) return;
                 CEnchantment deathgodEnchant = CEnchantments.DEATHGOD.getEnchantment();
-                double modifier = target.getHealth() / 2;
-                if (modifier >= maxhealthdouble) modifier = maxhealthdouble;
-                if (target.getHealth() < modifier) {
-                    target.setHealth(target.getHealth() + 5 + (double) (this.enchantmentBookSettings.getLevel(armor, deathgodEnchant)) / 4);
-                    target.sendMessage("** DEATH GOD ** (Healed you for: " + modifier + ")");
+                int level = this.enchantmentBookSettings.getLevel(armor, deathgodEnchant);
+
+                if (!CEnchantments.DEATHGOD.isOffCooldown(target.getUniqueId(), level, true)) continue;
+
+                double currentHealth = target.getHealth();
+                double damage = event.getFinalDamage();
+                double postDamageHealth = currentHealth - damage;
+                double threshold = 4.0 + level;
+                double maxHealth = Objects.requireNonNull(target.getAttribute(Attribute.MAX_HEALTH)).getValue();
+
+                if (postDamageHealth > 0 && postDamageHealth <= threshold) {
+                    event.setCancelled(true);
+
+                    double healAmount = threshold;
+                    double newHealth = Math.min(currentHealth + healAmount, maxHealth);
+                    double healed = newHealth - currentHealth;
+
+                    target.setHealth(newHealth);
+                    target.sendMessage("§5** DEATH GOD ** §7(Healed you for: §a" + String.format("%.1f", healed) + "§7)");
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.ENDERWALKER, target, armor, enchants)) {
@@ -574,36 +597,42 @@ public class ArmorEnchantments implements Listener {
                     player.sendMessage("* TANK *");
                 }
             }
-            if (EnchantUtils.isEventActive(CEnchantments.DESTRUCTION, player, armor, enchants)) {
-                CEnchantment destructionEnchant = CEnchantments.DESTRUCTION.getEnchantment();
-                //Get the world and region the player is in.
-                World world = player.getWorld();
-                BoundingBox region = player.getBoundingBox();
+            if (EnchantUtils.isEventActive(CEnchantments.DEATHGOD, player, armor, enchants)) {
+                if (!CEnchantments.DESTRUCTION.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.DESTRUCTION.getEnchantment())), true)) return;
+                CEnchantment deathgodEnchant = CEnchantments.DEATHGOD.getEnchantment();
+                int level = this.enchantmentBookSettings.getLevel(armor, deathgodEnchant);
 
-                //Expand the region to account for nearby entities.
-                region = region.expand(8);
+                if (!CEnchantments.DEATHGOD.isOffCooldown(player.getUniqueId(), level, true)) continue;
 
-                //Dump all entities in the BoundingBox into a new Collection
-                Collection<Entity> nearbyEntities = world.getNearbyEntities(region);
-                int limit = 2 + this.enchantmentBookSettings.getLevel(armor, destructionEnchant);
+                double currentHealth = player.getHealth();
+                double damage = event.getFinalDamage();
+                double postDamageHealth = currentHealth - damage;
+                double threshold = 4.0 + level;
+                double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
 
-                //Build a stream to damage entities based on the following conditions
-                nearbyEntities.stream()
-                        .filter(entity -> entity instanceof LivingEntity)
-                        .map(entity -> (LivingEntity) entity)
-                        .limit(limit)
-                        .forEach(entity -> {
-                            entity.damage(event.getDamage() / 2);
-                            entity.sendMessage("** DESTRUCTION **");
-                        });
+                if (postDamageHealth > 0 && postDamageHealth <= threshold) {
+                    event.setCancelled(true);
+
+                    double healAmount = threshold;
+                    double newHealth = Math.min(currentHealth + healAmount, maxHealth);
+                    double healed = newHealth - currentHealth;
+
+                    player.setHealth(newHealth);
+                    player.sendMessage("§5** DEATH GOD ** §7(Healed you for: §a" + String.format("%.1f", healed) + "§7)");
+                }
             }
             if (EnchantUtils.isEventActive(CEnchantments.DIMINISH, player, armor, enchants)) {
+                if (!CEnchantments.DIMINISH.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.DIMINISH.getEnchantment())), true))
+                    return;
                 double lastAttack = player.getLastDamage();
                 event.setDamage(lastAttack / 2);
             }
             if (EnchantUtils.isEventActive(CEnchantments.ARMORED, player, armor, enchants)) {
+                if (!CEnchantments.ARMORED.isOffCooldown(damager.getUniqueId(), (enchants.get(CEnchantments.ARMORED.getEnchantment())), true))
+                    return;
                 CEnchantment armoredEnchant = CEnchantments.ARMORED.getEnchantment();
                 if (!(event.getDamager() instanceof Player attacker)) return;
+
                 @NotNull final Set<Material> swords = Set.of(
                         Material.WOODEN_SWORD,
                         Material.STONE_SWORD,
@@ -612,9 +641,14 @@ public class ArmorEnchantments implements Listener {
                         Material.DIAMOND_SWORD,
                         Material.NETHERITE_SWORD
                 );
+
                 @NotNull ItemStack item = this.methods.getItemInHand(attacker);
                 if (swords.contains(item.getType())) {
-                    event.setDamage(event.getDamage() - this.enchantmentBookSettings.getLevel(armor, armoredEnchant));
+                    int level = this.enchantmentBookSettings.getLevel(armor, armoredEnchant);
+                    double damage = event.getDamage();
+                    double reduction = damage * (0.02 * level); // Reduce by 2% per level
+                    event.setDamage(damage - reduction);
+
                     player.sendMessage("* ARMORED *");
                 }
             }
@@ -657,6 +691,41 @@ public class ArmorEnchantments implements Listener {
                     }
                 }
             }
+            if (EnchantUtils.isEventActive(CEnchantments.EXTERMINATOR, player, armor, enchants)) {
+                if (!CEnchantments.EXTERMINATOR.isOffCooldown(damager.getUniqueId(), enchants.get(CEnchantments.EXTERMINATOR.getEnchantment()), true))
+                    return;
+                if (!(event.getEntity() instanceof Player target)) return;
+
+                int level = enchants.get(CEnchantments.EXTERMINATOR.getEnchantment());
+
+                //Silence able enchants name must use the second name found in CEnchantments
+                Set<String> silencedEnchantNames = Set.of("Guardians", "Spirits", "Valor", "Guards");
+
+                ItemStack[] armorContents = target.getInventory().getArmorContents();
+
+                for (ItemStack targetItem : armorContents) {
+                    if (targetItem == null || targetItem.getType().isAir()) continue;
+
+                    @NotNull Map<CEnchantment, Integer> enchantmentMap = this.enchantmentBookSettings.getEnchantments(targetItem);
+
+                    if (enchantmentMap.isEmpty()) continue;
+
+                    for (Map.Entry<CEnchantment, Integer> entry : enchantmentMap.entrySet()) {
+                        CEnchantment enchantment = entry.getKey();
+
+                        // Check if it's one of the target enchants and it's currently activated
+                        if (silencedEnchantNames.contains(enchantment.getName()) && enchantment.isActivated()) {
+                            enchantment.setActivated(false);
+                            this.plugin.getLogger().info("[DEBUG] [Silence] " + enchantment.getName() + " enchant silenced!");
+
+                            this.scheduler.runTaskLater(plugin, () -> {
+                                enchantment.setActivated(true);
+                                this.plugin.getLogger().info("[DEBUG] [Silence] " + enchantment.getName() + " enchant reactivated!");
+                            }, 60L); // Delay in ticks (60 ticks = 3 seconds)
+                        }
+                    }
+                }
+            }
         }
 
         if (!(damager instanceof Player)) return;
@@ -682,12 +751,16 @@ public class ArmorEnchantments implements Listener {
             @NotNull final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
 
             if (EnchantUtils.isEventActive(CEnchantments.FAT, victim, armor, enchants)) {
-                CEnchantment fat = CEnchantments.FAT.getEnchantment();
-                int level = this.enchantmentBookSettings.getLevel(armor, fat);
-
+                CEnchantment fatEnchant = CEnchantments.FAT.getEnchantment();
+                int level = this.enchantmentBookSettings.getLevel(armor, fatEnchant);
                 event.setDamage(Math.max(event.getDamage() - level, 0));
+                if (level >= 3) {
+                    AttributeModifier modifier = new AttributeModifier(new NamespacedKey(plugin, "fat"), level * 8, AttributeModifier.Operation.ADD_NUMBER);
+                    victim.getAttribute(Attribute.MAX_ABSORPTION).addModifier(modifier);
+                    victim.setAbsorptionAmount(level * 2);
 
-                if (level >= 3) victim.getScheduler().runDelayed(this.plugin, apply -> victim.setAbsorptionAmount(level * 8), null, 10L);
+                    this.scheduler.runTaskLater(plugin, () -> victim.getAttribute(Attribute.MAX_ABSORPTION).removeModifier(modifier), 120L);
+                }
             }
         }
     }
@@ -699,13 +772,66 @@ public class ArmorEnchantments implements Listener {
 
         for (ItemStack armor : attacker.getEquipment().getArmorContents()) {
             @NotNull final Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
+
             if (EnchantUtils.isEventActive(CEnchantments.DEATHBRINGER, attacker, armor, enchants)) {
-                victim.damage(event.getDamage() * 2);
+                if (!CEnchantments.DEATHBRINGER.isOffCooldown(attacker.getUniqueId(), (enchants.get(CEnchantments.DEATHBRINGER.getEnchantment())), true)) return;
+                int level = this.enchantmentBookSettings.getLevel(armor, CEnchantments.DEATHBRINGER.getEnchantment());
+
+                double multiplier = 1.0 + 0.25 * level;
+
+                double originalDamage = event.getDamage();
+                double newDamage = originalDamage * multiplier;
+                event.setDamage(newDamage);
+
                 attacker.sendMessage("* DEATHBRINGER *");
-                attacker.sendMessage("Deathbringer damage: " + event.getDamage() * 2);
+                //attacker.sendMessage("Deathbringer level " + level + " → " + newDamage + " damage (" + multiplier + "x)");
+                break;
             }
         }
 
+    }
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerHit(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)) return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+
+        for (ItemStack armor : victim.getInventory().getArmorContents()) {
+            Map<CEnchantment, Integer> enchants = this.enchantmentBookSettings.getEnchantments(armor);
+
+            if (enchants.containsKey(CEnchantments.SURPRISE.getEnchantment())
+                    && EnchantUtils.isEventActive(CEnchantments.SURPRISE, victim, armor, enchants)) {
+
+                int level = enchants.get(CEnchantments.SURPRISE.getEnchantment());
+
+                if (!CEnchantments.SURPRISE.isOffCooldown(victim.getUniqueId(), level, true)) return;
+
+                Location behind = attacker.getLocation().clone().subtract(attacker.getLocation().getDirection().normalize().multiply(2));
+
+                // Try same Y level, then +1, then -1
+                Location[] candidates = new Location[] {
+                        behind.clone(),                       // Same Y
+                        behind.clone().add(0, 1, 0),          // One block up
+                        behind.clone().add(0, -1, 0)          // One block down
+                };
+
+                for (Location candidate : candidates) {
+                    if (TeleportUtil.isSafeTeleportLocation(candidate)) {
+                        // Set yaw to face attacker
+                        Vector directionToAttacker = attacker.getLocation().toVector().subtract(candidate.toVector()).normalize();
+                        candidate.setDirection(directionToAttacker);
+
+                        victim.teleport(candidate);
+                        victim.sendMessage("§e* BACKSTEP * §7You teleported behind your attacker!");
+                        attacker.sendMessage("§cYour target vanished behind you!");
+
+                        victim.getWorld().spawnParticle(Particle.PORTAL, victim.getLocation(), 30, 0.5, 0.5, 0.5);
+                        victim.getWorld().playSound(victim.getLocation(), Sound.ENTITY_CAT_AMBIENT, 1.0f, 1.0f);
+
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     @EventHandler()
@@ -934,5 +1060,63 @@ public class ArmorEnchantments implements Listener {
                         .forEach(ench -> topEnchants.put(ench.getKey(), ench.getValue())));
 
         return topEnchants;
+    }
+    public class TeleportUtil {
+
+        private static final Set<Material> UNSAFE_PASSABLE_BLOCKS = Set.of(
+                Material.COBWEB,
+                Material.LAVA,
+                Material.WATER,
+                Material.FIRE,
+                Material.CAMPFIRE,
+                Material.SOUL_CAMPFIRE,
+                Material.SWEET_BERRY_BUSH
+                // Add more materials here if needed
+        );
+
+        /**
+         * Checks whether a location is safe for teleporting.
+         * Ensures head & feet are in non-solid, not specifically unsafe passable blocks,
+         * and that there's solid ground underneath.
+         *
+         * @param loc the Location to test
+         * @return true if safe for teleport, false otherwise
+         */
+        public static boolean isSafeTeleportLocation(Location loc) {
+            if (loc == null) return false;
+
+            Block feetBlock = loc.getBlock();
+            Block headBlock = feetBlock.getRelative(BlockFace.UP);
+            Block belowBlock = feetBlock.getRelative(BlockFace.DOWN);
+
+            // Feet and head must not be in a solid block or unsafe passable block
+            if (!isSafeBlock(feetBlock) || !isSafeBlock(headBlock)) {
+                return false;
+            }
+
+            // Block beneath must be solid (not air or passable)
+            if (belowBlock.isEmpty() || belowBlock.isPassable()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static boolean isSafeBlock(Block block) {
+            Material type = block.getType();
+
+            // Solid blocks are unsafe (can't teleport into)
+            if (block.isSolid()) {
+                return false;
+            }
+
+            // Avoid certain dangerous passable blocks
+            if (UNSAFE_PASSABLE_BLOCKS.contains(type)) {
+                return false;
+            }
+
+            // Allow everything else (non-solid and not unsafe)
+            return true;
+        }
     }
 }
