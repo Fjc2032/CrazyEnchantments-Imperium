@@ -448,7 +448,7 @@ public class AxeEnchantments implements Listener {
                 for (BukkitTask task : runnables) task.cancel();
             }, 100L);
         }
-        if (allowDebug) damager.sendMessage("Base damage: " + event.getDamage());
+        //if (allowDebug) damager.sendMessage("Base damage: " + event.getDamage());
     }
 
     @EventHandler()
