@@ -1,5 +1,7 @@
 package com.badbones69.crazyenchantments.paper.api.enums.pdc;
 
+import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,11 @@ public class Enchant {
         return this.enchants.containsKey(enchantment);
     }
 
+    public boolean hasEnchantment(CEnchantment enchantment) {
+        String object = enchantment.getName();
+        return this.enchants.containsKey(object);
+    }
+
     /**
      *
      * @return Hashmap of all enchantments and their corresponding levels.
@@ -40,7 +47,7 @@ public class Enchant {
     /**
      *
      * @param enchantment The enchantment want the level for.
-     * @return The level or null if the enchantment is not on the item.
+     * @return The level, or 0 if the enchantment is not on the item.
      */
     public Integer getLevel(String enchantment) {
         if (this.enchants.get(enchantment) == null) return 0;

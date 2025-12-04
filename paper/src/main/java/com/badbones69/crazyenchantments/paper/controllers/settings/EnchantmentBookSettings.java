@@ -76,6 +76,17 @@ public class EnchantmentBookSettings {
         return this.gson.fromJson(itemData, Enchant.class).hasEnchantment(enchantment.getName());
     }
 
+    public boolean hasEnchantment(ItemStack item, CEnchantment enchantment) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+
+        for (CEnchantment enchantment1 : getEnchantments(meta).keySet()) {
+            if (enchantment.equals(enchantment1)) return true;
+        }
+
+        return false;
+    }
+
     /**
      * This method converts an ItemStack into a CEBook.
      * @param book The ItemStack you are converting.
