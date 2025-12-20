@@ -83,9 +83,9 @@ public class PickaxeEnchantments implements Listener {
         boolean damage = Files.CONFIG.getFile().getBoolean("Settings.EnchantmentOptions.Blast-Full-Durability");
 
         if (!(this.blocks.containsKey(player) && this.blocks.get(player).containsKey(initialBlock))) return;
-        if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.BLAST, enchantments)) return;
+        if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.DETONATE, enchantments)) return;
 
-        Set<Block> blockList = getBlocks(initialBlock.getLocation(), blocks.get(player).get(initialBlock), (enchantmentBookSettings.getLevel(currentItem, CEnchantments.BLAST.getEnchantment()) - 1));
+        Set<Block> blockList = getBlocks(initialBlock.getLocation(), blocks.get(player).get(initialBlock), (enchantmentBookSettings.getLevel(currentItem, CEnchantments.DETONATE.getEnchantment()) - 1));
         this.blocks.remove(player);
 
         if (massBlockBreakCheck(player, blockList)) return;
@@ -113,9 +113,9 @@ public class PickaxeEnchantments implements Listener {
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(currentItem);
         boolean damage = Files.CONFIG.getFile().getBoolean("Settings.EnchantmentOptions.VeinMiner-Full-Durability", true);
 
-        if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.VEINMINER, enchantments)) return;
+        if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.VEIN, enchantments)) return;
 
-        HashSet<Block> blockList = getOreBlocks(currentBlock.getLocation(), enchantments.get(CEnchantments.VEINMINER.getEnchantment()));
+        HashSet<Block> blockList = getOreBlocks(currentBlock.getLocation(), enchantments.get(CEnchantments.VEIN.getEnchantment()));
         blockList.add(currentBlock);
 
         if (massBlockBreakCheck(player, blockList)) return;

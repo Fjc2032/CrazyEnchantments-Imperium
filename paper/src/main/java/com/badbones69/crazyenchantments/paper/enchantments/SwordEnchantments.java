@@ -360,8 +360,8 @@ public class SwordEnchantments implements Listener {
             en.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 3 * 20, 2 + level));
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.VIPER, damager, item, enchantments)) {
-            en.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 5 * 20, enchantments.get(CEnchantments.VIPER.getEnchantment())));
+        if (EnchantUtils.isEventActive(CEnchantments.POISON, damager, item, enchantments)) {
+            en.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 5 * 20, enchantments.get(CEnchantments.POISON.getEnchantment())));
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.WITHER, damager, item, enchantments)) {

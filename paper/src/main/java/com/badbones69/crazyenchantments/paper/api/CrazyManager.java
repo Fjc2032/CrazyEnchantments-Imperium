@@ -700,8 +700,8 @@ public class CrazyManager {
         enchants.put(CEnchantments.AQUATIC, new HashMap<>());
         enchants.get(CEnchantments.AQUATIC).put(PotionEffectType.WATER_BREATHING, -1);
 
-        enchants.put(CEnchantments.BURNSHIELD, new HashMap<>());
-        enchants.get(CEnchantments.BURNSHIELD).put(PotionEffectType.FIRE_RESISTANCE, -1);
+        enchants.put(CEnchantments.OBSIDIANSHIELD, new HashMap<>());
+        enchants.get(CEnchantments.OBSIDIANSHIELD).put(PotionEffectType.FIRE_RESISTANCE, -1);
 
         enchants.put(CEnchantments.DRUNK, new HashMap<>());
         enchants.get(CEnchantments.DRUNK).put(PotionEffectType.STRENGTH, -1);

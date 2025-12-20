@@ -97,8 +97,8 @@ public class AllyEnchantments implements Listener {
             spawnAllies(player, enemy, AllyType.WOLF, power);
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.GUARDS, player, item, enchants)) {
-            int power = enchants.get(CEnchantments.GUARDS.getEnchantment());
+        if (EnchantUtils.isEventActive(CEnchantments.GUARDIANS, player, item, enchants)) {
+            int power = enchants.get(CEnchantments.GUARDIANS.getEnchantment());
             spawnAllies(player, enemy, AllyType.IRON_GOLEM, power);
         }
 
@@ -107,8 +107,8 @@ public class AllyEnchantments implements Listener {
             spawnAllies(player, enemy, AllyType.BEE, power);
         }
 
-        if (EnchantUtils.isEventActive(CEnchantments.NECROMANCER, player, item, enchants)) {
-            int power = enchants.get(CEnchantments.NECROMANCER.getEnchantment());
+        if (EnchantUtils.isEventActive(CEnchantments.UNDEADRUSE, player, item, enchants)) {
+            int power = enchants.get(CEnchantments.UNDEADRUSE.getEnchantment());
             spawnAllies(player, enemy, AllyType.ZOMBIE, power * 2);
         }
 

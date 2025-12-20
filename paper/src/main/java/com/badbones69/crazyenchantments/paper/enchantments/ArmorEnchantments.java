@@ -471,7 +471,7 @@ public class ArmorEnchantments implements Listener {
                 }
             }
 
-            if (EnchantUtils.isEventActive(CEnchantments.MANEUVER, player, armor, enchants)) {
+            if (EnchantUtils.isEventActive(CEnchantments.DODGE, player, armor, enchants)) {
                 event.setCancelled(true);
                 return;
             }
@@ -489,7 +489,7 @@ public class ArmorEnchantments implements Listener {
                 damager.setVelocity(player.getLocation().getDirection().multiply(2).setY(1.25));
             }
 
-            if (player.getHealth() <= 8 && EnchantUtils.isEventActive(CEnchantments.ROCKET, player, armor, enchants)) {
+            if (player.getHealth() <= 8 && EnchantUtils.isEventActive(CEnchantments.ROCKETESCAPE, player, armor, enchants)) {
                 // Anti cheat support here with AAC or any others.
                 player.getScheduler().runDelayed(this.plugin, playerTask -> player.setVelocity(player.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(1)), null, 1);
                 this.fallenPlayers.add(player.getUniqueId());

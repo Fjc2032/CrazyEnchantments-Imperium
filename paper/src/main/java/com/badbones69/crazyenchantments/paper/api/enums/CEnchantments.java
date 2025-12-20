@@ -20,78 +20,50 @@ public enum CEnchantments {
 
     //	----------------Boots----------------  \\
     WINGS("Wings", "Boots"),
-    ROCKET("Rocket", "Boots", 15, 5),
-    SPRINGS("Springs", "Boots"),
-    ANTIGRAVITY("AntiGravity", "Boots"),
     //	----------------Bows----------------  \\
     PULL("Pull", "Bow", 25, 10),
-    VENOM("Venom", "Bow", 10, 5),
     DOCTOR("Doctor", "Bow"),
-    PIERCING("Piercing", "Bow", 5, 5),
     ICEFREEZE("IceFreeze", "Bow", 25, 10),
     MULTIARROW("MultiArrow", "Bow", 25, 10),
     STICKY_SHOT("Sticky-Shot", "Bow", 10, 10),
     //	----------------Helmets----------------  \\
-    IMPLANTS("Implants", "Helmet", 5, 5),
     //	----------------Swords----------------  \\
-    TRAP("Trap", "Sword", 10, 5),
-    VIPER("Viper", "Sword", 10, 5),
-    SNARE("Snare", "Sword", 10, 3),
+
     SLOWMO("SlowMo", "Sword", 5, 5),
-    WITHER("Wither", "Sword", 10, 3),
-    VAMPIRE("Vampire", "Sword", 5, 5),
-    EXECUTE("Execute", "Sword"),
     FASTTURN("FastTurn", "Sword", 5, 5),
-    PARALYZE("Paralyze", "Sword", 15, 5),
-    BLINDNESS("Blindness", "Sword", 5, 1),
     DISORDER("Disorder", "Sword", 1, 0),
     CHARGE("Charge", "Sword"),
     //	----------------Armor----------------  \\
-    VALOR("Valor", "Armor"),
-    ANGEL("Angel", "Armor"),
+    PAINGIVER("PainGiver", "Armor", 10, 5),
     TAMER("Tamer", "Armor"),
-    GUARDS("Guards", "Armor"),
-    VOODOO("Voodoo", "Armor", 15, 5),
     SAVIOR("Savior", "Armor", 15, 5),
-    CACTUS("Cactus", "Armor", 25, 25),
-    FREEZE("Freeze", "Armor", 10, 5),
     RECOVER("Recover", "Armor"),
+    ANGEL("Angel", "Armor"),
     NURSERY("Nursery", "Armor", 5, 5),
     FORTIFY("Fortify", "Armor", 10, 5),
     BLIZZARD("Blizzard", "Armor"),
     ACIDRAIN("AcidRain", "Armor", 5, 5),
     SANDSTORM("SandStorm", "Armor", 5, 5),
-    SMOKEBOMB("SmokeBomb", "Helmet", 5, 5),
-    PAINGIVER("PainGiver", "Armor", 10, 5),
     INTIMIDATE("Intimidate", "Armor"),
-    BURNSHIELD("BurnShield", "Armor"),
     LEADERSHIP("Leadership", "Armor", 10, 5),
     INFESTATION("Infestation", "Armor"),
-    NECROMANCER("Necromancer", "Armor"),
-    STORMCALLER("StormCaller", "Armor", 10, 5),
     CYBORG("Cyborg", "Armor"),
     BEEKEEPER("BeeKeeper", "Armor"),
-    MANEUVER("Maneuver", "Armor", 10, 5),
     CROUCH("Crouch", "Armor", 10, 5),
-    SHOCKWAVE("Shockwave", "Armor", 10, 5, "Chestplate"),
     SYSTEMREBOOT("SystemReboot", "Armor", 10, 5),
     //	----------------Axes----------------  \\
     REKT("Rekt", "Axe", 5, 1),
     CURSED("Cursed", "Axe", 10, 5),
-    BLESSED("Blessed", "Axe", 10, 5),
     BATTLECRY("BattleCry", "Axe", 10, 5),
-    DEMONFORGED("DemonForged", "Axe", 10, 5),
     //	----------------PickAxes----------------  \\
-    VEINMINER("VeinMiner", "Pickaxe"),
-    BLAST("Blast", "Pickaxe"),
     //	----------------Tools----------------  \\
     //	----------------Hoes----------------  \\
     GREENTHUMB("GreenThumb", "Hoe", 10, 10),
     HARVESTER("Harvester", "Hoe"),
     TILLER("Tiller", "Hoe"),
-    PLANTER("Planter", "Hoe"),
     //	----------------All----------------  \\
     HELLFORGED("HellForged", "Damaged-Items", 5, 5),
+
     //IMPERIUM: Simple Enchantments
     //Armour
     AQUATIC("Aquatic", "Helmet"),
@@ -112,10 +84,10 @@ public enum CEnchantments {
     OXYGENATE("Oxygenate", "Tool", 60L),
     HASTE("Haste", "Tool"),
     //missing
-    //EPICNESS kinda pointless
-    //THUNDERINGBLOW thunder I think it was just strike lighting more as an effect enchant
-    //ETHEREAL haste upon killing mobs kinda pointless
-    //Strike strikes lighting on impact with the ground
+    EPICNESS("Epicness", "Weapon"),// kinda pointless
+    THUNDERINGBLOW("ThunderingBlow", "Swords"), //thunder I think it was just strike lighting more as an effect enchant
+    ETHEREAL("Ethereal", "Swords"),   // haste upon killing mobs kinda pointless
+    STRIKE("Strike", "Trident"),//Strike strikes lighting on impact with the ground
 
     //IMPERIUM: Unique Enchantments
     //ARMOUR
@@ -126,31 +98,114 @@ public enum CEnchantments {
     RADIANT("Radiant", "Armor"),//disabled
     NINJA("Ninja", "Armor"),//disabled
     SELFDESTRUCT("SelfDestruct", "Armor", 24, 10, 80L),
-    //sustain missing SUSTAIN("Sustain", "Armor", 12, 2, 160L)
-    //plague carrier PLAGUECARRIER("PlagueCarrier", "Armor", 20, 10, 60L)
-    
+    SUSTAIN("Sustain", "Armor", 12, 2, 160L),
+    PLAGUECARRIER("PlagueCarrier", "Armor", 20, 10, 60L),//missing
     COMMANDER("Commander", "Helmet", 9, 3, 120L),
     ENDERSHIFT("EnderShift", "Boots", 15, 15, 120L, -40L),//was ADRENALINE
-
     //WEAPONS
     FAMISHED("FeedMe", "Axe", 14, 4, 40L),//was FEEDME
     BERSERK("Berserk", "Axe", 4, 4, 160L, 20L),
-    
     NUTRITION("Nutrition", "Sword", 14, 4, 40L),
     LIFEBLOOM("Lifebloom", "Sword", 20, 10, 200L, -25L),
     FAMINE("Famine", "Sword", 12, 4, 8L), //was FAMISHED
     FEATHERWEIGHT("FeatherWeight", "Sword", 35, 20, 40L),//was LIGHTWEIGHT
     SKILLSWIPE("SkillSwipe", "Sword", 15, 2, 100L),
-    
     EXPLOSIVE("Explosive", "Bow", 20, 10, 8L),//was BOOM
     VIRUS("Virus", "Bow", 16, 4),
-
     //TOOLS
     TELEPATHY("Telepathy", "Tool", 40, 20),
     OBBYDESTROYER("ObbyDestroyer", "Pickaxe", 20, 15, 160L, 20L),
 
     //IMPERIUM: Elite Enchantments
+    // Trident //
+    IMPACT("Impact", "Trident", 15, 10),
+    INFERNAL("Infernal", "Bow", 7, 4),
+    NETHERSLAYER("Netherslayer", "Sword", 50, 10),
+    SHACKLE("Shackle", "Sword", 70, 10),
+    REFORGED("Reforged", "Tool", 10, 10),
+    GREATSWORD("Greatsword", "Sword", 40, 10),
+    TRICKSTER("Trickster", "Armor", 25, 6),
+    PUMMEL("Pummel", "Axe", 30, 5),
+    FARCAST("Farcast", "Bow", 10, 5),
+    POISONED("Poisoned", "Armor", 10, 5),
+    HARDENED("Hardened", "Armor", 30, 10),
+    ENDERSLAYER("Enderslayer", "Sword", 50, 10),
+    REAPER("Reaper", "Axe", 10, 3),
+
+    PARALYZE("Paralyze", "Sword", 15, 5),
+    BLINDNESS("Blindness", "Sword", 5, 1),//blind
+    WITHER("Wither", "Sword", 10, 3),
+    VAMPIRE("Vampire", "Sword", 5, 5),
+    EXECUTE("Execute", "Sword"),
+    TRAP("Trap", "Sword", 10, 5),
+    POISON("Poison", "Sword", 10, 5),//was viper
+    SNARE("Snare", "Sword", 10, 3),
+    VOODOO("Voodoo", "Armor", 15, 5),
+    CACTUS("Cactus", "Armor", 25, 25),
+    FROZEN("Frozen", "Armor", 10, 5),//was Freeze
+    SMOKEBOMB("SmokeBomb", "Helmet", 5, 5),
+    UNDEADRUSE("UndeadRuse", "Armor"),//was Necromancer
+    STORMCALLER("StormCaller", "Armor", 10, 5),
+    SHOCKWAVE("Shockwave", "Armor", 10, 5, "Chestplate"),
+    ROCKETESCAPE("RocketEscape", "Boots", 15, 5), //was rocket
+    SPRINGS("Springs", "Boots"),
+    ANTIGRAVITY("AntiGravity", "Boots"),
+    VENOM("Venom", "Bow", 10, 5),
+    DEMONFORGED("DemonForged", "Axe", 10, 5),
+
+    COUNTERBLOCK("CounterBlock", "Armor", 10, 5),
     //IMPERIUM: Ultimate Enchantments
+    PICKPOCKET("Pickpocket", "Swords"),//weapons enchant
+    ICEASPECT("IceAspect", "Swords"),
+    Disapear("Disapear", "Armor"),
+    DISINTERGRATE("Disintergrate", "Swords"),
+    ARSONIST("Arsonist", "Swords"),
+    EAGLEEYE("EagleEye", "Bow"),
+    ANNIHILATE("Annihilate", "Axe"),
+    PACIFY("Pacify", "Bow"),
+
+    MARKSMAN("Marksman", "Armor"),
+    ANGELIC("Angelic", "Armor", 20, 5, 200L),
+    JELLYLEGS("Jellylegs", "Boots", 10, 3),
+    CLEAVE("Cleave", "Axe", 15, 5),
+    DOMINATE("Dominate", "Swords", 10, 3),
+    ENDERWALKER("Enderwalker", "Boots", 8, 3),
+    TANK("Tank", "Armor", 16, 4),
+    BLOCK("Block", "Sword", 11, 11),
+    CORRUPT("Corrupt", "Axe", 20, 7),
+    CREEPERARMOR("CreeperArmor", "Armor", 10, 3),
+    DEMONIC("Demonic", "Sword", 10, 3),
+    METAPHYSICAL("Metaphysical", "Boots", 50, 10),
+    DISTANCE("Distance", "Sword", 14, 3),
+    RAGDOLL("Ragdoll", "Armor", 30, 5),
+    ARROWBREAK("Arrowbreak", "Axe", 10, 10),
+    ARROWDEFLECT("Arrowdeflect", "Armor", 10, 10),
+    ARROWLIFESTEAL("ArrowLifesteal", "Bow", 10, 10),
+    HELLFIRE("Hellfire", "Bow", 15, 10, 60L),
+    HEAVY("Heavy", "Armor", 10, 5, 20L),
+    REINFORCED("Reinforced", "Armor", 20, 10),
+    TIMBER("Timber", "Axe", 10, 5),
+    SPIRITS("Spirits", "Armor", 10, 10, 600L),
+    LONGBOW("Longbow", "Bow", 30, 10),
+    UNFOCUS("Unfocus", "Bow", 10, 5),
+    BLEED("Bleed", "Axe", 8, 4),//not messing with
+
+    PIERCING("Piercing", "Bow", 5, 5),
+    GUARDIANS("Guardians", "Armor"), //   guardians  was Guards
+    VALOR("Valor", "Armor"),
+    PLANTER("Planter", "Hoe"),
+    IMPLANTS("Implants", "Helmet", 5, 5),
+    OBSIDIANSHIELD("ObsidianShield", "Armor"), //was burnshield
+    DODGE("Dodge", "Armor", 10, 5), //was MANEUVER
+    BLESSED("Blessed", "Axe", 10, 5),
+    //	----------------removed----------------  \\\
+    VEIN("Vein", "Pickaxe"),//was veinminer
+    DETONATE("Detonate", "Pickaxe"),// detonate
+    POWERLOAD("Powerload", "Pickaxe"),
+    WEIGHTED("Weighted", "Pickaxe"),
+    SMASH("Smash", "Pickaxe"),
+
+
     //IMPERIUM: Legendary Enchantments
     //	----------------Boots----------------  \\\
     GEARS("Gears", "Boots"),//untested persistent effect issue
@@ -170,7 +225,6 @@ public enum CEnchantments {
     //	----------------AXES----------------  \\\
     INSANITY("Insanity", "Axe", 7, 7, 30L),
     BARBARIAN("Barbarian", "Axe", 20, 4, 20L),
-    BLEED("Bleed", "Axe", 8, 4),//not messing with
     DEVOUR("Devour", "Axe", 10, 5, 60L),//w
     BLACKSMITH("Blacksmith", "Axe", 8, 8, 60L),
     //	----------------ARMOUR----------------  \\\
@@ -192,63 +246,59 @@ public enum CEnchantments {
     SNIPER("Sniper", "Bow", 25, 5, 100L),//ww
     TWINGE("Twinge", "Trident", 40, 8),
     ABIDING("Abiding", "Tool"),
+    IMPALE("Impale", "Bow", 50, 5),
+    //	----------------removed----------------  \\\
+    PILLAGE("Pillage", "Tool"),
+    PROTECTION("Protection", "Armor"),
+    FEATHER("Feather", "Armor"),
+    DESTRUCTIVE("Destructive", "Armor"),//mace enchant
     //NEW - Imperium
-    POISONED("Poisoned", "Armor", 10, 5),
-    HARDENED("Hardened", "Armor", 30, 10),
-    LONGBOW("Longbow", "Bow", 30, 10),
-    UNFOCUS("Unfocus", "Bow", 10, 5),
-    ENDERSLAYER("Enderslayer", "Sword", 50, 10),
-    REAPER("Reaper", "Axe", 10, 3),
     //Modified: Reaper now scales damage based on XP, and will no longer apply wither effects.
     //This is final.
-
-    NETHERSLAYER("Netherslayer", "Sword", 50, 10),
-    SHACKLE("Shackle", "Sword", 70, 10),
-    REFORGED("Reforged", "Tool", 10, 10),
-    GREATSWORD("Greatsword", "Sword", 40, 10),
-    TRICKSTER("Trickster", "Armor", 25, 6),
-    PUMMEL("Pummel", "Axe", 30, 5),
-    FARCAST("Farcast", "Bow", 10, 5),
-    MARKSMAN("Marksman", "Armor"),
-    ANGELIC("Angelic", "Armor", 20, 5, 200L),
-    JELLYLEGS("Jellylegs", "Boots", 10, 3),
-    CLEAVE("Cleave", "Axe", 15, 5),
-    DOMINATE("Dominate", "Swords", 10, 3),
-    ENDERWALKER("Enderwalker", "Boots", 8, 3),
-    INFERNAL("Infernal", "Bow", 7, 4),
-    TANK("Tank", "Armor", 16, 4),
-    BLOCK("Block", "Sword", 11, 11),
-    CORRUPT("Corrupt", "Axe", 20, 7),
-    CREEPERARMOR("CreeperArmor", "Armor", 10, 3),
-    DEMONIC("Demonic", "Sword", 10, 3),
-    METAPHYSICAL("Metaphysical", "Boots", 50, 10),
-    DISTANCE("Distance", "Sword", 14, 3),
-    RAGDOLL("Ragdoll", "Armor", 30, 5),
-    ARROWBREAK("Arrowbreak", "Axe", 10, 10),
-    ARROWDEFLECT("Arrowdeflect", "Armor", 10, 10),
-    ARROWLIFESTEAL("ArrowLifesteal", "Bow", 10, 10),
-    HELLFIRE("Hellfire", "Bow", 15, 10, 60L),
-    HEAVY("Heavy", "Armor", 10, 5, 20L),
-    REINFORCED("Reinforced", "Armor", 20, 10),
-    TIMBER("Timber", "Axe", 10, 5),
-    SPIRITS("Spirits", "Armor", 10, 10, 600L),
 
     //SUGGESTED - Imperium
     SWARM("Swarm", "Sword"),
     HEX("Hex", "Axe", 10, 5),
-
-    //HEROIC
-
     //TEST - enchantments
     AURA("Aura", "Trident"),
-    // Trident //
-    IMPACT("Impact", "Trident", 15, 10),
     //IMPERIUM: Heroic Enchantments
     MIGHTYCACTUS("MightyCactus", "Armor", 10, 10, true, CEnchantments.CACTUS),
     DEEPBLEED("DeepBleed", "Axe", 10, 10, true, CEnchantments.BLEED),
     BIDIRECTIONAL("BidirectionalTeleportation", "Bow", 15, 10, true, null),
     ALIENIMPLANTS("AlienImplants", "Helmet", 15, 10, true, CEnchantments.IMPLANTS),
     GODLYOVERLOAD("GodlyOverload", "Armor"),
+    MASSINSANITY("MassInsanity", "Axe", 15, 10, true, CEnchantments.INSANITY),
+    MEGAHEAVY("MegaHeavy", "Armor", 15, 10, true, CEnchantments.HEAVY),
+    BEWITCHEDHEX("BewitchedHex", "Armor", 15, 10, true, CEnchantments.HEX),
+    MIGHTYCLEAVE("MightyCleave", "Axe", 15, 10, true, CEnchantments.CLEAVE),
+    GUIDEDROCKETESCAPE("GuidedRocketEscape", "Axe", 15, 10, true, CEnchantments.ROCKETESCAPE),
+    POLYMORPHICMETAPHYSICAL("polymorphicMetaphysical", "Axe", 15, 10, true, CEnchantments.METAPHYSICAL),
+    REINFORCEDTANK("ReinforcedTank", "Axe", 15, 10, true, CEnchantments.TANK),
+    SOULHARDEND("SoulHardened", "Axe", 15, 10, true, CEnchantments.HARDENED),
+    EPIDEMICCARRIER("EpidemicCarrier", "Axe", 15, 10, true, CEnchantments.PLAGUECARRIER),
+    REFLECTIVEBLOCK("ReflectiveBlock", "Axe", 15, 10, true, CEnchantments.BLOCK),
+    MASTERINQUISITIVE("MasterInquisitive", "Axe", 15, 10, true, CEnchantments.INQUISITIVE),
+    PLANETARYDEATHBRINGER("PlanetaryDeathbringer", "Axe", 15, 10, true, CEnchantments.DEATHBRINGER),
+    DEVINEENGLIGHTENED("DevineEnlightened", "Axe", 15, 10, true, CEnchantments.INQUISITIVE),
+    LETHALSNIPER("LethalSniper", "Axe", 15, 10, true, CEnchantments.SNIPER),
+    TITANTRAP("TitanTrap", "Axe", 15, 10, true, CEnchantments.TRAP),
+    MASTERBLACKSMITH("MasterBlacksmith", "Axe", 15, 10, true, CEnchantments.BLACKSMITH),
+    VENGEFULDIMINISH("VengefulDiminish", "Axe", 15, 10, true, CEnchantments.DIMINISH),
+    ETHEREALDODGE("EtherealDodge", "Axe", 15, 10, true, CEnchantments.DODGE),
+    PAlADINARMOURED("PaladinArmoured", "Axe", 15, 10, true, CEnchantments.ARMORED),
+    DEMONICLIFESTEAL("DemonicLifesteal", "Axe", 15, 10, true, CEnchantments.LIFESTEAL),
+
+    PHOENIX("Phoenix", "Axe", 15, 10),
+    MARKOFTHEBEAST("MarkOfTheBeast", "Axe", 15, 10),
+    NATURESWRATH("NaturesWrath", "Axe", 15, 10),
+    CHAINLIFESTEAL("ChainLifesteal", "Axe", 15, 10, true, CEnchantments.LIFESTEAL),
+    SUPERSPIKEY("SuperSpikey", "Axe", 15, 10),
+
+
+
+
+
+
     ;
 
 
