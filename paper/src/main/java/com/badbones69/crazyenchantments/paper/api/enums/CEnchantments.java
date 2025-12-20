@@ -72,7 +72,7 @@ public enum CEnchantments {
     //weapons
     HEADLESS("Headless", "Sword", 20, 20),
     OBLITERATE("Obliterate", "Sword", 10, 5, 400L, 40L),
-    CONFUSION("Confusion", "Sword", 15, 5, 80L, -20L),
+    CONFUSION("Confusion", "Sword", 15, 5, 80L, -20L), //is it ok for this to be negative??
     INSOMNIA("Insomnia", "Swords", 10, 2, 200L, 10L),
     DECAPITATION("Decapitation", "Axe", 20, 20),
     DIZZY("Dizzy", "Axe", 15, 5, 80L, -20L),

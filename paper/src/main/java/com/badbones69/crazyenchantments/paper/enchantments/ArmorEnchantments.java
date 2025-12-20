@@ -140,48 +140,85 @@ public class ArmorEnchantments implements Listener {
                 CEnchantment overload = CEnchantments.OVERLOAD.getEnchantment();
                 CEnchantment godlyOverload = CEnchantments.GODLYOVERLOAD.getEnchantment();
                 CEnchantment hulk = CEnchantments.HULK.getEnchantment();
+                CEnchantment gears = CEnchantments.GEARS.getEnchantment();
+                CEnchantment antiGravity = CEnchantments.ANTIGRAVITY.getEnchantment();
+                CEnchantment springs = CEnchantments.SPRINGS.getEnchantment();
 
                 //Metadata
                 ItemMeta meta = armor.getItemMeta();
                 if (meta == null) return;
 
-                if (this.enchantmentBookSettings.hasEnchantment(meta, overload)) {
-                    NamespacedKey key = new NamespacedKey(this.plugin, "overload");
+                //Keys
+                NamespacedKey[] keys = new NamespacedKey[6];
+                keys[0] = new NamespacedKey(this.plugin, "overload");
+                keys[1] = new NamespacedKey(this.plugin, "godly_overload");
+                keys[2] = new NamespacedKey(this.plugin, "hulk");
+                keys[3] = new NamespacedKey(this.plugin, "antigravity");
+                keys[4] = new NamespacedKey(this.plugin, "gears");
+                keys[5] = new NamespacedKey(this.plugin, "springs");
+
+
+                if (this.enchantmentBookSettings.hasEnchantment(armor, overload)) {
                     double level = this.enchantmentBookSettings.getLevel(armor, overload);
-                    AttributeModifier overloadModifier = new AttributeModifier(key, 4 * level, AttributeModifier.Operation.ADD_NUMBER);
-                    meta.addAttributeModifier(Attribute.MAX_HEALTH, overloadModifier);
+                    AttributeModifier overloadModifier = new AttributeModifier(keys[0], level * 4, AttributeModifier.Operation.ADD_NUMBER);
 
-                    armor.setItemMeta(meta);
-                    this.attributeController.updateAttributes(player, Attribute.MAX_HEALTH, overloadModifier, overload, armor, null);
-                    this.attributeController.add(Attribute.MAX_HEALTH, overloadModifier);
+                    if (!this.attributeController.addAttribute(player, Attribute.MAX_HEALTH, keys[0], level * 4)) {
+                        this.plugin.getLogger().warning("Something went wrong while attempting to apply this attribute.");
+                    }
+                } else {
+                    this.attributeController.removeModifier(player, Attribute.MAX_HEALTH, keys[0]);
                 }
-                if (this.enchantmentBookSettings.hasEnchantment(meta, godlyOverload)) {
-                    NamespacedKey key = new NamespacedKey(this.plugin, "godly_overload");
-                    double level = this.enchantmentBookSettings.getLevel(armor, godlyOverload);
-                    AttributeModifier godlyOverloadModifier = new AttributeModifier(key, 8 * level, AttributeModifier.Operation.ADD_NUMBER);
-                    meta.addAttributeModifier(Attribute.MAX_HEALTH, godlyOverloadModifier);
-
-                    armor.setItemMeta(meta);
-                    this.attributeController.updateAttributes(player, Attribute.MAX_HEALTH, godlyOverloadModifier, godlyOverload, armor, null);
-                    this.attributeController.add(Attribute.MAX_HEALTH, godlyOverloadModifier);
-                }
-                //Hulk will be modified to increase attack power
-                //Think of it as a big guy flexing his hulk muscles
-                if (this.enchantmentBookSettings.hasEnchantment(meta, hulk)) {
-                    NamespacedKey key = new NamespacedKey(this.plugin, "hulk");
+                if (this.enchantmentBookSettings.hasEnchantment(armor, hulk)) {
                     double power = this.enchantmentBookSettings.getLevel(armor, hulk) * 10;
-                    AttributeModifier hulkModifier = new AttributeModifier(key, power, AttributeModifier.Operation.ADD_NUMBER);
-                    meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, hulkModifier);
+                    AttributeModifier hulkModifier = new AttributeModifier(keys[2], power, AttributeModifier.Operation.ADD_NUMBER);
 
-                    armor.setItemMeta(meta);
-                    this.attributeController.updateAttributes(player, Attribute.ATTACK_DAMAGE, hulkModifier, hulk, armor, null);
+                    this.attributeController.addAttributes(player, Attribute.ATTACK_DAMAGE, hulkModifier);
                     this.attributeController.add(Attribute.ATTACK_DAMAGE, hulkModifier);
+                } else {
+                    this.attributeController.removeAttribute(player, Attribute.ATTACK_DAMAGE, keys[2]);
+                    this.attributeController.remove(Attribute.ATTACK_DAMAGE, keys[2]);
+                }
+
+                if (this.enchantmentBookSettings.hasEnchantment(armor, antiGravity)) {
+                    double power = this.enchantmentBookSettings.getLevel(armor, antiGravity) * 0.08;
+                    AttributeModifier agModifier = new AttributeModifier(keys[3], power, AttributeModifier.Operation.ADD_NUMBER);
+
+                    this.attributeController.addAttributes(player, Attribute.JUMP_STRENGTH, agModifier);
+                    this.attributeController.add(Attribute.JUMP_STRENGTH, agModifier);
+                } else {
+                    this.attributeController.removeAttribute(player, Attribute.JUMP_STRENGTH, keys[3]);
+                    this.attributeController.remove(Attribute.JUMP_STRENGTH, keys[3]);
+                }
+
+                if (this.enchantmentBookSettings.hasEnchantment(armor, gears)) {
+                    double power = this.enchantmentBookSettings.getLevel(armor, gears) * 0.04;
+                    AttributeModifier gearsModifier = new AttributeModifier(keys[4], power, AttributeModifier.Operation.ADD_NUMBER);
+
+                    this.attributeController.addAttributes(player, Attribute.MOVEMENT_SPEED, gearsModifier);
+                    this.attributeController.add(Attribute.MOVEMENT_SPEED, gearsModifier);
+                } else {
+                    this.attributeController.removeAttribute(player, Attribute.MOVEMENT_SPEED, keys[4]);
+                    this.attributeController.remove(Attribute.MOVEMENT_SPEED, keys[4]);
+                }
+
+                if (this.enchantmentBookSettings.hasEnchantment(armor, springs)) {
+                    double power = this.enchantmentBookSettings.getLevel(armor, springs) * 0.015;
+                    AttributeModifier springsModifier = new AttributeModifier(keys[5], power, AttributeModifier.Operation.ADD_NUMBER);
+
+                    this.attributeController.addAttributes(player, Attribute.JUMP_STRENGTH, springsModifier);
+                    this.attributeController.add(Attribute.JUMP_STRENGTH, springsModifier);
+                } else {
+                    this.attributeController.removeAttribute(player, Attribute.JUMP_STRENGTH, keys[5]);
+                    this.attributeController.remove(Attribute.JUMP_STRENGTH, keys[5]);
                 }
             }
-        } catch (IllegalArgumentException | NullPointerException ignored) {
+            //Sometimes Minecraft complains that the user already has the modifier attached, so this will just hide that.
+        } catch (IllegalArgumentException | NullPointerException exception) {
             this.plugin.getLogger().warning("[DEBUG] This modifier is already active! If the enchantment is working as expected, you can ignore this message.");
+            this.plugin.getLogger().warning(exception.getLocalizedMessage());
         }
     }
+
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void potionHandler(EntityDamageByEntityEvent event) {

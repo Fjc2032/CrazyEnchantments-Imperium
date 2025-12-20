@@ -42,6 +42,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CrazyEnchantments extends JavaPlugin {
 
+    private static CrazyEnchantments instance;
+
     private Starter starter;
 
     // Plugin Listeners.
@@ -55,6 +57,7 @@ public class CrazyEnchantments extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         this.starter = new Starter();
         this.starter.run();
 
@@ -149,6 +152,7 @@ public class CrazyEnchantments extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        instance = null;
         getServer().getGlobalRegionScheduler().cancelTasks(this);
         getServer().getAsyncScheduler().cancelTasks(this);
 
@@ -171,6 +175,10 @@ public class CrazyEnchantments extends JavaPlugin {
 
     public Starter getStarter() {
         return this.starter;
+    }
+
+    public static CrazyEnchantments getInstance() {
+        return instance;
     }
 
     // Plugin Listeners.

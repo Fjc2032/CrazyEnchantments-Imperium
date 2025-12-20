@@ -6,8 +6,10 @@ import com.badbones69.crazyenchantments.paper.Starter;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -24,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("UnstableApiUsage")
 @ApiStatus.Experimental
 public class AttributeController {
 
@@ -37,7 +40,7 @@ public class AttributeController {
     private final Methods methods = this.starter.getMethods();
 
     @NotNull
-    private final EnchantmentBookSettings enchantmentBookSettings = new EnchantmentBookSettings();
+    private final EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
 
     @NotNull
     private static final Map<UUID, AttributeController> dataset = new ConcurrentHashMap<>();
@@ -55,6 +58,69 @@ public class AttributeController {
     private ScheduledTask[] task;
 
     public boolean isAttributeHandlingEnabled = true;
+
+    /**
+     * Adds an associated modifier to the specified player
+     * @param player The player to target
+     * @param attribute The attribute
+     * @param modifier The modifier
+     * @return The resulting player for chaining, or null if not applicable
+     * @apiNote May return null if the specified attribute/modifier can't be applied to the player
+     */
+    public @Nullable Player addAttributes(Player player, Attribute attribute, AttributeModifier modifier) {
+        var instance = player.getAttribute(attribute);
+        if (instance == null) return null;
+
+        NamespacedKey identifier = modifier.getKey();
+        AttributeModifier mapper = instance.getModifier(identifier);
+
+
+        if (instance.getModifiers().contains(mapper)) return player;
+        instance.addModifier(modifier);
+
+        return player;
+    }
+
+    public boolean addAttribute(Player player, Attribute attribute, NamespacedKey key, double amount) {
+        AttributeInstance inst = player.getAttribute(attribute);
+        if (inst == null) return false;
+
+        if (inst.getModifier(key) != null) return false;
+
+        AttributeModifier modifier1 = new AttributeModifier(key, amount, AttributeModifier.Operation.ADD_NUMBER);
+
+
+        inst.addModifier(modifier1);
+        add(attribute, modifier1);
+        return true;
+    }
+
+    public boolean removeModifier(Player player, Attribute attribute, NamespacedKey key) {
+        AttributeInstance inst = player.getAttribute(attribute);
+        if (inst == null) return false;
+
+        if (inst.getModifier(key) == null) return false;
+
+        inst.removeModifier(key);
+        remove(attribute, key);
+        return true;
+    }
+
+    /**
+     * Removes the associated modifier from the player
+     * @param player The player to target
+     * @param attribute The attribute
+     * @param modifier The modifier's identifiable key
+     * @return The resulting player, for chaining
+     */
+    public Player removeAttribute(Player player, Attribute attribute, NamespacedKey modifier) {
+        var instance = player.getAttribute(attribute);
+        if (instance == null) return null;
+
+        instance.removeModifier(modifier);
+
+        return player;
+    }
 
     /**
      * Starts a task calculation that will remove the attribute modifier when the item is no longer valid.
@@ -94,39 +160,34 @@ public class AttributeController {
      * @param modifier The modifier that will affect the attribute
      * @param enchantment The enchantment this attribute combination is tied to
      * @param tool The ItemStack this is tied to. Can be any item, as long as the player is holding it.
-     * @return True if the attribute was removed, false otherwise
      */
-    public boolean updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment, @NotNull ItemStack tool) {
-        if (player == null || attribute == null || modifier == null || enchantment == null) {
-            this.plugin.getLogger().warning("One or more parts of updateAttributes is null. Exiting...");
-            return false;
-        }
+    public void updateAttributes(Player player, @Nullable Attribute attribute, @Nullable AttributeModifier modifier, CEnchantment enchantment, @NotNull ItemStack tool) {
+        if (player == null || attribute == null || modifier == null || enchantment == null) return;
 
         this.attribute = attribute;
         this.modifier = modifier;
 
-            if (tool == null) {
-                this.plugin.getLogger().warning("[DEBUG] Item handler is null.");
-                return false;
-            }
+        ItemMeta meta = tool.getItemMeta();
+        if (meta == null) return;
 
-            //Metadata
-            ItemMeta meta = tool.getItemMeta();
-            if (meta == null) {
-                this.plugin.getLogger().warning("[DEBUG] Metadata handler is null.");
-                return false;
-            }
+        EquipmentSlot slot = tool.getItemMeta().getEquippable().getSlot();
+        if (!player.getEquipment().getItem(slot).equals(tool)) return;
+        if (!this.enchantmentBookSettings.hasEnchantment(meta, enchantment)) {
 
-            if (this.enchantmentBookSettings.hasEnchantment(meta, enchantment)) {
-                this.plugin.getLogger().warning("[DEBUG] Enchantment is present. Skipping...");
-                return false;
-            }
+            var inst = meta.getAttributeModifiers(attribute);
+            if (inst == null) return;
 
-            tool = this.removeModifiers(player, tool, attribute, modifier);
+            //Filter out any modifiers that don't match this key (like from other plugins)
+            inst.stream()
+                    .filter(Objects::nonNull)
+                    .filter(obj -> obj.getKey().equals(modifier.getKey()))
+                    .forEach(obj -> {
+                        meta.removeAttributeModifier(attribute, obj);
+                        remove(attribute, obj);
+                    });
 
-
-
-        return true;
+            tool.setItemMeta(meta);
+        }
     }
 
     /**
@@ -149,11 +210,20 @@ public class AttributeController {
         if (player.getEquipment().getItem(slot).equals(armor)) return;
         if (!this.enchantmentBookSettings.hasEnchantment(armor.getItemMeta(), enchantment)) {
             ItemMeta meta = armor.getItemMeta();
-            Set<Attribute> keySet = meta.getAttributeModifiers().keySet();
-            if (keySet.contains(null)) keySet = keySet.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-            for (Attribute selection : keySet) {
-                meta.removeAttributeModifier(selection);
-            }
+            if (meta == null) return;
+
+            var instance = meta.getAttributeModifiers(attribute);
+            if (instance == null) return;
+
+            //Filter out any modifiers that don't match this key
+            instance.stream()
+                    .filter(Objects::nonNull)
+                    .filter(obj -> obj.getKey().equals(modifier.getKey()))
+                    .forEach(obj -> {
+                        meta.removeAttributeModifier(attribute, obj);
+                        remove(attribute, obj);
+                    });
+
             armor.setItemMeta(meta);
         }
     }
@@ -193,6 +263,11 @@ public class AttributeController {
     public void remove(Attribute attribute, AttributeModifier element) {
         this.attributes.remove(attribute);
         this.modifiers.remove(element);
+    }
+
+    public void remove(Attribute attribute, NamespacedKey element) {
+        this.attributes.remove(attribute);
+        this.modifiers.removeIf(modifier1 -> modifier1.getKey() == element);
     }
 
     public void clear() {
@@ -291,8 +366,18 @@ public class AttributeController {
         Inventory inventory = player.getInventory();
         ItemMeta meta = item.getItemMeta();
         if (meta == null || attribute == null || modifier == null) return item;
-        if (meta.getAttributeModifiers() == null) return item;
-        meta.removeAttributeModifier(attribute, modifier);
+
+        var instance = meta.getAttributeModifiers(attribute);
+        if (instance == null) return item;
+
+        instance.stream()
+                        .filter(Objects::nonNull)
+                        .filter(obj -> obj.getKey().equals(modifier.getKey()))
+                        .forEach(obj -> {
+                            meta.removeAttributeModifier(attribute, obj);
+                            remove(attribute, obj);
+                        });
+
         item.setItemMeta(meta);
 
         ItemStack newItem = item.clone();
@@ -300,7 +385,6 @@ public class AttributeController {
 
         inventory.addItem(newItem);
 
-        this.remove(attribute, modifier);
         return newItem;
     }
 
