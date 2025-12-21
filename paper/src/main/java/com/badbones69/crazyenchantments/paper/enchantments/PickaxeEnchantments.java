@@ -204,8 +204,8 @@ public class PickaxeEnchantments implements Listener {
                 if (Math.random() <= chance) {
                     int gain = (int) (event.getExpToDrop() + 2 + (Math.random() * 4));
                     //Some debug to see what's going on
-                    player.sendMessage("Experience triggered!");
-                    player.sendMessage("XP Gain: " + event.getExpToDrop() + " + " + (gain - event.getExpToDrop()));
+                    //player.sendMessage("Experience triggered!");
+                    //player.sendMessage("XP Gain: " + event.getExpToDrop() + " + " + (gain - event.getExpToDrop()));
                     event.setExpToDrop(gain);
                 }
             } else {

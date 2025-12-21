@@ -198,6 +198,7 @@ public enum CEnchantments {
     OBSIDIANSHIELD("ObsidianShield", "Armor"), //was burnshield
     DODGE("Dodge", "Armor", 10, 5), //was MANEUVER
     BLESSED("Blessed", "Axe", 10, 5),
+    ASSASSIN("Assassin", "Axe", 10, 5),
     //	----------------removed----------------  \\\
     VEIN("Vein", "Pickaxe"),//was veinminer
     DETONATE("Detonate", "Pickaxe"),// detonate
@@ -287,8 +288,10 @@ public enum CEnchantments {
     ETHEREALDODGE("EtherealDodge", "Axe", 15, 10, true, CEnchantments.DODGE),
     PAlADINARMOURED("PaladinArmoured", "Axe", 15, 10, true, CEnchantments.ARMORED),
     DEMONICLIFESTEAL("DemonicLifesteal", "Axe", 15, 10, true, CEnchantments.LIFESTEAL),
+    SHADOWASSASSIN("ShadowAssassin", "Axe", 15, 10, true, CEnchantments.ASSASSIN),
+    SOULBOUND("SoulBound", "Axe", 15, 10),
 
-    PHOENIX("Phoenix", "Axe", 15, 10),
+            PHOENIX("Phoenix", "Axe", 15, 10),
     MARKOFTHEBEAST("MarkOfTheBeast", "Axe", 15, 10),
     NATURESWRATH("NaturesWrath", "Axe", 15, 10),
     CHAINLIFESTEAL("ChainLifesteal", "Axe", 15, 10, true, CEnchantments.LIFESTEAL),

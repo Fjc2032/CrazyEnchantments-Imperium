@@ -23,7 +23,7 @@ Enchantments:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
     #The in-game name of the enchantment.
-    Name: '§7Glowing'
+    Name: '§7Glowing ★'
     #Max lvl the enchantment goes up to.
     MaxPower: 1
     #The type of items that can be enchanted with the enchantment.
@@ -43,7 +43,7 @@ Enchantments:
   Shuffle:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Shuffle'
+    Name: '§7Shuffle ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -60,7 +60,7 @@ Enchantments:
   Aquatic:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Aquatic'
+    Name: '§7Aquatic ★'
     MaxPower: 1
     Enchantment-Type: 'Helmet'
     Info:
@@ -74,7 +74,7 @@ Enchantments:
   Insomnia:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Insomnia'
+    Name: '§7Insomnia ★'
     MaxPower: 7
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -92,7 +92,7 @@ Enchantments:
   AutoSmelt:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7AutoSmelt'
+    Name: '§7AutoSmelt ★'
     MaxPower: 3
     Enchantment-Type: 'PickAxe'
     Chance-System:
@@ -110,7 +110,7 @@ Enchantments:
   Experience:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Experience'
+    Name: '§7Experience ★'
     MaxPower: 5
     Enchantment-Type: 'PickAxe'
     Chance-System:
@@ -128,7 +128,7 @@ Enchantments:
   Furnace:
     Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Furnace'
+    Name: '§7Furnace ★'
     MaxPower: 1
     Enchantment-Type: 'PickAxe'
     Info:
@@ -158,7 +158,7 @@ Enchantments:
   Oxygenate:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Oxygenate'
+    Name: '§7Oxygenate ★'
     MaxPower: 1
     Enchantment-Type: 'Tool'
     Info:
@@ -173,7 +173,7 @@ Enchantments:
   Lightning:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Lightning'
+    Name: '§7Lightning ★'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -191,7 +191,7 @@ Enchantments:
   Obliterate:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Obliterate'
+    Name: '§7Obliterate ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -208,7 +208,7 @@ Enchantments:
   Decapitation:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Decapitation'
+    Name: '§7Decapitation ★'
     MaxPower: 3
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -226,7 +226,7 @@ Enchantments:
   Confusion:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Confusion'
+    Name: '§7Confusion ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -244,7 +244,7 @@ Enchantments:
   Dizzy:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Dizzy'
+    Name: '§7Dizzy ★'
     MaxPower: 3
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -262,7 +262,7 @@ Enchantments:
   Headless:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Headless'
+    Name: '§7Headless ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -280,7 +280,7 @@ Enchantments:
   Epicness:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Epicness'
+    Name: '§7Epicness ★'
     MaxPower: 3
     Enchantment-Type: 'Weapon'
     Info:
@@ -294,7 +294,7 @@ Enchantments:
   ThunderingBlow:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Thundering Blow'
+    Name: '§7Thundering Blow ★'
     MaxPower: 3
     Enchantment-Type: 'Weapon'
     Info:
@@ -308,7 +308,7 @@ Enchantments:
   Ethereal:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Ethereal'
+    Name: '§7Ethereal ★'
     MaxPower: 3
     Enchantment-Type: 'Weapon'
     Info:
@@ -322,7 +322,7 @@ Enchantments:
   Strike:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Strike'
+    Name: '§7Strike ★'
     MaxPower: 3
     Enchantment-Type: 'Trident'
     Info:
@@ -333,10 +333,46 @@ Enchantments:
     Categories:
       - 'Simple'
   #Do not change this line.
+  Disorder:
+    Enabled: false
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§7Disorder ★'
+    MaxPower: 1
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 1
+      Increase: 1
+    Info:
+      Name: '§e§lDisorder §7(§bI§7)'
+      Description:
+        - '§7Has a chance to reorder'
+        - '§7your enemies hot-bar.'
+        - '§7Seasonal Swords Enchantment'
+    Categories:
+      - 'Simple'
+  #Do not change this line.
+  Molten:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§aMolten ★'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 1
+    Info:
+      Name: '§aMolten §7(§bI-§bV§7)'
+      Description:
+        - '§7Has a chance to set'
+        - '§7set your enemy on fire.'
+        - '§7Seasonal Armours Enchantment'
+    Categories:
+      - 'Unique'
+  #Do not change this line.
   SelfDestruct:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aSelfDestruct'
+    Name: '§aSelfDestruct ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Info:
@@ -348,10 +384,24 @@ Enchantments:
     Categories:
       - 'Unique'
   #Do not change this line.
+  Sustain:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§aSustain ★'
+    MaxPower: 4
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '§a§lSustain §r§7(I-V)'
+      Description:
+        - '§eA chance to regain hunger while taking damage'
+        - '§7Unique Armours Enchantment'
+    Categories:
+      - 'Unique'
+  #Do not change this line.
   Curse:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aCurse'
+    Name: '§aCurse ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Info:
@@ -365,7 +415,7 @@ Enchantments:
   Hulk:
     Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aHulk'
+    Name: '§aHulk ★'
     MaxPower: 2
     Enchantment-Type: 'Armor'
     Info:
@@ -380,7 +430,7 @@ Enchantments:
   Ninja:
     Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aNinja'
+    Name: '§aNinja ★'
     MaxPower: 2
     Enchantment-Type: 'Armor'
     Info:
@@ -395,7 +445,7 @@ Enchantments:
   Explosive:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aExplosive'
+    Name: '§aExplosive ★'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -413,7 +463,7 @@ Enchantments:
   FeatherWeight:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aFeather Weight'
+    Name: '§aFeather Weight ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -431,7 +481,7 @@ Enchantments:
   Famished:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aFamished'
+    Name: '§aFamished ★'
     MaxPower: 5
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -449,7 +499,7 @@ Enchantments:
   Berserk:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aBerserk'
+    Name: '§aBerserk ★'
     MaxPower: 3
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -482,7 +532,7 @@ Enchantments:
   Nutrition:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aNutrition'
+    Name: '§aNutrition ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -500,7 +550,7 @@ Enchantments:
   SkillSwipe:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aSkillSwipe'
+    Name: '§aSkillSwipe ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -518,7 +568,7 @@ Enchantments:
   EnderShift:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aEnder Shift'
+    Name: '§aEnder Shift ★'
     MaxPower: 3
     Enchantment-Type: 'Boots'
     Chance-System:
@@ -536,7 +586,7 @@ Enchantments:
   Commander:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aCommander'
+    Name: '§aCommander ★'
     MaxPower: 5
     Enchantment-Type: 'Helmet'
     Info:
@@ -551,7 +601,7 @@ Enchantments:
   Radiant:
     Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aRadiant'
+    Name: '§aRadiant ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -566,7 +616,7 @@ Enchantments:
   Famine:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aFamine'
+    Name: '§aFamine ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -585,7 +635,7 @@ Enchantments:
   Revenge:
     Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aRevenge'
+    Name: '§aRevenge ★'
     MaxPower: 1
     Enchantment-Type: 'Sword'
     Info:
@@ -601,7 +651,7 @@ Enchantments:
   Ward:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aWard'
+    Name: '§aWard ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -619,7 +669,7 @@ Enchantments:
   Virus:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aVirus'
+    Name: '§aVirus ★'
     MaxPower: 4
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -637,7 +687,7 @@ Enchantments:
   ObbyDestroyer:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§aObsidian Destroyer'
+    Name: '§aObsidian Destroyer ★'
     MaxPower: 5
     Enchantment-Type: 'PickAxe'
     Chance-System:
@@ -654,7 +704,7 @@ Enchantments:
   Springs:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bSprings'
+    Name: '§bSprings ★'
     MaxPower: 5
     Enchantment-Type: 'Boots'
     Info:
@@ -669,7 +719,7 @@ Enchantments:
   Impact:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bImpact'
+    Name: '§bImpact ★'
     MaxPower: 4
     Enchantment-Type: 'Tridents'
     Chance-System:
@@ -686,7 +736,7 @@ Enchantments:
   Vampire:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bVampire'
+    Name: '§bVampire ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -704,7 +754,7 @@ Enchantments:
   Venom:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bVenom'
+    Name: '§bVenom ★'
     MaxPower: 5
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -722,7 +772,7 @@ Enchantments:
   Blind:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bBlind'
+    Name: '§bBlind ★'
     MaxPower: 2
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -740,7 +790,7 @@ Enchantments:
   Poison:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bPoison'
+    Name: '§bPoison ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -758,7 +808,7 @@ Enchantments:
   AntiGravity:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bAntiGravity'
+    Name: '§bAntiGravity ★'
     MaxPower: 3
     Enchantment-Type: 'Boots'
     Info:
@@ -773,7 +823,7 @@ Enchantments:
   Frozen:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bFrozen'
+    Name: '§bFrozen ★'
     MaxPower: 2
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -791,7 +841,7 @@ Enchantments:
   PainGiver:
     Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bPainGiver'
+    Name: '§bPainGiver ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -809,7 +859,7 @@ Enchantments:
   Execute:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bExecute'
+    Name: '§bExecute ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Info:
@@ -824,7 +874,7 @@ Enchantments:
   Paralyze:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bParalyze'
+    Name: '§bParalyze ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -842,7 +892,7 @@ Enchantments:
   Snare:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bSnare'
+    Name: '§bSnare ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -860,7 +910,7 @@ Enchantments:
   Trap:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bTrap'
+    Name: '§bTrap ★'
     MaxPower: 2
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -878,7 +928,7 @@ Enchantments:
   Wither:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bWither'
+    Name: '§bWither ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -896,7 +946,7 @@ Enchantments:
   SmokeBomb:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bSmokeBomb'
+    Name: '§bSmokeBomb ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -914,7 +964,7 @@ Enchantments:
   Voodoo:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bVoodoo'
+    Name: '§bVoodoo ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -932,7 +982,7 @@ Enchantments:
   Cactus:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bCactus'
+    Name: '§bCactus ★'
     MaxPower: 2
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -950,7 +1000,7 @@ Enchantments:
   RocketEscape:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bRocket Escape'
+    Name: '§bRocket Escape ★'
     MaxPower: 3
     Enchantment-Type: 'Boots'
     Chance-System:
@@ -968,7 +1018,7 @@ Enchantments:
   StormCaller:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bStormCaller'
+    Name: '§bStormCaller ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -986,7 +1036,7 @@ Enchantments:
   UndeadRuse:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bUndead Ruse'
+    Name: '§bUndead Ruse ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -1001,7 +1051,7 @@ Enchantments:
   Shockwave:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bShockwave'
+    Name: '§bShockwave ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -1017,7 +1067,7 @@ Enchantments:
   DemonForged:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bDemonForged'
+    Name: '§bDemonForged ★'
     MaxPower: 5
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1036,7 +1086,7 @@ Enchantments:
   Enderslayer:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bEnder slayer'
+    Name: '§bEnder slayer ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1053,7 +1103,7 @@ Enchantments:
   Reaper:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bReaper'
+    Name: '§bReaper ★'
     MaxPower: 4
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1072,7 +1122,7 @@ Enchantments:
   Netherslayer:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bNether slayer'
+    Name: '§bNether slayer ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1089,7 +1139,7 @@ Enchantments:
   Shackle:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bShackle'
+    Name: '§bShackle ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1106,7 +1156,7 @@ Enchantments:
   Reforged:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bReforged'
+    Name: '§bReforged ★'
     MaxPower: 9
     Enchantment-Type: 'Tool'
     Chance-System:
@@ -1125,7 +1175,7 @@ Enchantments:
   Greatsword:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bGreatsword'
+    Name: '§bGreatsword ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1143,7 +1193,7 @@ Enchantments:
   Trickster:
       Enabled: true
       Sound: 'ENTITY_PLAYER_LEVELUP'
-      Name: '§bTrickster'
+      Name: '§bTrickster ★'
       MaxPower: 8
       Enchantment-Type: 'Armor'
       Chance-System:
@@ -1161,7 +1211,7 @@ Enchantments:
   Pummel:
       Enabled: true
       Sound: 'ENTITY_PLAYER_LEVELUP'
-      Name: '§bPummel'
+      Name: '§bPummel ★'
       MaxPower: 3
       Enchantment-Type: 'Axe'
       Chance-System:
@@ -1179,7 +1229,7 @@ Enchantments:
   Farcast:
       Enabled: true
       Sound: 'ENTITY_PLAYER_LEVELUP'
-      Name: '§bFarcast'
+      Name: '§bFarcast ★'
       MaxPower: 5
       Enchantment-Type: 'Bow'
       Chance-System:
@@ -1198,7 +1248,7 @@ Enchantments:
   Poisoned:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bPoisoned'
+    Name: '§bPoisoned ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1215,7 +1265,7 @@ Enchantments:
   Infernal:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bInfernal'
+    Name: '§bInfernal ★'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1232,7 +1282,7 @@ Enchantments:
   CounterBlock:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§bCounterBlock'
+    Name: '§bCounter Block ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1249,7 +1299,7 @@ Enchantments:
   ObsidianShield:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eObsidian Shield'
+    Name: '§eObsidian Shield ★'
     MaxPower: 1
     Enchantment-Type: 'Armor'
     Info:
@@ -1264,7 +1314,7 @@ Enchantments:
   Piercing:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§ePiercing'
+    Name: '§ePiercing ★'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1282,7 +1332,7 @@ Enchantments:
   Blessed:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eBlessed'
+    Name: '§eBlessed ★'
     MaxPower: 3
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1300,7 +1350,7 @@ Enchantments:
   Valor:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eValor'
+    Name: '§eValor ★'
     MaxPower: 2
     Enchantment-Type: 'Armor'
     Info:
@@ -1315,7 +1365,7 @@ Enchantments:
   Implants:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eImplants'
+    Name: '§eImplants ★'
     MaxPower: 5
     Enchantment-Type: 'Helmet'
     Chance-System:
@@ -1333,7 +1383,7 @@ Enchantments:
   Guardians:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eGuardians'
+    Name: '§eGuardians ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -1348,7 +1398,7 @@ Enchantments:
   Dodge:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eDodge'
+    Name: '§eDodge ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -1362,7 +1412,7 @@ Enchantments:
   Planter:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§ePlanter'
+    Name: '§ePlanter ★'
     MaxPower: 1
     Enchantment-Type: 'Hoe'
     Info:
@@ -1379,7 +1429,7 @@ Enchantments:
   Longbow:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eLongbow'
+    Name: '§eLongbow ★'
     MaxPower: 4
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1397,7 +1447,7 @@ Enchantments:
   Unfocus:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eUnfocus'
+    Name: '§eUnfocus ★'
     MaxPower: 4
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1415,7 +1465,7 @@ Enchantments:
   Marksman:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eMarksman'
+    Name: '§eMarksman ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1432,7 +1482,7 @@ Enchantments:
   Angelic:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eAngelic'
+    Name: '§eAngelic ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1449,7 +1499,7 @@ Enchantments:
   Jellylegs:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eJelly legs'
+    Name: '§eJelly legs ★'
     MaxPower: 3
     Enchantment-Type: 'Boots'
     Chance-System:
@@ -1466,7 +1516,7 @@ Enchantments:
   Cleave:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eCleave'
+    Name: '§eCleave ★'
     MaxPower: 7
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1484,7 +1534,7 @@ Enchantments:
   Dominate:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eDominate'
+    Name: '§eDominate ★'
     MaxPower: 4
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1502,7 +1552,7 @@ Enchantments:
   Enderwalker:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eEnder walker'
+    Name: '§eEnder walker ★'
     MaxPower: 5
     Enchantment-Type: 'Boots'
     Chance-System:
@@ -1537,7 +1587,7 @@ Enchantments:
   Block:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eBlock'
+    Name: '§eBlock ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1555,7 +1605,7 @@ Enchantments:
   Corrupt:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eCorrupt'
+    Name: '§eCorrupt ★'
     MaxPower: 4
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1572,7 +1622,7 @@ Enchantments:
   CreeperArmor:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eCreeper Armor'
+    Name: '§eCreeper Armor ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1590,7 +1640,7 @@ Enchantments:
   Demonic:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eDemonic'
+    Name: '§eDemonic ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1607,7 +1657,7 @@ Enchantments:
   Metaphysical:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eMetaphysical'
+    Name: '§eMetaphysical ★'
     MaxPower: 4
     Enchantment-Type: 'Boots'
     Chance-System:
@@ -1625,7 +1675,7 @@ Enchantments:
   Distance:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eDistance'
+    Name: '§eDistance ★'
     MaxPower: 4
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1643,7 +1693,7 @@ Enchantments:
   Ragdoll:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eRagdoll'
+    Name: '§eRagdoll ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1661,7 +1711,7 @@ Enchantments:
   Arrowbreak:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eArrow Break'
+    Name: '§eArrow Break ★'
     MaxPower: 6
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1679,7 +1729,7 @@ Enchantments:
   Arrowdeflect:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eArrow Deflect'
+    Name: '§eArrow Deflect ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1697,7 +1747,7 @@ Enchantments:
   ArrowLifesteal:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§eArrow Lifesteal'
+    Name: '§eArrow Lifesteal ★'
     MaxPower: 5
     Enchantment-Type: 'bow'
     Chance-System:
@@ -1714,7 +1764,7 @@ Enchantments:
   Bleed:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Bleed'
+    Name: '§6Bleed ★'
     MaxPower: 8
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1732,7 +1782,7 @@ Enchantments:
   Pickpocket:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Pickpocket'
+    Name: '§6Pickpocket ★'
     MaxPower: 3
     Enchantment-Type: 'weapon'
     Chance-System:
@@ -1750,7 +1800,7 @@ Enchantments:
   IceAspect:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Ice Aspect'
+    Name: '§6Ice Aspect ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1768,7 +1818,7 @@ Enchantments:
   Disapear:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Disapear'
+    Name: '§6Disapear ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1786,7 +1836,7 @@ Enchantments:
   Disintergrate:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Disintergrate'
+    Name: '§6Disintergrate ★'
     MaxPower: 4
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -1804,7 +1854,7 @@ Enchantments:
   Arsonist:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Arsonist'
+    Name: '§6Arsonist ★'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1822,7 +1872,7 @@ Enchantments:
   EagleEye:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Eagle Eye'
+    Name: '§6Eagle Eye ★'
     MaxPower: 5
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1840,7 +1890,7 @@ Enchantments:
   Annihilate:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Annihilate'
+    Name: '§6Annihilate ★'
     MaxPower: 6
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1857,7 +1907,7 @@ Enchantments:
   Pacify:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Pacify'
+    Name: '§6Pacify ★'
     MaxPower: 4
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1876,7 +1926,7 @@ Enchantments:
   Hellfire:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Hellfire'
+    Name: '§6Hellfire ★'
     MaxPower: 5
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -1894,7 +1944,7 @@ Enchantments:
   Heavy:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Heavy'
+    Name: '§6Heavy ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1912,7 +1962,7 @@ Enchantments:
   Reinforced:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Reinforced'
+    Name: '§6Reinforced ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -1930,7 +1980,7 @@ Enchantments:
   Timber:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Timber'
+    Name: '§6Timber ★'
     MaxPower: 3
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -1947,7 +1997,7 @@ Enchantments:
   Spirits:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Spirits'
+    Name: '§6Spirits ★'
     MaxPower: 10
     Enchantment-Type: 'Amour'
     Chance-System:
@@ -1965,7 +2015,7 @@ Enchantments:
   Vein:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Vein'
+    Name: '§6Vein ★'
     MaxPower: 3
     Enchantment-Type: 'Pickaxe'
     Chance-System:
@@ -1982,7 +2032,7 @@ Enchantments:
   Detonate:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Detonate'
+    Name: '§6Detonate ★'
     MaxPower: 9
     Enchantment-Type: 'Pickaxe'
     Chance-System:
@@ -1999,7 +2049,7 @@ Enchantments:
   Powerload:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Powerload'
+    Name: '§6Powerload ★'
     MaxPower: 1
     Enchantment-Type: 'Pickaxe'
     Chance-System:
@@ -2016,7 +2066,7 @@ Enchantments:
   Weighted:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Weighted'
+    Name: '§6Weighted ★'
     MaxPower: 1
     Enchantment-Type: 'Pickaxe'
     Chance-System:
@@ -2033,7 +2083,7 @@ Enchantments:
   Smash:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Smash'
+    Name: '§6Smash ★'
     MaxPower: 1
     Enchantment-Type: 'Pickaxe'
     Chance-System:
@@ -2050,7 +2100,7 @@ Enchantments:
   Twinge:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Twinge'
+    Name: '§6Twinge ★'
     MaxPower: 4
     Enchantment-Type: 'Tridents'
     Chance-System:
@@ -2068,7 +2118,7 @@ Enchantments:
   Sniper:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Sniper'
+    Name: '§6Sniper ★'
     MaxPower: 3
     Enchantment-Type: 'Bow'
     Chance-System:
@@ -2087,7 +2137,7 @@ Enchantments:
   OverLoad:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6OverLoad'
+    Name: '§6OverLoad ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -2102,7 +2152,7 @@ Enchantments:
   Gears:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Gears'
+    Name: '§6Gears ★'
     MaxPower: 3
     Enchantment-Type: 'Boots'
     Info:
@@ -2117,7 +2167,7 @@ Enchantments:
   LifeSteal:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6LifeSteal'
+    Name: '§6LifeSteal ★'
     MaxPower: 5
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2135,7 +2185,7 @@ Enchantments:
   DoubleStrike:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Double Strike'
+    Name: '§6Double Strike ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2153,7 +2203,7 @@ Enchantments:
   Enlightened:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Enlightened'
+    Name: '§6Enlightened ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2171,7 +2221,7 @@ Enchantments:
   Disarmer:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Disarmer'
+    Name: '§6Disarmer ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2189,7 +2239,7 @@ Enchantments:
   Inquisitive:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Inquisitive'
+    Name: '§6Inquisitive ★'
     MaxPower: 4
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2207,7 +2257,7 @@ Enchantments:
   Rage:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Rage'
+    Name: '§6Rage ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2225,7 +2275,7 @@ Enchantments:
   Fat:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Fat'
+    Name: '§6Fat ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2243,7 +2293,7 @@ Enchantments:
   Deathbringer:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Deathbringer'
+    Name: '§6Deathbringer ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2260,7 +2310,7 @@ Enchantments:
   Destruction:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Destruction'
+    Name: '§6Destruction ★'
     MaxPower: 5
     Enchantment-Type: 'Helmet'
     Chance-System:
@@ -2278,7 +2328,7 @@ Enchantments:
   DeathGod:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6DeathGod'
+    Name: '§6DeathGod ★'
     MaxPower: 3
     Enchantment-Type: 'Helmet'
     Chance-System:
@@ -2297,7 +2347,7 @@ Enchantments:
   Insanity:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Insanity'
+    Name: '§6Insanity ★'
     MaxPower: 8
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -2316,7 +2366,7 @@ Enchantments:
   Diminish:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Diminish'
+    Name: '§6Diminish ★'
     MaxPower: 6
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2336,7 +2386,7 @@ Enchantments:
   Barbarian:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Barbarian'
+    Name: '§6Barbarian ★'
     MaxPower: 4
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -2353,7 +2403,7 @@ Enchantments:
   Abiding:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Abiding'
+    Name: '§6Abiding ★'
     MaxPower: 1
     Enchantment-Type: 'Tool'
     Info:
@@ -2367,7 +2417,7 @@ Enchantments:
   Quiver:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Quiver'
+    Name: '§6Quiver ★'
     MaxPower: 6
     Enchantment-Type: 'Boots'
     Chance-System:
@@ -2385,7 +2435,7 @@ Enchantments:
   Inversion:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Inversion'
+    Name: '§6Inversion ★'
     MaxPower: 4
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2403,7 +2453,7 @@ Enchantments:
   Devour:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Devour'
+    Name: '§6Devour ★'
     MaxPower: 4
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -2421,7 +2471,7 @@ Enchantments:
   Armored:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Armored'
+    Name: '§6Armored ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2439,7 +2489,7 @@ Enchantments:
   Clarity:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Clarity'
+    Name: '§6Clarity ★'
     MaxPower: 1
     Enchantment-Type: 'Armor'
     Info:
@@ -2453,7 +2503,7 @@ Enchantments:
   Silence:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Silence'
+    Name: '§6Silence ★'
     MaxPower: 4
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2471,7 +2521,7 @@ Enchantments:
   Killaura:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Kill aura'
+    Name: '§6Kill aura ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2489,7 +2539,7 @@ Enchantments:
   Stun:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Stun'
+    Name: '§6Stun ★'
     MaxPower: 3
     Enchantment-Type: 'Sword'
     Chance-System:
@@ -2507,7 +2557,7 @@ Enchantments:
   Judgement:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Judgement'
+    Name: '§6Judgement ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2525,7 +2575,7 @@ Enchantments:
   Blacksmith:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Blacksmith'
+    Name: '§6Blacksmith ★'
     MaxPower: 5
     Enchantment-Type: 'Axe'
     Chance-System:
@@ -2547,7 +2597,7 @@ Enchantments:
   Drunk:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Drunk'
+    Name: '§6Drunk ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Chance-System:
@@ -2565,7 +2615,7 @@ Enchantments:
   LavaWalker:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6LavaWalker'
+    Name: '§6LavaWalker ★'
     MaxPower: 1
     Enchantment-Type: 'Boots'
     Info:
@@ -2579,7 +2629,7 @@ Enchantments:
   Torrent:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Torrent'
+    Name: '§6Torrent ★'
     MaxPower: 4
     Enchantment-Type: 'Boots'
     Info:
@@ -2593,7 +2643,7 @@ Enchantments:
   Exterminator:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Exterminator'
+    Name: '§6Exterminator ★'
     MaxPower: 3
     Enchantment-Type: 'Armor'
     Info:
@@ -2609,7 +2659,7 @@ Enchantments:
   Unholy:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Unholy'
+    Name: '§6Unholy ★'
     MaxPower: 5
     Enchantment-Type: 'Armor'
     Info:
@@ -2623,7 +2673,7 @@ Enchantments:
   Surprise:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Surprise'
+    Name: '§6Surprise ★'
     MaxPower: 4
     Enchantment-Type: 'Armor'
     Info:
@@ -2638,7 +2688,7 @@ Enchantments:
   Impale:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Impale'
+    Name: '§6Impale ★'
     MaxPower: 4
     Enchantment-Type: 'Bow'
     Info:
@@ -2653,7 +2703,7 @@ Enchantments:
   Pillage:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Pillage'
+    Name: '§6Pillage ★'
     MaxPower: 1
     Enchantment-Type: 'Pickaxe'
     Info:
@@ -2668,7 +2718,7 @@ Enchantments:
   Feather:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Feather'
+    Name: '§6Feather ★'
     MaxPower: 1
     Enchantment-Type: 'Pickaxe'
     Info:
@@ -2683,7 +2733,7 @@ Enchantments:
   Destructive:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§6Destructive'
+    Name: '§6Destructive ★'
     MaxPower: 1
     Enchantment-Type: 'Pickaxe'
     Info:
@@ -2698,7 +2748,7 @@ Enchantments:
   MightyCactus:
     Enabled: true
     Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§dMighty Cactus'
+    Name: '§dMighty Cactus ★'
     MaxPower: 2
     Enchantment-Type: 'armor'
     Chance-System:
@@ -2712,250 +2762,309 @@ Enchantments:
         - '§eaffect your durability. Requires Cactus II to apply.'
         - '§7Heroic Armours Enchantment'
     Categories:
+  #Do not change this line.
+  DeepBleed:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dDeep Bleed ★'
+    MaxPower: 6
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 10
+      Increase: 10
+    Info:
+      Name: '§d§lDeep Bleed §r§7(I-VI)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
       - 'Heroic'
-#Do not change this line.
-MightyCactus:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dMighty Cactus'
-  MaxPower: 2
-  Enchantment-Type: 'armor'
-  Chance-System:
-    Base: 10
-    Increase: 10
-  Info:
-    Name: '§d§lMighty Cactus §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-DeepBleed:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dDeep Bleed'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 10
-    Increase: 10
-  Info:
-    Name: '§d§lDeep Bleed §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-BidirectionalTeleportation:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dBidirectional Teleportation'
-  MaxPower: 2
-  Enchantment-Type: 'bow'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lBidirectional Teleportation §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-AlienImplants:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dAlien Implants'
-  MaxPower: 2
-  Enchantment-Type: 'helmet'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lAlien Implants §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-GodlyOverload:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dGodly Overload'
-  MaxPower: 2
-  Enchantment-Type: 'armor'
-  Chance-System:
-    Base: 0
-    Increase: 0
-  Info:
-    Name: '§d§lGodly Overload §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-MassInsanity:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dMass Insanity'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lMass Insanity §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-MegaHeavy:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dMega Heavy'
-  MaxPower: 2
-  Enchantment-Type: 'armor'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lMega Heavy §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-BewitchedHex:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dBewitched Hex'
-  MaxPower: 2
-  Enchantment-Type: 'armor'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lBewitched Hex §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-MightyCleave:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dMighty Cleave'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lMighty Cleave §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-GuidedRocketEscape:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dGuided Rocket Escape'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lGuided Rocket Escape §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-PolymorphicMetaphysical:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dPolymorphic Metaphysical'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lPolymorphic Metaphysical §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-ReinforcedTank:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dReinforced Tank'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lReinforced Tank §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-SoulHardened:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dSoul Hardened'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lSoul Hardened §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-EpidemicCarrier:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dEpidemic Carrier'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lEpidemic Carrier §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
-
-ReflectiveBlock:
-  Enabled: true
-  Sound: 'ENTITY_PLAYER_LEVELUP'
-  Name: '§dReflective Block'
-  MaxPower: 2
-  Enchantment-Type: 'axe'
-  Chance-System:
-    Base: 15
-    Increase: 10
-  Info:
-    Name: '§d§lReflective Block §r§7(I-II)'
-    Description:
-      - '§eHeroic Enchantment.'
-  Categories:
-    - 'Heroic'
+  #Do not change this line.
+  BidirectionalTeleportation:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dBidirectional Teleportation ★'
+    MaxPower: 2
+    Enchantment-Type: 'bow'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lBidirectional Teleportation §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  AlienImplants:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dAlien Implants ★'
+    MaxPower: 3
+    Enchantment-Type: 'helmet'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lAlien Implants §r§7(I-III)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  GodlyOverload:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dGodly Overload ★'
+    MaxPower: 2
+    Enchantment-Type: 'armor'
+    Chance-System:
+      Base: 0
+      Increase: 0
+    Info:
+      Name: '§d§lGodly Overload §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  MassInsanity:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dMass Insanity ★'
+    MaxPower: 8
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lMass Insanity §r§7(I-VIII)'
+      Description:
+        - '§eHeroic Axes Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  MegaHeavy:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dMega Heavy ★'
+    MaxPower: 2
+    Enchantment-Type: 'armor'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lMega Heavy §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  BewitchedHex:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dBewitched Hex ★'
+    MaxPower: 2
+    Enchantment-Type: 'armor'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lBewitched Hex §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  MightyCleave:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dMighty Cleave ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lMighty Cleave §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  GuidedRocketEscape:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dGuided Rocket Escape ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lGuided Rocket Escape §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  PolymorphicMetaphysical:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dPolymorphic Metaphysical ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lPolymorphic Metaphysical §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  ReinforcedTank:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dReinforced Tank ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lReinforced Tank §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  SoulHardened:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dSoul Hardened ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lSoul Hardened §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  EpidemicCarrier:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dEpidemic Carrier ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lEpidemic Carrier §r§7(I-II)'
+      Description:
+        - '§eHeroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  ReflectiveBlock:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dReflective Block ★'
+    MaxPower: 2
+    Enchantment-Type: 'axe'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lReflective Block §r§7(I-II)'
+      Description:
+        - '§e'
+        - '§7Heroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  DemonicLifesteal:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dDemonic Lifesteal ★'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lDemonic Lifesteal §r§7(I-V)'
+      Description:
+        - '§eSteals much more HP at a greatly'
+        - '§eincreased rate compared to normal lifesteal.'
+        - '§7Heroic Swords Enchantment.'
+        - '§7Requires lifesteal V.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  SoulBound:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dSoul Bound ★'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 34
+      Increase: 33
+    Info:
+      Name: '§d§lSoul Bound §r§7(I-V)'
+      Description:
+        - '§eA chance to keep item on death'
+        - '§7Heroic Enchantment.'
+    Categories:
+      - 'Heroic'
+  #Do not change this line.
+  ShadowAssassin:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dShadow Assassin ★'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lShadow Assassin §r§7(I-V)'
+      Description:
+        - '§eThe closer you are to an enemy'
+        - '§eup the more damage you inflict'
+        - '§ehowever when greater than 2 away'
+        - '§eyou will do less proportionally.'
+        - '§e up to (2x) damage or (1/2) every blocks distance'
+        - '§7Heroic Swords Enchantment.'
+        - '§7Requires Assassin V.'
+  #Do not change this line.
+  MasterInquisitive:
+    Enabled: true
+    Sound: 'ENTITY_PLAYER_LEVELUP'
+    Name: '§dMaster Inquisitive ★'
+    MaxPower: 4
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 10
+    Info:
+      Name: '§d§lMaster Inquisitive §r§7(I-V)'
+      Description:
+        - '§eChance to massively increase'
+        - '§eEXP drops from mobs'
+        - '§7Heroic Swords Enchantment.'
+        - '§7Requires Inquisitive IV.'
+    Categories:
+      - 'Heroic'
   #Do not change this line.
   Doctor:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Doctor'
     MaxPower: 3
@@ -2971,7 +3080,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   SlowMo:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7SlowMo'
     MaxPower: 3
@@ -2989,7 +3098,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   FastTurn:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7FastTurn'
     MaxPower: 2
@@ -3007,7 +3116,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Cursed:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Cursed'
     MaxPower: 3
@@ -3025,11 +3134,11 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Rekt:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Rekt'
     MaxPower: 3
-    Enchantment-Type: 'Axe'
+    Enchantment-Type: 'false'
     Chance-System:
       Base: 5
       Increase: 1
@@ -3043,7 +3152,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Fortify:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Fortify'
     MaxPower: 3
@@ -3060,26 +3169,8 @@ ReflectiveBlock:
     Categories:
       - 'Seasonal'
   #Do not change this line.
-  Molten:
-    Enabled: true
-    Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Molten'
-    MaxPower: 5
-    Enchantment-Type: 'Armor'
-    Chance-System:
-      Base: 10
-      Increase: 1
-    Info:
-      Name: '§e§lMolten §7(§bI-§bV§7)'
-      Description:
-        - '§7Has a chance to set'
-        - '§7set your enemy on fire.'
-        - '§7Seasonal Armours Enchantment'
-    Categories:
-      - 'Seasonal'
-  #Do not change this line.
   Savior:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Savior'
     MaxPower: 5
@@ -3097,7 +3188,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Nursery:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Nursery'
     MaxPower: 5
@@ -3115,7 +3206,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   IceFreeze:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7IceFreeze'
     MaxPower: 1
@@ -3133,7 +3224,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   MultiArrow:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7MultiArrow'
     MaxPower: 5
@@ -3151,7 +3242,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Recover:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Recover'
     MaxPower: 1
@@ -3166,7 +3257,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Angel:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Angel'
     MaxPower: 5
@@ -3181,7 +3272,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   HellForged:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7HellForged'
     MaxPower: 4
@@ -3199,7 +3290,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Leadership:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Leadership'
     MaxPower: 5
@@ -3214,7 +3305,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Wings:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Wings'
     MaxPower: 1
@@ -3260,7 +3351,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Blizzard:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Blizzard'
     MaxPower: 1
@@ -3275,7 +3366,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   AcidRain:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7AcidRain'
     MaxPower: 3
@@ -3290,7 +3381,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   SandStorm:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7SandStorm'
     MaxPower: 1
@@ -3305,7 +3396,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Intimidate:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Intimidate'
     MaxPower: 2
@@ -3320,7 +3411,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Pull:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Pull'
     MaxPower: 3
@@ -3338,7 +3429,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Tamer:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Tamer'
     MaxPower: 5
@@ -3353,7 +3444,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Infestation:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Infestation'
     MaxPower: 2
@@ -3368,7 +3459,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   BeeKeeper:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7BeeKeeper'
     MaxPower: 2
@@ -3383,7 +3474,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Crouch:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Crouch'
     MaxPower: 3
@@ -3402,7 +3493,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   SystemReboot:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7SystemReboot'
     MaxPower: 3
@@ -3418,7 +3509,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Sticky-Shot:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7StickyShot'
     MaxPower: 3
@@ -3435,26 +3526,8 @@ ReflectiveBlock:
     Categories:
       - 'Seasonal'
   #Do not change this line.
-  Disorder:
-    Enabled: true
-    Sound: 'ENTITY_PLAYER_LEVELUP'
-    Name: '§7Disorder'
-    MaxPower: 1
-    Enchantment-Type: 'Sword'
-    Chance-System:
-      Base: 1
-      Increase: 1
-    Info:
-      Name: '§e§lDisorder §7(§bI§7)'
-      Description:
-        - '§7Has a chance to reorder'
-        - '§7your enemies hot-bar.'
-        - '§7Seasonal Swords Enchantment'
-    Categories:
-      - 'Seasonal'
-  #Do not change this line.
   Charge:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Charge'
     MaxPower: 5
@@ -3469,7 +3542,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   BattleCry:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7BattleCry'
     MaxPower: 5
@@ -3488,7 +3561,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   GreenThumb:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7GreenThumb'
     MaxPower: 3
@@ -3508,7 +3581,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Harvester:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Harvester'
     MaxPower: 1
@@ -3524,7 +3597,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Tiller:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Tiller'
     MaxPower: 1
@@ -3543,7 +3616,7 @@ ReflectiveBlock:
       - 'Seasonal'
   #Do not change this line.
   Cyborg:
-    Enabled: true
+    Enabled: false
     Sound: 'ENTITY_PLAYER_LEVELUP'
     Name: '§7Cyborg'
     MaxPower: 1
