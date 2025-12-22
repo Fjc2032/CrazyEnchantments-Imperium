@@ -160,7 +160,7 @@ public class PickaxeEnchantments implements Listener {
                 if (!isSmeltable(drop.getType())) continue;
 
                 if (CEnchantments.AUTOSMELT.chanceSuccessful(level)) {
-                    player.sendMessage("Autosmelt success.");
+                    //player.sendMessage("Autosmelt success.");
                     itemEntity.setItemStack(getSmeltedDrop(drop, drop.getAmount()));
                     changeDrop(event.getBlock().getLocation(), event);
                 }

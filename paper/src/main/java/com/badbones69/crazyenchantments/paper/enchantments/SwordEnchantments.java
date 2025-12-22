@@ -329,9 +329,9 @@ public class SwordEnchantments implements Listener {
 
                 Vector direction = damager.getLocation().getDirection().multiply(strengthX).setY(strengthY);
                 event.getEntity().setVelocity(direction);
-            } else {
-                damager.sendMessage("Obliterate on cooldown!");
-            }
+            }// else {
+            //    damager.sendMessage("Obliterate on cooldown!");
+            //}
         }
 
         if (EnchantUtils.isEventActive(CEnchantments.PARALYZE, damager, item, enchantments)) {

@@ -581,9 +581,9 @@ public class ArmorEnchantments implements Listener {
                         for (int i = 0; i < 9; i++) {
                             target.getInventory().setItem(i, items.get(i));
                         }
-                    } else {
-                        target.sendMessage("Shuffle on cooldown!");
-                    }
+                    }// else {
+                    //    target.sendMessage("Shuffle on cooldown!");
+                    //}
                 }
             }
             if (EnchantUtils.isEventActive(CEnchantments.HARDENED, player, armor, enchants)) {
