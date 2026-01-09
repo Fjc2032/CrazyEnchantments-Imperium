@@ -440,14 +440,14 @@ public class EnchantmentBookSettings {
             return;
         }
 
-        @NotNull CEnchantment oldEnchant = data.getOldEnchant().getEnchantment();
-        if (oldEnchant == null) {
+        var old = data.getOldEnchant();
+        if (old == null) {
             this.logger.warning("Data entry for this heroic is null!");
             this.logger.warning("Or something else went wrong.");
             return;
-        } else {
-            this.logger.info("Check 1 passed! Continuing...");
         }
+        @NotNull CEnchantment oldEnchant = data.getOldEnchant().getEnchantment();
+        this.logger.info("Check 1 passed! Continuing...");
         if (this.hasEnchantment(item.getItemMeta(), oldEnchant)) {
             this.logger.info("Check 2 passed! Continuing...");
             ItemStack newItem = this.removeEnchantment(item, oldEnchant);

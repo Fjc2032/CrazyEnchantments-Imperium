@@ -1,3 +1,5 @@
+
+
 plugins {
     `maven-publish`
     `java-library`
@@ -5,7 +7,7 @@ plugins {
 
 val buildNumber: String? = System.getenv("BUILD_NUMBER")
 
-rootProject.version = if (buildNumber != null) "${libs.versions.minecraft.get()}-$buildNumber" else "2.5.2.15-alpha16"
+rootProject.version = if (buildNumber != null) "${libs.versions.minecraft.get()}-$buildNumber" else "2.5.2.16-alpha3"
 
 subprojects.filter { it.name != "api" }.forEach {
     it.project.version = rootProject.version
