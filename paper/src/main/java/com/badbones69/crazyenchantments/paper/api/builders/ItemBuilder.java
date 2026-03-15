@@ -460,38 +460,26 @@ public class ItemBuilder {
         return item;
     }
 
-    public ItemMeta addEnchantments(ItemMeta meta, Map<CEnchantment, Integer> enchantments) { //TODO Stop CrazyManager from being null to replace this method.
-
-        CrazyManager crazyManager = this.starter.getCrazyManager(); // Temp fix for this method being outdated.
-        if (crazyManager != null) return crazyManager.addEnchantments(meta, enchantments); //TODO Replace whole method.
-
-        EnchantmentBookSettings enchantmentBookSettings = this.starter.getEnchantmentBookSettings();
-        Gson gson = new Gson();
-        Map<CEnchantment, Integer> currentEnchantments = enchantmentBookSettings.getEnchantments(meta);
-
-        meta = enchantmentBookSettings.removeEnchantments(meta, enchantments.keySet().stream().filter(currentEnchantments::containsKey).toList());
-
-        String data = meta.getPersistentDataContainer().get(DataKeys.enchantments.getNamespacedKey(), PersistentDataType.STRING);
-        Enchant enchantData = data != null ? gson.fromJson(data, Enchant.class) : new Enchant(new HashMap<>());
-
-        List<Component> lore = meta.lore();
-        if (lore == null) lore = new ArrayList<>();
+    public ItemMeta addEnchantments(ItemMeta meta, Map<CEnchantment, Integer> enchantments) {
 
         for (Map.Entry<CEnchantment, Integer> entry : enchantments.entrySet()) {
-            CEnchantment enchantment = entry.getKey();
+
+            CEnchantment ce = entry.getKey();
             int level = entry.getValue();
 
-            String loreString = enchantment.getCustomName() + " " + NumberUtils.convertLevelString(level);
+            // Enchant name from plugin matches datapack enchant id
+            String enchantName = ce.getName().toLowerCase();
 
-            lore.add(ColorUtils.legacyTranslateColourCodes(loreString));
+            NamespacedKey key = NamespacedKey.minecraft(enchantName);
 
-            for (Map.Entry<CEnchantment, Integer> x : enchantments.entrySet()) {
-                enchantData.addEnchantment(x.getKey().getName(), x.getValue());
+            Enchantment enchant = RegistryAccess.registryAccess()
+                    .getRegistry(RegistryKey.ENCHANTMENT)
+                    .get(key);
+
+            if (enchant != null) {
+                meta.addEnchant(enchant, level, true);
             }
         }
-
-        meta.lore(lore);
-        meta.getPersistentDataContainer().set(DataKeys.enchantments.getNamespacedKey(), PersistentDataType.STRING, gson.toJson(enchantData));
 
         return meta;
     }

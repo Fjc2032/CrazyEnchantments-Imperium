@@ -139,7 +139,6 @@ public class ArmorEnchantments implements Listener {
                 //Enchants
                 CEnchantment overload = CEnchantments.OVERLOAD.getEnchantment();
                 CEnchantment godlyOverload = CEnchantments.GODLYOVERLOAD.getEnchantment();
-                CEnchantment hulk = CEnchantments.HULK.getEnchantment();
                 CEnchantment gears = CEnchantments.GEARS.getEnchantment();
                 CEnchantment antiGravity = CEnchantments.ANTIGRAVITY.getEnchantment();
                 CEnchantment springs = CEnchantments.SPRINGS.getEnchantment();
@@ -167,16 +166,6 @@ public class ArmorEnchantments implements Listener {
                     }
                 } else {
                     this.attributeController.removeModifier(player, Attribute.MAX_HEALTH, keys[0]);
-                }
-                if (this.enchantmentBookSettings.hasEnchantment(armor, hulk)) {
-                    double power = this.enchantmentBookSettings.getLevel(armor, hulk) * 10;
-                    AttributeModifier hulkModifier = new AttributeModifier(keys[2], power, AttributeModifier.Operation.ADD_NUMBER);
-
-                    this.attributeController.addAttributes(player, Attribute.ATTACK_DAMAGE, hulkModifier);
-                    this.attributeController.add(Attribute.ATTACK_DAMAGE, hulkModifier);
-                } else {
-                    this.attributeController.removeAttribute(player, Attribute.ATTACK_DAMAGE, keys[2]);
-                    this.attributeController.remove(Attribute.ATTACK_DAMAGE, keys[2]);
                 }
 
                 if (this.enchantmentBookSettings.hasEnchantment(armor, antiGravity)) {
@@ -917,10 +906,6 @@ public class ArmorEnchantments implements Listener {
 
             case SANDSTORM -> {
                 if (EnchantUtils.isAuraActive(player, enchant, enchantments)) other.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10 * 20, 0));
-            }
-
-            case RADIANT -> {
-                if (EnchantUtils.isAuraActive(player, enchant, enchantments)) other.setFireTicks(5 * 20);
             }
         }
     }

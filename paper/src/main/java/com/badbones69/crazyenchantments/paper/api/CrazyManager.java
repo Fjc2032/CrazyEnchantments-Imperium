@@ -35,6 +35,7 @@ import com.badbones69.crazyenchantments.paper.support.interfaces.CropManagerVers
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -66,7 +67,7 @@ public class CrazyManager {
 
     @NotNull
     private final CrazyEnchantments plugin = JavaPlugin.getPlugin(CrazyEnchantments.class);
-    
+
     @NotNull
     private final Starter starter = this.plugin.getStarter();
 
@@ -99,10 +100,10 @@ public class CrazyManager {
 
     @NotNull
     private final ShopManager shopManager = this.starter.getShopManager();
-    
+
     @NotNull
     private final BowEnchantmentManager bowEnchantmentManager = this.starter.getBowEnchantmentManager();
-    
+
     @NotNull
     private final ArmorEnchantmentManager armorEnchantmentManager = this.starter.getArmorEnchantmentManager();
 
@@ -222,16 +223,16 @@ public class CrazyManager {
 
             if (enchants.contains(path)) { // To make sure the enchantment isn't broken.
                 CEnchantment enchantment = new CEnchantment(name)
-                .setCustomName(enchants.getString(path + ".Name"))
-                .setActivated(enchants.getBoolean(path + ".Enabled"))
-                .setMaxLevel(enchants.getInt(path + ".MaxPower"))
-                .setEnchantmentType(cEnchantment.getType())
-                .setInfoName(enchants.getString(path + ".Info.Name"))
-                .setInfoDescription(enchants.getStringList(path + ".Info.Description"))
-                .setCategories(enchants.getStringList(path + ".Categories"))
-                .setChance(cEnchantment.getChance())
-                .setChanceIncrease(cEnchantment.getChanceIncrease())
-                .setSound(enchants.getString(path + ".Sound"));
+                        .setCustomName(enchants.getString(path + ".Name"))
+                        .setActivated(enchants.getBoolean(path + ".Enabled"))
+                        .setMaxLevel(enchants.getInt(path + ".MaxPower"))
+                        .setEnchantmentType(cEnchantment.getType())
+                        .setInfoName(enchants.getString(path + ".Info.Name"))
+                        .setInfoDescription(enchants.getStringList(path + ".Info.Description"))
+                        .setCategories(enchants.getStringList(path + ".Categories"))
+                        .setChance(cEnchantment.getChance())
+                        .setChanceIncrease(cEnchantment.getChanceIncrease())
+                        .setSound(enchants.getString(path + ".Sound"));
 
                 if (enchants.contains(path + ".Enchantment-Type")) enchantment.setEnchantmentType(this.methods.getFromName(enchants.getString(path + ".Enchantment-Type")));
 
@@ -261,12 +262,12 @@ public class CrazyManager {
                 boolean autoEquip = gkit.getBoolean(path + "Auto-Equip");
 
                 ItemStack displayItem = new ItemBuilder()
-                  .setMaterial(gkit.getString(path + "Display.Item", ColorUtils.getRandomPaneColor().getName()))
-                  .setName(gkit.getString(path + "Display.Name", "Error getting name."))
-                  .setLore(gkit.getStringList(path + "Display.Lore"))
-                  .setGlow(gkit.getBoolean(path + "Display.Glowing"))
-                  .addStringPDC(DataKeys.gkit_type.getNamespacedKey(), kit)
-                .build();
+                        .setMaterial(gkit.getString(path + "Display.Item", ColorUtils.getRandomPaneColor().getName()))
+                        .setName(gkit.getString(path + "Display.Name", "Error getting name."))
+                        .setLore(gkit.getStringList(path + "Display.Lore"))
+                        .setGlow(gkit.getBoolean(path + "Display.Glowing"))
+                        .addStringPDC(DataKeys.gkit_type.getNamespacedKey(), kit)
+                        .build();
 
                 List<String> commands = gkit.getStringList(path + "Commands");
                 List<String> itemStrings = gkit.getStringList(path + "Items");
@@ -453,7 +454,7 @@ public class CrazyManager {
     public List<CEPlayer> getCEPlayers() {
         return this.players;
     }
-    
+
     public CEBook getRandomEnchantmentBook(Category category) {
         try {
             List<CEnchantment> enchantments = category.getEnabledEnchantments();
@@ -462,7 +463,7 @@ public class CrazyManager {
             return new CEBook(enchantment, randomLevel(enchantment, category), 1, category);
         } catch (Exception e) {
             this.plugin.getLogger().info("The category " + category.getName() + " has no enchantments."
-            + " Please add enchantments to the category in the Enchantments.yml. If you do not wish to have the category feel free to delete it from the Config.yml.");
+                    + " Please add enchantments to the category in the Enchantments.yml. If you do not wish to have the category feel free to delete it from the Config.yml.");
             return null;
         }
     }
@@ -507,7 +508,7 @@ public class CrazyManager {
     }
 
     /**
-     * @see #addEnchantments(ItemMeta, Map) 
+     * @see #addEnchantments(ItemMeta, Map)
      */
     public ItemStack addEnchantment(ItemStack item, CEnchantment enchantment, int level) {
         Map<CEnchantment, Integer> enchantments = new HashMap<>();
@@ -518,7 +519,7 @@ public class CrazyManager {
     }
 
     /**
-     * @see #addEnchantments(ItemMeta, Map) 
+     * @see #addEnchantments(ItemMeta, Map)
      */
     public ItemStack addEnchantments(ItemStack item, Map<CEnchantment, Integer> enchantments) {
         item.setItemMeta(addEnchantments(item.getItemMeta(), enchantments));
@@ -532,33 +533,25 @@ public class CrazyManager {
      * @return The item with the enchantment on it.
      */
     public ItemMeta addEnchantments(ItemMeta meta, Map<CEnchantment, Integer> enchantments) {
-        Gson gson = new Gson();
-        Map<CEnchantment, Integer> currentEnchantments = this.enchantmentBookSettings.getEnchantments(meta);
 
-        meta = this.enchantmentBookSettings.removeEnchantments(meta, enchantments.keySet().stream().filter(currentEnchantments::containsKey).toList());
+        for (Map.Entry<CEnchantment, Integer> entry : enchantments.entrySet()) {
 
-        String data = meta.getPersistentDataContainer().get(DataKeys.enchantments.getNamespacedKey(), PersistentDataType.STRING);
-        Enchant enchantData = data != null ? gson.fromJson(data, Enchant.class) : new Enchant(new HashMap<>());
-
-        List<Component> oldLore = meta.lore() != null ? meta.lore() : new ArrayList<>();
-        List<Component> newLore = new ArrayList<>();
-
-        for (Entry<CEnchantment, Integer> entry : enchantments.entrySet()) {
-            CEnchantment enchantment = entry.getKey();
+            CEnchantment ce = entry.getKey();
             int level = entry.getValue();
 
-            String loreString = enchantment.getCustomName() + " " + NumberUtils.convertLevelString(level);
+            // datapack enchant id should match CE name
+            String enchantName = ce.getName().toLowerCase();
 
-            newLore.add(ColorUtils.legacyTranslateColourCodes(loreString));
+            NamespacedKey key = new NamespacedKey("imperium-ce", enchantName);
 
-            for (Entry<CEnchantment, Integer> x : enchantments.entrySet()) {
-                enchantData.addEnchantment(x.getKey().getName(), x.getValue());
+            Enchantment enchant = Enchantment.getByKey(key);
+
+            if (enchant != null) {
+                meta.addEnchant(enchant, level, true);
+            } else {
+                plugin.getLogger().warning("Missing datapack enchant: " + key);
             }
         }
-
-        newLore.addAll(oldLore);
-        meta.lore(newLore);
-        meta.getPersistentDataContainer().set(DataKeys.enchantments.getNamespacedKey(), PersistentDataType.STRING, gson.toJson(enchantData));
 
         return meta;
     }
@@ -708,11 +701,6 @@ public class CrazyManager {
         enchants.get(CEnchantments.DRUNK).put(PotionEffectType.MINING_FATIGUE, -1);
         enchants.get(CEnchantments.DRUNK).put(PotionEffectType.SLOWNESS, -1);
 
-        enchants.put(CEnchantments.HULK, new HashMap<>());
-        enchants.get(CEnchantments.HULK).put(PotionEffectType.STRENGTH, -1);
-        enchants.get(CEnchantments.HULK).put(PotionEffectType.RESISTANCE, -1);
-        enchants.get(CEnchantments.HULK).put(PotionEffectType.SLOWNESS, -1);
-
         enchants.put(CEnchantments.VALOR, new HashMap<>());
         enchants.get(CEnchantments.VALOR).put(PotionEffectType.RESISTANCE, -1);
 
@@ -721,10 +709,6 @@ public class CrazyManager {
 
         enchants.put(CEnchantments.GODLYOVERLOAD, new HashMap<>());
         enchants.get(CEnchantments.GODLYOVERLOAD).put(PotionEffectType.HEALTH_BOOST, -1);
-
-        enchants.put(CEnchantments.NINJA, new HashMap<>());
-        enchants.get(CEnchantments.NINJA).put(PotionEffectType.HEALTH_BOOST, -1);
-        enchants.get(CEnchantments.NINJA).put(PotionEffectType.SPEED, -1);
 
         //depricated Insomnia 
         //enchants.put(CEnchantments.INSOMNIA, new HashMap<>());

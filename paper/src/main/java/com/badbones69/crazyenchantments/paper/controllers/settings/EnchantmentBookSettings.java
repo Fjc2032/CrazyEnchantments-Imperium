@@ -99,7 +99,7 @@ public class EnchantmentBookSettings {
         if (!meta.getPersistentDataContainer().has(DataKeys.stored_enchantments.getNamespacedKey())) return null;
 
         EnchantedBook data = this.gson.fromJson(meta.getPersistentDataContainer().get(DataKeys.stored_enchantments.getNamespacedKey(), PersistentDataType.STRING), EnchantedBook.class);
-       
+
         CEnchantment enchantment = null;
         for (CEnchantment enchant : getRegisteredEnchantments()) {
             if (enchant.getName().equalsIgnoreCase(data.getName())) {
@@ -205,27 +205,50 @@ public class EnchantmentBookSettings {
 
     @NotNull
     public Map<CEnchantment, Integer> getEnchantments(@Nullable ItemMeta meta) {
-        if (meta == null) return Collections.emptyMap();
 
-        return getEnchantments(meta.getPersistentDataContainer());
+        Map<CEnchantment, Integer> enchantments = new HashMap<>();
+
+        if (meta == null) return enchantments;
+
+        for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
+
+            String enchantName = entry.getKey().getKey().getKey();
+            int level = entry.getValue();
+
+            for (CEnchantment ce : getRegisteredEnchantments()) {
+                if (!ce.isActivated()) continue;
+
+                if (ce.getName().equalsIgnoreCase(enchantName)) {
+                    enchantments.put(ce, level);
+                    break;
+                }
+            }
+        }
+
+        return enchantments;
     }
 
     @NotNull
     public Map<CEnchantment, Integer> getEnchantments(@NotNull PersistentDataContainer container) {
         Map<CEnchantment, Integer> enchantments = new HashMap<>();
 
-        String data = container.get(DataKeys.enchantments.getNamespacedKey(), PersistentDataType.STRING);
+        if (!(container.getAdapterContext() instanceof ItemMeta meta)) {
+            return enchantments;
+        }
 
-        if (data == null) return Collections.emptyMap();
+        for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
 
-        Enchant enchants = this.gson.fromJson(data, Enchant.class);
+            String enchantName = entry.getKey().getKey().getKey();
+            int level = entry.getValue();
 
-        if (enchants.isEmpty()) return Collections.emptyMap();
+            for (CEnchantment ce : getRegisteredEnchantments()) {
+                if (!ce.isActivated()) continue;
 
-        for (CEnchantment enchantment : getRegisteredEnchantments()) {
-            if (!enchantment.isActivated()) continue;
-
-            if (enchants.hasEnchantment(enchantment.getName())) enchantments.put(enchantment, enchants.getLevel(enchantment.getName()));
+                if (ce.getName().equalsIgnoreCase(enchantName)) {
+                    enchantments.put(ce, level);
+                    break;
+                }
+            }
         }
 
         return enchantments;
@@ -341,13 +364,26 @@ public class EnchantmentBookSettings {
      * @return The level the enchantment has.
      */
     public int getLevel(@NotNull ItemStack item, @NotNull CEnchantment enchant) {
-        String data = item.getItemMeta().getPersistentDataContainer().get(DataKeys.enchantments.getNamespacedKey(), PersistentDataType.STRING);
 
-        int level = data == null ? 0 : this.gson.fromJson(data, Enchant.class).getLevel(enchant.getName());
+        if (!item.hasItemMeta()) return 0;
 
-        if (!useUnsafeEnchantments() && level > enchant.getMaxLevel()) level = enchant.getMaxLevel();
+        ItemMeta meta = item.getItemMeta();
 
-        return level;
+        for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
+
+            if (entry.getKey().getKey().getKey().equalsIgnoreCase(enchant.getName())) {
+
+                int level = entry.getValue();
+
+                if (!useUnsafeEnchantments() && level > enchant.getMaxLevel()) {
+                    level = enchant.getMaxLevel();
+                }
+
+                return level;
+            }
+        }
+
+        return 0;
     }
 
     /**

@@ -19,7 +19,9 @@ import com.badbones69.crazyenchantments.paper.controllers.settings.ProtectionCry
 import com.badbones69.crazyenchantments.paper.listeners.ScramblerListener;
 import com.badbones69.crazyenchantments.paper.listeners.ScrollListener;
 import com.badbones69.crazyenchantments.paper.listeners.SlotCrystalListener;
+import com.badbones69.crazyenchantments.paper.listeners.misc.LAEListener;
 import com.badbones69.crazyenchantments.paper.listeners.misc.LoreUpdater;
+import com.badbones69.crazyenchantments.paper.listeners.misc.PdcListener;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport;
 import com.badbones69.crazyenchantments.paper.support.PluginSupport.SupportedPlugins;
 import com.badbones69.crazyenchantments.paper.support.SkullCreator;
@@ -76,6 +78,8 @@ public class Starter {
     private ScrollListener scrollListener;
     private SlotCrystalListener slotCrystalListener;
     private LoreUpdater loreUpdater;
+    private PdcListener PdcListener;
+    private LAEListener LAEListener;
 
 
     public void run() {
@@ -138,7 +142,9 @@ public class Starter {
         this.plugin.pluginManager.registerEvents(this.scramblerListener = new ScramblerListener(), this.plugin);
         this.plugin.pluginManager.registerEvents(this.scrollListener = new ScrollListener(), this.plugin);
         this.plugin.pluginManager.registerEvents(this.slotCrystalListener = new SlotCrystalListener(), this.plugin);
-        this.plugin.pluginManager.registerEvents(this.loreUpdater = new LoreUpdater(), this.plugin);
+        this.plugin.pluginManager.registerEvents(this.loreUpdater = new LoreUpdater(this.plugin), this.plugin);
+        this.plugin.pluginManager.registerEvents(this.PdcListener = new PdcListener(this.plugin), this.plugin);
+        this.plugin.pluginManager.registerEvents(this.LAEListener = new LAEListener(this.plugin), this.plugin);
         this.skullCreator = new SkullCreator();
 
         this.crazyManager = new CrazyManager();

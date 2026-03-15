@@ -36,7 +36,6 @@ public class AuraListener implements Listener {
             CEnchantments.BLIZZARD,
             CEnchantments.ACIDRAIN,
             CEnchantments.SANDSTORM,
-            CEnchantments.RADIANT,
             CEnchantments.INTIMIDATE
     };
 

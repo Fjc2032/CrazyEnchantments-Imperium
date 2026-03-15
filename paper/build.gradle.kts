@@ -28,6 +28,10 @@ repositories {
     maven("https://mvn.lumine.io/repository/maven-public/")
 
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
+
+    maven("https://github.com/tr7zw/Item-NBT-API")
+
+
 }
 
 dependencies {
@@ -69,6 +73,9 @@ dependencies {
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
 
     compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
+
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.5")
+
 }
 
 val component: SoftwareComponent = components["java"]

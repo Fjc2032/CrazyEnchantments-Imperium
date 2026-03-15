@@ -186,15 +186,6 @@ public class AxeEnchantments implements Listener {
         if (EnchantUtils.isEventActive(CEnchantments.CURSED, damager, item, enchantments))
             entity.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (enchantments.get(CEnchantments.CURSED.getEnchantment()) + 9) * 20, 1));
 
-        if (EnchantUtils.isEventActive(CEnchantments.DIZZY, damager, item, enchantments)) {
-            int level = enchantmentBookSettings.getLevel(item, CEnchantments.DIZZY.getEnchantment());
-
-            if (CEnchantments.DIZZY.isOffCooldown(damager.getUniqueId(), level, true)) {
-                int duration = (level >= 3) ? 120 : (level == 2 ? 80 : 40);
-                entity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, duration, 0));
-            }
-        }
-
         if (EnchantUtils.isEventActive(CEnchantments.BATTLECRY, damager, item, enchantments)) {
             for (Entity nearbyEntity : damager.getNearbyEntities(3, 3, 3)) {
                 entity.getScheduler().run(plugin, task -> {
@@ -515,38 +506,10 @@ public class AxeEnchantments implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity();
-
-        if (player.getKiller() == null) return;
-
-        if (!this.pluginSupport.allowCombat(player.getLocation())) return;
-
-        Player damager = player.getKiller();
-        ItemStack item = this.methods.getItemInHand(damager);
-
-        if (EnchantUtils.isEventActive(CEnchantments.DECAPITATION, damager, item, this.enchantmentBookSettings.getEnchantments(item))) {
-            event.getDrops().add(new ItemBuilder().setMaterial(Material.PLAYER_HEAD).setPlayerName(player.getName()).build());
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
-        Player killer = event.getEntity().getKiller();
-
-        if (killer == null) return;
-
-        ItemStack item = this.methods.getItemInHand(killer);
-        Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
-        Material headMat = EntityUtils.getHeadMaterial(event.getEntity());
-
-        if (headMat != null && !EventUtils.containsDrop(event, headMat)) {
-            double multiplier = this.crazyManager.getDecapitationHeadMap().getOrDefault(headMat, 0.0);
-
-            if (multiplier != 0.0 && EnchantUtils.isEventActive(CEnchantments.DECAPITATION, killer, item, enchantments, multiplier)) {
-                ItemStack head = new ItemBuilder().setMaterial(headMat).build();
-                event.getDrops().add(head);
-            }
-        }
     }
 
     @ApiStatus.Experimental()
